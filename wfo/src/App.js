@@ -45,7 +45,7 @@ class App extends Component {
         // the hash is a wfo id so we navigate to that item
         // if it is not the current one
         if (!this.state.item || newHash !== this.state.item.wfoId) {
-          this.navigateToItem(newHash);
+          this.setState({ 'page': "form", "wfo": newHash });
         }
       } else {
         // the hash is not a wfo id so assume it is a page
@@ -54,32 +54,6 @@ class App extends Component {
     }
 
   } // end constructor
-
-  navigateToItem = (itemId) => {
-    this.setState({ 'page': "form", "wfo": itemId });
-    window.location.hash = itemId;
-  }
-
-  getPage = () => {
-
-    let page = null;
-    switch (this.state.page) {
-
-      case "search":
-        page = <PageSearch />;
-        break;
-
-      case "form":
-        page = <PageForm wfo={this.state.wfo} user={this.state.user} graphClient={this.graphClient} />;
-        break;
-
-      default:
-        page = <PageHome user={this.state.user} />;
-        break;
-    }
-
-    return page;
-  }
 
   render() {
     return (
@@ -97,7 +71,9 @@ class App extends Component {
             </Nav>
           </Navbar.Collapse>
         </Navbar>
-        {this.getPage()}
+        <PageHome hash={this.state.page} user={this.state.user} />
+        <PageForm hash={this.state.page} wfo={this.state.wfo} user={this.state.user} graphClient={this.graphClient} />
+        <PageSearch hash={this.state.page} user={this.state.user} graphClient={this.graphClient} />
       </div>
     );
   }

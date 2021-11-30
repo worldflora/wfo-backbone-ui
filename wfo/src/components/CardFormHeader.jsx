@@ -24,7 +24,8 @@ class CardFormHeader extends Component {
 
         // if there is a taxon then we are displaying an accepted part of the hierarchy
         if (taxon) {
-            return (<Card.Header>Taxon</Card.Header>);
+            let displayRank = taxon.rank.charAt(0).toUpperCase() + taxon.rank.slice(1);
+            return (<Card.Header>{displayRank}</Card.Header>);
         }
 
         // if there is a synOf then we are a synonym
@@ -41,14 +42,27 @@ class CardFormHeader extends Component {
 
     }
 
+    getHeadline = () => {
+
+        const { name, taxon, synOf } = this.props;
+
+        if (name) {
+            return (<span dangerouslySetInnerHTML={{ __html: name.fullNameString }} />);
+        }
+
+        return "No Name";
+
+    }
+
     render() {
 
         const { taxon, name } = this.props;
         return (
             <Card className="wfo-child-list" style={{ marginTop: "1em" }}>
                 {this.getCardHeader()}
+
                 <Card.Body>
-                    <p>This is the text</p>
+                    <h2>{this.getHeadline()}</h2>
                 </Card.Body>
             </Card>
         );

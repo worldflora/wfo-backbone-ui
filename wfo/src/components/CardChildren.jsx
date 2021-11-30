@@ -17,7 +17,7 @@ class CardChildren extends Component {
                     key={kid.id}
                     onClick={(e) => { e.preventDefault(); window.location.hash = kid.acceptedName.wfo; }}
                 >
-                    {kid.acceptedName.nameString}
+                    <span dangerouslySetInnerHTML={{ __html: kid.acceptedName.fullNameString }} />
                 </ListGroup.Item>
             ));
         } else {

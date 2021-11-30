@@ -19,11 +19,11 @@ class CardAncestors extends Component {
                 if (ancestor.acceptedName) {
                     return (
                         <Breadcrumb.Item key={ancestor.id} href="#" onClick={(e) => { e.preventDefault(); window.location.hash = ancestor.acceptedName.wfo; }} >
-                            {ancestor.acceptedName.nameString}
+                            <span dangerouslySetInnerHTML={{ __html: ancestor.acceptedName.fullNameString }} />
                         </Breadcrumb.Item>
                     );
                 } else {
-                    return <Breadcrumb.Item></Breadcrumb.Item>
+                    return <Breadcrumb.Item>Home</Breadcrumb.Item>
                 }
 
 

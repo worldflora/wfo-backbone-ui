@@ -4,6 +4,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 import CardChildren from "./CardChildren";
+import CardSynonyms from "./CardSynonyms";
 import CardAncestors from "./CardAncestors";
 import CardFormHeader from "./CardFormHeader";
 
@@ -32,10 +33,11 @@ class PageForm extends Component {
         this.loadData();
     }
 
+
     loadData = () => {
 
-        if (this.props.wfo === this.state.wfo) {
-            console.log("No need to update: " + this.props.wfo);
+        if (!this.props.wfo || this.props.wfo === this.state.wfo) {
+            // no need to update
             return;
         } else {
             this.setState({
@@ -56,6 +58,7 @@ query{
 	getNameForWfoId(id: "${this.props.wfo}"){
     id,
     wfo,
+    fullNameString,
     nameString,
     genusString,
     speciesString,
@@ -68,6 +71,7 @@ query{
     basionym{
       id
       nameString
+      fullNameString,
       genusString,
     	speciesString,
       authorsString,
@@ -76,15 +80,24 @@ query{
     },
     taxonPlacement{
       id,
+      rank,
       acceptedName{
         id,
         wfo,
+        fullNameString,
+        nameString
+      },
+      synonyms{
+        id,
+        wfo,
+        fullNameString,
         nameString
       },
       ancestors{
         id,
         acceptedName{
             wfo,
+            fullNameString(abbreviateGenus: true, authors: false),
             nameString
         }
       },
@@ -92,6 +105,7 @@ query{
         id
         acceptedName{
           wfo,
+          fullNameString(abbreviateGenus: true),
           id
         }
       }
@@ -99,6 +113,7 @@ query{
         id,
         acceptedName{
           wfo,
+          fullNameString(abbreviateGenus: true),
           nameString
         }
       }
@@ -150,14 +165,23 @@ query{
      */
 
     getTaxonName = () => {
-
-
-        return "banana";
+        if (this.state.name == null) return "-";
+        return <span dangerouslySetInnerHTML={{ __html: this.state.name.fullNameString }} />;
     }
 
     getAncestorsCard = () => {
+
+        // we are an acceped taxon so the ancestry is our ancestry
         if (this.state.taxon) {
             return <CardAncestors ancestors={this.state.taxon.ancestors} />
+        }
+
+        // we are a synonym so the ancestry is the synonym of our
+        // accepted name (including our accepted name)
+        if (this.state.synOf) {
+            let ants = [...this.state.synOf.ancestors];
+            ants.unshift(this.state.synOf);
+            return <CardAncestors ancestors={ants} />
         }
         return "";
     }
@@ -169,7 +193,17 @@ query{
         return "";
     }
 
+
+    getSynonymsCard = () => {
+        if (this.state.taxon) {
+            return <CardSynonyms synonyms={this.state.taxon.synonyms} />
+        }
+        return "";
+    }
+
     render() {
+
+        if (this.props.hash != 'form') return null;
 
         return (
 
@@ -177,27 +211,27 @@ query{
                 <Row>
                     <Col>
                         {this.getAncestorsCard()}
-                        <CardFormHeader taxon={this.state.taxon} name={this.state.name} synOf={this.state.synOf} />
                     </Col>
                 </Row>
                 <Row>
                     <Col>
+                        <CardFormHeader taxon={this.state.taxon} name={this.state.name} synOf={this.state.synOf} />
                         <Card>
                             <Card.Body>
+
                                 <Card.Text>
-                                    <h2>Form Page</h2>
-                                    <p>{this.getTaxonName()}</p>
+                                    <h2>{this.getTaxonName()}</h2>
                                     <p>{process.env.REACT_APP_GRAPHQL_ENDPOINT}</p>
                                     <p><a href="#wfo-9499999999">#wfo-9499999999</a></p>
                                     <p><a href="#wfo-9499999998">#wfo-9499999998</a></p>
-                                    <p><a href="#wfo-9499999997">#wfo-9499999997</a></p>
+                                    <p><a href="#wfo-0000003319">#wfo-0000003319</a> - with synonyms</p>
                                 </Card.Text>
                             </Card.Body>
                         </Card>
                     </Col>
                     <Col xs={4}>
                         {this.getChildrenCard()}
-                        <p>Synonyms Card</p>
+                        {this.getSynonymsCard()}
                     </Col>
                 </Row>
             </Container>
