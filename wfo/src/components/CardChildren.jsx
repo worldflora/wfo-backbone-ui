@@ -35,18 +35,33 @@ class CardChildren extends Component {
 
         if (!this.props.children) return "";
 
-        return <span style={badgeStyle} >{' '}<Badge pill variant="secondary">{this.props.children.length.toLocaleString()}</Badge></span>;
+        return <span style={badgeStyle} >{' '}<Badge pill bg="secondary">{this.props.children.length.toLocaleString()}</Badge></span>;
     }
+
+    getHeader = () => {
+
+        if (this.props.children && this.props.children.length > 0) {
+            let rank = this.props.children[0].acceptedName.rank;
+            return rank.plural;
+        }
+
+        return "Child Taxa";
+
+    }
+
 
     render() {
 
-        const { children, navigateToItem } = this.props;
+        const { children } = this.props;
+
+        if (!children || children.length == 0) return null;
+
         return (
-            <Card className="wfo-child-list" style={{ marginTop: "1em" }}>
-                <Card.Header>Child Taxa</Card.Header>
+            <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
+                <Card.Header>{this.getHeader()} {this.getCountBadge()}</Card.Header>
                 <Card.Body>
                     <ListGroup>
-                        {this.renderChildren(children, navigateToItem)}
+                        {this.renderChildren(children)}
                     </ListGroup>
                 </Card.Body>
             </Card>

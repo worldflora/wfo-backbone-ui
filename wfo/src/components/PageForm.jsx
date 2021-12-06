@@ -7,6 +7,13 @@ import CardChildren from "./CardChildren";
 import CardSynonyms from "./CardSynonyms";
 import CardAncestors from "./CardAncestors";
 import CardFormHeader from "./CardFormHeader";
+import CardNameParts from "./CardNameParts";
+
+/*
+    Design pattern of using keys to refresh component
+    https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#recommendation-fully-controlled-component
+
+*/
 
 import {
     gql
@@ -20,8 +27,8 @@ class PageForm extends Component {
             wfo: null,
             name: null,
             taxon: null,
-            synOf: null
-
+            synOf: null,
+            ranks: null
         };
 
     }
@@ -44,7 +51,8 @@ class PageForm extends Component {
                 wfo: this.props.wfo,
                 name: null,
                 taxon: null,
-                synOf: null
+                synOf: null,
+                ranks: null
             });
 
             // FIXME: We should test here if the WFO ID really is a WFO ID or if it is an integer
@@ -63,6 +71,12 @@ query{
     genusString,
     speciesString,
     authorsString,
+    rank{
+        name,
+        children{
+            name
+        }
+    },
     status,
     isAutonym,
     year,
@@ -80,7 +94,10 @@ query{
     },
     taxonPlacement{
       id,
-      rank,
+      rank{
+          name,
+          plural
+      },
       acceptedName{
         id,
         wfo,
@@ -104,9 +121,15 @@ query{
       parent{
         id
         acceptedName{
+          id,
           wfo,
           fullNameString(abbreviateGenus: true),
-          id
+          rank{
+              name,
+              children{
+                  name
+              }
+          }
         }
       }
       children{
@@ -114,11 +137,23 @@ query{
         acceptedName{
           wfo,
           fullNameString(abbreviateGenus: true),
-          nameString
+          nameString,
+          rank{
+              name,
+              plural
+          }
         }
       }
     }
   }
+  getAllRanks{
+  name,
+  plural
+  children{
+    name,
+    plural
+  }
+}
 }
     `
         }).then(result => {
@@ -126,6 +161,7 @@ query{
             let name = result.data.getNameForWfoId; // we always have a name - loading unspecified taxa is handle separately
             let taxon = null; // do we have a taxon?
             let synOf = null; // or a synonym
+            let ranks = null;
 
             if (name.taxonPlacement) {
                 // the name has a placement in the taxonomy.
@@ -149,7 +185,8 @@ query{
             this.setState({
                 name: name,
                 taxon: taxon,
-                synOf: synOf
+                synOf: synOf,
+                ranks: result.data.getAllRanks
             });
         });
     }
@@ -164,10 +201,6 @@ query{
      * 
      */
 
-    getTaxonName = () => {
-        if (this.state.name == null) return "-";
-        return <span dangerouslySetInnerHTML={{ __html: this.state.name.fullNameString }} />;
-    }
 
     getAncestorsCard = () => {
 
@@ -186,24 +219,14 @@ query{
         return "";
     }
 
-    getChildrenCard = () => {
-        if (this.state.taxon) {
-            return <CardChildren children={this.state.taxon.children} />
-        }
-        return "";
-    }
-
-
-    getSynonymsCard = () => {
-        if (this.state.taxon) {
-            return <CardSynonyms synonyms={this.state.taxon.synonyms} />
-        }
-        return "";
-    }
-
     render() {
 
+        // only render if we are the page to be displayed
         if (this.props.hash != 'form') return null;
+
+        // only render if we have a wfo to display
+        if (!this.state.name) return null;
+
 
         return (
 
@@ -216,12 +239,10 @@ query{
                 <Row>
                     <Col>
                         <CardFormHeader taxon={this.state.taxon} name={this.state.name} synOf={this.state.synOf} />
+                        <CardNameParts key={this.state.wfo} graphClient={this.props.graphClient} name={this.state.name} ranks={this.state.ranks} />
                         <Card>
                             <Card.Body>
-
                                 <Card.Text>
-                                    <h2>{this.getTaxonName()}</h2>
-                                    <p>{process.env.REACT_APP_GRAPHQL_ENDPOINT}</p>
                                     <p><a href="#wfo-9499999999">#wfo-9499999999</a></p>
                                     <p><a href="#wfo-9499999998">#wfo-9499999998</a></p>
                                     <p><a href="#wfo-0000003319">#wfo-0000003319</a> - with synonyms</p>
@@ -230,8 +251,8 @@ query{
                         </Card>
                     </Col>
                     <Col xs={4}>
-                        {this.getChildrenCard()}
-                        {this.getSynonymsCard()}
+                        <CardChildren children={this.state.taxon ? this.state.taxon.children : null} />
+                        <CardSynonyms synonyms={this.state.taxon ? this.state.taxon.synonyms : null} />
                     </Col>
                 </Row>
             </Container>

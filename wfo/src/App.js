@@ -58,22 +58,24 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <Navbar bg="light" expand="lg">
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="mr-auto" >
-              <Nav.Link href="#home" >Home</Nav.Link>
-              <Nav.Link href="#search"  >Search</Nav.Link>
-              <Nav.Link href="#wfo-9499999999"  >Browse</Nav.Link>
-              <Nav.Link href="#editors" >Editors</Nav.Link>
-              <Nav.Link href="#data" >Data</Nav.Link>
-              <Nav.Link href="#help" >Help</Nav.Link>
-            </Nav>
-          </Navbar.Collapse>
-        </Navbar>
-        <PageHome hash={this.state.page} user={this.state.user} />
-        <PageForm hash={this.state.page} wfo={this.state.wfo} user={this.state.user} graphClient={this.graphClient} />
-        <PageSearch hash={this.state.page} user={this.state.user} graphClient={this.graphClient} />
+        <ApolloProvider client={client}>
+          <Navbar bg="light" expand="lg">
+            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar.Collapse id="basic-navbar-nav">
+              <Nav className="mr-auto" >
+                <Nav.Link href="#home" >Home</Nav.Link>
+                <Nav.Link href="#search"  >Search</Nav.Link>
+                <Nav.Link href="#wfo-9499999999"  >Browse</Nav.Link>
+                <Nav.Link href="#editors" >Editors</Nav.Link>
+                <Nav.Link href="#data" >Data</Nav.Link>
+                <Nav.Link href="#help" >Help</Nav.Link>
+              </Nav>
+            </Navbar.Collapse>
+          </Navbar>
+          <PageHome hash={this.state.page} user={this.state.user} />
+          <PageForm hash={this.state.page} wfo={this.state.wfo} user={this.state.user} graphClient={this.graphClient} />
+          <PageSearch hash={this.state.page} user={this.state.user} graphClient={this.graphClient} />
+        </ApolloProvider>
       </div>
     );
   }

@@ -19,12 +19,12 @@ class CardFormHeader extends Component {
 
         // if there is no name then this is an unspecified taxon
         if (!name) {
-            return (<Card.Header>Unspecified {taxon.rank}</Card.Header>);
+            return (<Card.Header>Unspecified {taxon.rank.name}</Card.Header>);
         }
 
         // if there is a taxon then we are displaying an accepted part of the hierarchy
         if (taxon) {
-            let displayRank = taxon.rank.charAt(0).toUpperCase() + taxon.rank.slice(1);
+            let displayRank = taxon.rank.name.charAt(0).toUpperCase() + taxon.rank.name.slice(1);
             return (<Card.Header>{displayRank}</Card.Header>);
         }
 
@@ -58,7 +58,7 @@ class CardFormHeader extends Component {
 
         const { taxon, name } = this.props;
         return (
-            <Card className="wfo-child-list" style={{ marginTop: "1em" }}>
+            <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
                 {this.getCardHeader()}
 
                 <Card.Body>

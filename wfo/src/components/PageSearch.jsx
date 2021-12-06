@@ -170,28 +170,41 @@ getNamesByStringMatch(queryString: "${queryString}"){
 
         // what is the state of this name?
         let placement = null;
+        let border = "secondary";
 
         if (name.taxonPlacement) {
 
-            let family = name.taxonPlacement.family;
+            let familyLink = "";
+            if (name.taxonPlacement.family) {
+                familyLink = this.getNameLink(name.taxonPlacement.family.acceptedName.fullNameString, name.taxonPlacement.family.acceptedName.wfo);
+            }
+
+            let orderLink = "";
+            if (name.taxonPlacement.order) {
+                orderLink = this.getNameLink(name.taxonPlacement.order.acceptedName.fullNameString, name.taxonPlacement.order.acceptedName.wfo);
+            }
+
             let order = name.taxonPlacement.order;
 
             if (name.taxonPlacement.acceptedName.wfo == name.wfo) {
                 placement = <span>Accepted taxon name.
-                    {" "} [{this.getNameLink(family.acceptedName.fullNameString, family.acceptedName.wfo)}{", "}{this.getNameLink(order.acceptedName.fullNameString, order.acceptedName.wfo)}]
-                </span>
+                    {" "} [{familyLink}{", "}{orderLink}]
+                </span>;
+                border = "success";
             } else {
                 let accepted = name.taxonPlacement.acceptedName;
                 placement = <span>
                     A synonym of {' '}
                     {this.getNameLink(accepted.fullNameString, accepted.wfo)}
-                    {" "} [{family.acceptedName.fullNameString}{", "}{order.acceptedName.fullNameString}]
+                    {" "} [{familyLink}{", "}{orderLink}]
                 </span>
             }
         } else {
             if (name.status == 'deprecated') {
+                border = "danger";
                 placement = <span>Deprecated name. Do not use.</span>;
             } else {
+                border = "primary";
                 if (name.status) {
                     placement = <span>This name has not been placed in taxonomy. Nomenclatural status: {name.status}</span>;
                 } else {
@@ -204,7 +217,7 @@ getNamesByStringMatch(queryString: "${queryString}"){
 
         return (<Row>
             <Col>
-                <Card style={{ marginBottom: '0.5em' }}>
+                <Card border={border} style={{ marginBottom: '0.5em' }}>
                     <Card.Body>
                         <Card.Text>
                             <p>

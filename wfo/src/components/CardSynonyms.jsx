@@ -36,14 +36,16 @@ class CardSynonyms extends Component {
 
         if (!this.props.synonyms) return "";
 
-        return <span style={badgeStyle} >{' '}<Badge pill variant="secondary">{this.props.synonyms.length.toLocaleString()}</Badge></span>;
+        return <span style={badgeStyle} >{' '}<Badge pill bg="secondary">{this.props.synonyms.length.toLocaleString()}</Badge></span>;
     }
 
     render() {
 
+        if (!this.props.synonyms || this.props.synonyms.length < 1) return null;
+
         return (
-            <Card className="wfo-child-list" style={{ marginTop: "1em" }}>
-                <Card.Header>Synonyms</Card.Header>
+            <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
+                <Card.Header>Synonyms {this.getCountBadge()}</Card.Header>
                 <Card.Body>
                     <ListGroup>
                         {this.renderSynonyms()}
