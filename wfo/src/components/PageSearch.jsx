@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -7,66 +7,14 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Badge from "react-bootstrap/Badge";
 
-
-
 import {
+    useQuery,
     gql
 } from "@apollo/client";
 
-//import OrcidCard from "./OrcidCard";
-//import AssignmentsCard from "./AssignmentsCard";
-
-
-class PageSearch extends Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            queryString: "",
-            lastSearch: "",
-            loading: false,
-            names: null,
-            nameParts: null,
-            distances: null,
-            rank: null
-        };
-
-        console.log("PageSearch Constructed");
-    }
-
-    handleChange = (event) => {
-        this.setState({ queryString: event.target.value }, () => {
-            if (this.state.queryString.length > 4) {
-                this.doSearch(this.state.queryString);
-            }
-        });
-    }
-
-    handleSubmit = (event) => {
-        event.preventDefault();
-        this.doSearch(this.state.queryString);
-    }
-
-    doSearch = (queryString) => {
-
-        // are we still loading
-        if (this.state.loading) return;
-
-        // did the query string change
-        if (this.state.lastSearch == queryString) return;
-
-        console.log(queryString);
-
-        // set the state.
-        this.setState({
-            lastSearch: queryString,
-            loading: true
-        });
-
-        this.props.graphClient.query({
-            query: gql`
-            query{
-getNamesByStringMatch(queryString: "${queryString}"){
+const NAME_SEARCH = gql`
+  query doNameSearch($queryString: String!){
+getNamesByStringMatch(queryString: $queryString){
   distances,
   nameParts,
   authors,
@@ -97,76 +45,99 @@ getNamesByStringMatch(queryString: "${queryString}"){
   }
 }
 }
-`
-        }).then(result => {
-            console.log(result);
-            // update the state with our new list
-            this.setState({
-                names: result.data.getNamesByStringMatch.names,
-                nameParts: result.data.getNamesByStringMatch.nameParts,
-                distances: result.data.getNamesByStringMatch.distances,
-                rank: result.data.getNamesByStringMatch.rank
-            });
-        }).finally(() => {
-            this.setState({ loading: false });
+`;
+
+function PageSearch(props) {
+
+    const { loading, error, data, refetch } = useQuery(NAME_SEARCH, {
+        variables: { queryString: "" }
+    });
+
+    const [queryString, setQueryString] = useState("");
+
+    function handleChange(event) {
+        setQueryString(event.target.value);
+
+        if (queryString.length > 4 && !loading) {
+            refetch({ queryString: queryString });
         }
-        );
-
-
     }
 
-    getParsedName = () => {
+    function handleSubmit(event) {
+        event.preventDefault();
+        refetch({ queryString: "Geum" });
+        /*
+              
+              doSearch(queryString);
+          */
+    }
 
-        if (this.state.nameParts === null) {
+    function getParsedName() {
+
+        if (loading) return <p>Loading...</p>;
+        if (error) return <p>Error :(</p>;
+
+        const nameParts = data.getNamesByStringMatch.nameParts;
+
+        if (nameParts === null) {
             return <span>Nothing submitted.</span>;
         };
 
-        if (this.state.nameParts.length == 0) {
+        if (nameParts.length == 0) {
             return <span>No name parts</span>;
         }
 
         return (
-            this.state.nameParts.map(part => {
+            nameParts.map(part => {
                 return <span>{part} </span>
             })
         );
 
     }
 
-    getParsedRank = () => {
+    function getParsedRank() {
 
-        if (this.state.rank === null) {
+        if (loading) return <p>Loading...</p>;
+        if (error) return <p>Error :(</p>;
+
+        const rank = data.getNamesByStringMatch.rank;
+
+        if (rank === null) {
             return <span>Nothing found.</span>;
         };
 
-        return (<span>{this.state.rank} </span>);
+        return (<span>{rank} </span>);
 
     }
 
-    getResultRows = () => {
+    function getResultRows() {
+
+        if (loading) return <p>Loading...</p>;
+        if (error) return <p>Error :(</p>;
+
+        const names = data.getNamesByStringMatch.names;
 
         // do nothing if we have now content
-        if (this.state.names === null) {
+        if (names === null) {
             return <p>No names</p>;
         };
 
         return (
-            this.state.names.map((name, index) => {
-                return this.getNameRendered(name, index);
+            names.map((name, index) => {
+                return getNameRendered(name, index);
             })
 
         );
 
     }
 
-    getNameLink = (nameString, wfo) => {
-        //return <a href={"#" + wfo} onClick={(e) => { e.preventDefault(); window.location.hash = wfo; }, dangerouslySetInnerHTML={{ __html: nameString }} />
+    function getNameLink(nameString, wfo) {
         return < a href={"#" + wfo} onClick={(e) => { e.preventDefault(); window.location.hash = wfo; }} dangerouslySetInnerHTML={{ __html: nameString }} />
-
     }
 
-    getNameRendered = (name, index) => {
+    function getNameRendered(name, index) {
 
+        const distances = data.getNamesByStringMatch.distances;
 
         // what is the state of this name?
         let placement = null;
@@ -176,12 +147,12 @@ getNamesByStringMatch(queryString: "${queryString}"){
 
             let familyLink = "";
             if (name.taxonPlacement.family) {
-                familyLink = this.getNameLink(name.taxonPlacement.family.acceptedName.fullNameString, name.taxonPlacement.family.acceptedName.wfo);
+                familyLink = getNameLink(name.taxonPlacement.family.acceptedName.fullNameString, name.taxonPlacement.family.acceptedName.wfo);
             }
 
             let orderLink = "";
             if (name.taxonPlacement.order) {
-                orderLink = this.getNameLink(name.taxonPlacement.order.acceptedName.fullNameString, name.taxonPlacement.order.acceptedName.wfo);
+                orderLink = getNameLink(name.taxonPlacement.order.acceptedName.fullNameString, name.taxonPlacement.order.acceptedName.wfo);
             }
 
             let order = name.taxonPlacement.order;
@@ -195,7 +166,7 @@ getNamesByStringMatch(queryString: "${queryString}"){
                 let accepted = name.taxonPlacement.acceptedName;
                 placement = <span>
                     A synonym of {' '}
-                    {this.getNameLink(accepted.fullNameString, accepted.wfo)}
+                    {getNameLink(accepted.fullNameString, accepted.wfo)}
                     {" "} [{familyLink}{", "}{orderLink}]
                 </span>
             }
@@ -221,8 +192,8 @@ getNamesByStringMatch(queryString: "${queryString}"){
                     <Card.Body>
                         <Card.Text>
                             <p>
-                                <Badge pill variant="secondary">{this.state.distances[index]}</Badge>{" "}
-                                {this.getNameLink(name.fullNameString, name.wfo)}
+                                <Badge pill variant="secondary">{distances[index]}</Badge>{" "}
+                                {getNameLink(name.fullNameString, name.wfo)}
                                 {" "}
                                 {placement}
                             </p>
@@ -234,34 +205,32 @@ getNamesByStringMatch(queryString: "${queryString}"){
         );
     }
 
-    render() {
+    // finally render
+    if (props.hash != 'search') return null;
 
-        if (this.props.hash != 'search') return null;
-
-        return (
-            <Container style={{ marginTop: "2em" }}>
-                <Row>
-                    <Col>
-                        <Form onSubmit={this.handleSubmit}>
-                            <Row className="align-items-center">
-                                <Col>
-                                    <Form.Control type="text" placeholder="Enter a name of interest" value={this.state.queryString} onChange={this.handleChange} />
-                                </Col>
-                                <Col xs="auto">
-                                    <Button type="submit">Search</Button>
-                                </Col>
-                            </Row>
-                        </Form>
-                    </Col>
-                </Row>
-                <div><strong>Name parts: </strong>{this.getParsedName()} <strong>Rank: </strong> {this.getParsedRank()}</div>
-                <hr />
-                {this.getResultRows()}
-            </Container>
-        );
+    return (
+        <Container style={{ marginTop: "2em" }}>
+            <Row>
+                <Col>
+                    <Form onSubmit={handleSubmit}>
+                        <Row className="align-items-center">
+                            <Col>
+                                <Form.Control type="text" placeholder="Enter a name of interest" value={queryString} onChange={handleChange} />
+                            </Col>
+                            <Col xs="auto">
+                                <Button type="submit">Search</Button>
+                            </Col>
+                        </Row>
+                    </Form>
+                </Col>
+            </Row>
+            <div><strong>Name parts: </strong>{getParsedName()} <strong>Rank: </strong> {getParsedRank()}</div>
+            <hr />
+            {getResultRows()}
+        </Container>
+    );
 
 
-    }
 
 
 }

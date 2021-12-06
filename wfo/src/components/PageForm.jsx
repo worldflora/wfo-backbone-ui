@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -8,6 +8,7 @@ import CardSynonyms from "./CardSynonyms";
 import CardAncestors from "./CardAncestors";
 import CardFormHeader from "./CardFormHeader";
 import CardNameParts from "./CardNameParts";
+import { useQuery, gql } from "@apollo/client";
 
 /*
     Design pattern of using keys to refresh component
@@ -15,55 +16,11 @@ import CardNameParts from "./CardNameParts";
 
 */
 
-import {
-    gql
-} from "@apollo/client";
-
-class PageForm extends Component {
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            wfo: null,
-            name: null,
-            taxon: null,
-            synOf: null,
-            ranks: null
-        };
-
-    }
-
-    componentDidMount() {
-        this.loadData();
-    }
-    componentDidUpdate(prevProps) {
-        this.loadData();
-    }
 
 
-    loadData = () => {
-
-        if (!this.props.wfo || this.props.wfo === this.state.wfo) {
-            // no need to update
-            return;
-        } else {
-            this.setState({
-                wfo: this.props.wfo,
-                name: null,
-                taxon: null,
-                synOf: null,
-                ranks: null
-            });
-
-            // FIXME: We should test here if the WFO ID really is a WFO ID or if it is an integer
-            // if it is an integer then we are loading an unspecified taxon and 
-            // we should call an alternative load method based on getTaxonById.
-        }
-
-        this.props.graphClient.query({
-            query: gql`
-query{
-	getNameForWfoId(id: "${this.props.wfo}"){
+const FORM_DATA = gql`
+  query getFormData($wfo: String!){
+getNameForWfoId(id: $wfo){
     id,
     wfo,
     fullNameString,
@@ -155,112 +112,104 @@ query{
   }
 }
 }
-    `
-        }).then(result => {
+`;
 
-            let name = result.data.getNameForWfoId; // we always have a name - loading unspecified taxa is handle separately
-            let taxon = null; // do we have a taxon?
-            let synOf = null; // or a synonym
-            let ranks = null;
 
-            if (name.taxonPlacement) {
-                // the name has a placement in the taxonomy.
+function PageForm(props) {
 
-                if (name.taxonPlacement.acceptedName.id === name.id) {
-                    // the name is the accepted name of the taxon it is placed in
-                    // we are displaying a taxon!
-                    taxon = name.taxonPlacement;
-                    synOf = null;
+    const { loading, error, data, refetch } = useQuery(FORM_DATA, {
+        variables: { wfo: props.wfo }
+    });
 
-                } else {
-                    // the name is not the accepted name of the taxon it is placed in
-                    // we are displaying a synonym!
-                    taxon = null;
-                    synOf = name.taxonPlacement;
-                }
+    let wfo = null;
+    let name = null;
+    let ranks = null;
+    let taxon = null;
+    let synOf = null;
 
-            }
-
-            // finally set that lot in the state
-            this.setState({
-                name: name,
-                taxon: taxon,
-                synOf: synOf,
-                ranks: result.data.getAllRanks
-            });
-        });
+    if (data) {
+        name = data.getNameForWfoId;
+        wfo = data.getNameForWfoId.wfo;
+        ranks = data.getAllRanks
     }
 
-    /*
-     * 
-     * What next?
-     * This should load a name object and a taxon object if there is on
-     * if there is a taxon object it can kick off subloads for children and synonyms
-     *  
-     * 
-     * 
-     */
+    if (name && name.taxonPlacement) {
+        // the name has a placement in the taxonomy.
 
+        if (name.taxonPlacement.acceptedName.id === name.id) {
+            // the name is the accepted name of the taxon it is placed in
+            // we are displaying a taxon!
+            taxon = name.taxonPlacement;
+            synOf = null;
 
-    getAncestorsCard = () => {
+        } else {
+            // the name is not the accepted name of the taxon it is placed in
+            // we are displaying a synonym!
+            taxon = null;
+            synOf = name.taxonPlacement;
+        }
 
-        // we are an acceped taxon so the ancestry is our ancestry
-        if (this.state.taxon) {
-            return <CardAncestors ancestors={this.state.taxon.ancestors} />
+    }
+
+    function getAncestorsCard() {
+
+        // we are an accepted taxon so the ancestry is our ancestry
+        if (taxon) {
+            return <CardAncestors ancestors={taxon.ancestors} />
         }
 
         // we are a synonym so the ancestry is the synonym of our
         // accepted name (including our accepted name)
-        if (this.state.synOf) {
-            let ants = [...this.state.synOf.ancestors];
-            ants.unshift(this.state.synOf);
+        if (synOf) {
+            let ants = [...synOf.ancestors];
+            ants.unshift(synOf);
             return <CardAncestors ancestors={ants} />
         }
         return "";
     }
 
-    render() {
+    // finally render
 
-        // only render if we are the page to be displayed
-        if (this.props.hash != 'form') return null;
+    // only render if we are the page to be displayed
+    if (props.hash != 'form') return null;
 
-        // only render if we have a wfo to display
-        if (!this.state.name) return null;
+    // only render if we have a wfo to display
 
-
-        return (
-
-            <Container fluid>
-                <Row>
-                    <Col>
-                        {this.getAncestorsCard()}
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <CardFormHeader taxon={this.state.taxon} name={this.state.name} synOf={this.state.synOf} />
-                        <CardNameParts key={this.state.wfo} graphClient={this.props.graphClient} name={this.state.name} ranks={this.state.ranks} />
-                        <Card>
-                            <Card.Body>
-                                <Card.Text>
-                                    <p><a href="#wfo-9499999999">#wfo-9499999999</a></p>
-                                    <p><a href="#wfo-9499999998">#wfo-9499999998</a></p>
-                                    <p><a href="#wfo-0000003319">#wfo-0000003319</a> - with synonyms</p>
-                                </Card.Text>
-                            </Card.Body>
-                        </Card>
-                    </Col>
-                    <Col xs={4}>
-                        <CardChildren children={this.state.taxon ? this.state.taxon.children : null} />
-                        <CardSynonyms synonyms={this.state.taxon ? this.state.taxon.synonyms : null} />
-                    </Col>
-                </Row>
-            </Container>
-
-        );
+    console.log(data);
 
 
-    }
+    //if (!name) return null;
+    return (
+
+        <Container fluid>
+            <Row>
+                <Col>
+                    {getAncestorsCard()}
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <CardFormHeader taxon={taxon} name={name} synOf={synOf} />
+                    <CardNameParts key={wfo} name={name} ranks={ranks} />
+                    <Card>
+                        <Card.Body>
+                            <Card.Text>
+                                <p><a href="#wfo-9499999999">#wfo-9499999999</a></p>
+                                <p><a href="#wfo-9499999998">#wfo-9499999998</a></p>
+                                <p><a href="#wfo-0000003319">#wfo-0000003319</a> - with synonyms</p>
+                            </Card.Text>
+                        </Card.Body>
+                    </Card>
+                </Col>
+                <Col xs={4}>
+                    <CardChildren children={taxon ? taxon.children : null} />
+                    <CardSynonyms synonyms={taxon ? taxon.synonyms : null} />
+                </Col>
+            </Row>
+        </Container>
+
+    );
+
 
 
 }

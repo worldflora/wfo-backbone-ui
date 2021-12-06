@@ -1,17 +1,13 @@
-import React, { Component } from "react";
+import React from "react";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 import Badge from "react-bootstrap/Badge";
 
-class CardChildren extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {};
-    }
+function CardChildren(props) {
 
-    renderChildren = () => {
-        if (this.props.children && this.props.children.length > 0) {
-            return this.props.children.map((kid) => (
+    function renderChildren() {
+        if (props.children && props.children.length > 0) {
+            return props.children.map((kid) => (
                 <ListGroup.Item
                     action
                     key={kid.id}
@@ -26,22 +22,22 @@ class CardChildren extends Component {
     }
 
 
-    getCountBadge = () => {
+    function getCountBadge() {
 
         const badgeStyle = {
             fontSize: "80%",
             verticalAlign: "super"
         };
 
-        if (!this.props.children) return "";
+        if (!props.children) return "";
 
-        return <span style={badgeStyle} >{' '}<Badge pill bg="secondary">{this.props.children.length.toLocaleString()}</Badge></span>;
+        return <span style={badgeStyle} >{' '}<Badge pill bg="secondary">{props.children.length.toLocaleString()}</Badge></span>;
     }
 
-    getHeader = () => {
+    function getHeader() {
 
-        if (this.props.children && this.props.children.length > 0) {
-            let rank = this.props.children[0].acceptedName.rank;
+        if (props.children && props.children.length > 0) {
+            let rank = props.children[0].acceptedName.rank;
             return rank.plural;
         }
 
@@ -49,23 +45,22 @@ class CardChildren extends Component {
 
     }
 
+    // finally render it
 
-    render() {
+    const { children } = props;
 
-        const { children } = this.props;
+    if (!children || children.length == 0) return null;
 
-        if (!children || children.length == 0) return null;
+    return (
+        <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
+            <Card.Header>{getHeader()} {getCountBadge()}</Card.Header>
+            <Card.Body>
+                <ListGroup>
+                    {renderChildren(children)}
+                </ListGroup>
+            </Card.Body>
+        </Card>
+    );
 
-        return (
-            <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
-                <Card.Header>{this.getHeader()} {this.getCountBadge()}</Card.Header>
-                <Card.Body>
-                    <ListGroup>
-                        {this.renderChildren(children)}
-                    </ListGroup>
-                </Card.Body>
-            </Card>
-        );
-    }
 }
 export default CardChildren;

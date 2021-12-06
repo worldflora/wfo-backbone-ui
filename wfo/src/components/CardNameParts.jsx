@@ -1,27 +1,60 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { gql } from "@apollo/client";
+import Spinner from "react-bootstrap/Spinner";
 
-class CardNameParts extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            rankString: this.props.name.rank.name,
-            nameString: this.props.name.nameString,
-            speciesString: this.props.name.speciesString,
-            genusString: this.props.name.genusString,
-            wfo: this.props.key
-        };
+import { useMutation, gql } from "@apollo/client";
 
-    }
+const UPDATE_NAME_PARTS = gql`
+        mutation  updateNameParts(
+            $wfo: String!,
+            $rankString: String!,
+            $nameString: String!,
+            $genusString: String!,
+            $speciesString: String!
+            ){
+          updateNameParts(
+              wfo: $wfo,
+              nameString: $nameString,
+              genusString: $genusString,
+              speciesString: $speciesString,
+              rankString: $rankString
+          ){
+            name,
+            success,
+            message,
+            children{
+              name,
+              success,
+              message
+            }
+          }
+        }
+`;
 
-    handleChange = (event) => {
+
+function CardNameParts(props) {
+
+    const [updateNameParts, { data, loading, error }] = useMutation(UPDATE_NAME_PARTS);
+
+    const [rankString, setRankString] = useState(props.name ? props.name.rank.name : null);
+    const [nameString, setNameString] = useState(props.name ? props.name.nameString : null);
+    const [speciesString, setSpeciesString] = useState(props.name ? props.name.speciesString : null);
+    const [genusString, setGenusString] = useState(props.name ? props.name.genusString : null);
+    const [wfo, setWfo] = useState(props.name ? props.name.wfo : null);
+
+    // do nothing if we have no name of ranks
+    if (!props.name || !props.ranks) return (<Spinner animation="border" role="status">
+        <span className="visually-hidden">Loading...</span>
+    </Spinner>);
+
+    function handleChange(event) {
+
+        // this written before hooks so structure may seem off
 
         let val = event.target.value;
         let field = event.target.name;
-        const s = {};
 
         // we only deal with single words which may (in extremis have hyphens)
         val = val.replace(/[^A-Za-z-]/g, '');
@@ -32,24 +65,27 @@ class CardNameParts extends Component {
         // apart from the genus which is upper
         if (field == "genusString") {
             val = val.charAt(0).toUpperCase() + val.slice(1);
+            setGenusString(val);
         }
 
         // and the name if we are above species level
         if (field === "nameString") {
 
-            for (var i = 0; i < this.props.ranks.length; i++) {
+            for (var i = 0; i < props.ranks.length; i++) {
 
-                let rank = this.props.ranks[i];
+                let rank = props.ranks[i];
 
                 // stop at species
                 if (rank.name == "species") break;
 
                 // found a the rank
-                if (rank.name == this.state.rankString) {
+                if (rank.name == rankString) {
                     val = val.charAt(0).toUpperCase() + val.slice(1);
                 }
 
             }
+            console.log("namestring set to " + val);
+            setNameString(val);
         }
 
         // if we have changed the rank then it may result in an update
@@ -57,13 +93,15 @@ class CardNameParts extends Component {
         // but is the simplest way of doing it.
         if (field === "rankString") {
 
-            let ns = this.state.nameString;
+            setRankString(val);
+
+            let ns = nameString;
             ns = ns.toLowerCase();
 
             // uppercase it if we are above species level
-            for (var i = 0; i < this.props.ranks.length; i++) {
+            for (var i = 0; i < props.ranks.length; i++) {
 
-                let rank = this.props.ranks[i];
+                let rank = props.ranks[i];
 
                 // stop at species
                 if (rank.name == "species") break;
@@ -76,27 +114,28 @@ class CardNameParts extends Component {
             }
 
             // set it in the new state
-            s['nameString'] = ns;
+            setNameString(ns);
 
         }
 
-        // set the value in the new version of the state
-        s[field] = val;
+        if (field === "speciesString") {
+            // only field it could be is speciesString
+            setSpeciesString(val);
+        }
 
-        this.setState(s);
 
     }
 
-    getButtonDisabled = () => {
+    function getButtonDisabled() {
 
         if (
-            this.state.rankString !== this.props.name.rank.name
+            rankString !== props.name.rank.name
             ||
-            this.state.nameString !== this.props.name.nameString
+            nameString !== props.name.nameString
             ||
-            this.state.speciesString !== this.props.name.speciesString
+            speciesString !== props.name.speciesString
             ||
-            this.state.genusString !== this.props.name.genusString
+            genusString !== props.name.genusString
         ) {
             return false;
         } else {
@@ -105,14 +144,31 @@ class CardNameParts extends Component {
 
     }
 
-    handleSubmit = (event) => {
+    function handleSubmit(event) {
+
         event.preventDefault();
+
+        console.log("rank: " + rankString);
+        console.log("name: " + nameString);
+        console.log("genus: " + genusString);
+        console.log("species: " + speciesString);
+
+        updateNameParts({
+            variables: {
+                wfo: wfo,
+                rankString: rankString,
+                nameString: nameString,
+                genusString: genusString,
+                speciesString: speciesString
+            }
+        });
+
         /*
                 // we are going to issue a mutation 
                 // if successful we will update the local version of the data so it should be in line with the 
                 // version in the db
         
-                this.props.graphClient.query({
+                props.graphClient.query({
                     mutation: gql`
         mutation {
           updateNameParts(
@@ -147,38 +203,34 @@ class CardNameParts extends Component {
     }
 
 
-    renderRank = () => {
-
-
+    function renderRank() {
 
         let help = "The rank selected dictates the meaning of the parts of the name.";
         let disabled = false;
 
-        if (this.props.name.taxonPlacement && this.props.name.taxonPlacement.acceptedName.id == this.props.name.id) {
+        if (props.name && props.name.taxonPlacement && props.name.taxonPlacement.acceptedName.id == props.name.id) {
 
-            help = "This is the name of an accepted " + this.props.name.rank.name + " and therefore the possible ranks are restricted to those permissible within the parent taxon.";
+            help = "This is the name of an accepted " + props.name.rank.name + " and therefore the possible ranks are restricted to those permissible within the parent taxon.";
 
             // if we are a genus or species with children our rank can't be changed because it
             // would change the names of our children
             if (
-                (this.props.name.rank.name === "genus" || this.props.name.rank.name === "species")
-                && this.props.name.taxonPlacement.children
-                && this.props.name.taxonPlacement.children.length > 0
+                (props.name.rank.name === "genus" || props.name.rank.name === "species")
+                && props.name.taxonPlacement.children
+                && props.name.taxonPlacement.children.length > 0
             ) {
                 disabled = true;
-                help = "The is the name of an accepted " + this.props.name.rank.name + " with children whose names depend on it so the rank can't be changed.";
+                help = "The is the name of an accepted " + props.name.rank.name + " with children whose names depend on it so the rank can't be changed.";
 
             }
 
         }
 
-
-
         return (
             <Form.Group controlId="rank">
                 <Form.Label>Rank</Form.Label>
-                <Form.Select name="rankString" disabled={disabled} value={this.state.rankString} onChange={this.handleChange}>
-                    {this.getRanks()}
+                <Form.Select name="rankString" disabled={disabled} value={rankString} onChange={handleChange}>
+                    {getRanks()}
                 </Form.Select>
                 <Form.Text className="text-muted">
                     {help}
@@ -188,10 +240,10 @@ class CardNameParts extends Component {
 
     }
 
-    getRanks = () => {
+    function getRanks() {
 
         // safety catch for rendering empty
-        if (!this.props.name || !this.props.ranks) return null;
+        if (!props.name || !props.ranks) return null;
 
         /*
             So what ranks can be set here?
@@ -201,15 +253,15 @@ class CardNameParts extends Component {
 
         const options = [];
 
-        for (const idx in this.props.ranks) {
+        for (const idx in props.ranks) {
 
-            let rank = this.props.ranks[idx];
+            let rank = props.ranks[idx];
             let disabled = false;
 
             // if we are an accepted name we disable some ranks
-            if (this.props.name.taxonPlacement && this.props.name.taxonPlacement.acceptedName.id == this.props.name.id && this.props.name.taxonPlacement.parent.acceptedName) {
+            if (props.name.taxonPlacement && props.name.taxonPlacement.acceptedName.id == props.name.id && props.name.taxonPlacement.parent.acceptedName) {
                 disabled = true;
-                this.props.name.taxonPlacement.parent.acceptedName.rank.children.map(kidRank => {
+                props.name.taxonPlacement.parent.acceptedName.rank.children.map(kidRank => {
                     if (kidRank.name == rank.name) disabled = false;
                 });
             }
@@ -222,22 +274,22 @@ class CardNameParts extends Component {
         return options;
     }
 
-    renderGenus = () => {
+    function renderGenus() {
 
         // we are a genus so we don't have a genus part.
-        if (this.state.rankString === "genus") return null;
+        if (rankString === "genus") return null;
 
         // work through the other ranks
-        for (var i = 0; i < this.props.ranks.length; i++) {
-            let rank = this.props.ranks[i];
-            if (rank.name === this.state.rankString) return null; // we found our rank
+        for (var i = 0; i < props.ranks.length; i++) {
+            let rank = props.ranks[i];
+            if (rank.name === rankString) return null; // we found our rank
             if (rank.name === "genus") break; // we got to genus so we are good to go
         }
 
         // if we are part of the taxonomy then we can't be changes.
         let disabled = false;
         let help = "Ranks below genus level have a genus part to the name.";
-        if (this.props.name.taxonPlacement && this.props.name.taxonPlacement.acceptedName.id == this.props.name.id && this.props.name.taxonPlacement.parent.acceptedName) {
+        if (props.name.taxonPlacement && props.name.taxonPlacement.acceptedName.id == props.name.id && props.name.taxonPlacement.parent.acceptedName) {
             disabled = true;
             help = "This is the accepted name of a taxon and the genus part therefore has to agree with the genus it is placed in."
         }
@@ -245,28 +297,28 @@ class CardNameParts extends Component {
         return (
             <Form.Group controlId="genus">
                 <Form.Label>Genus Part</Form.Label>
-                <Form.Control disabled={disabled} type="text" placeholder="Genus part of name below genus rank." name="genusString" value={this.state.genusString} onChange={this.handleChange} />
+                <Form.Control disabled={disabled} type="text" placeholder="Genus part of name below genus rank." name="genusString" value={genusString} onChange={handleChange} />
                 <Form.Text className="text-muted">{help}</Form.Text>
             </Form.Group>
         );
     }
 
-    renderSpecies = () => {
+    function renderSpecies() {
 
         // we are a species so we don't have a genus part.
-        if (this.state.rankString === "species") return null;
+        if (rankString === "species") return null;
 
         // work through the other ranks
-        for (var i = 0; i < this.props.ranks.length; i++) {
-            let rank = this.props.ranks[i];
-            if (rank.name === this.state.rankString) return null; // we found our rank
+        for (var i = 0; i < props.ranks.length; i++) {
+            let rank = props.ranks[i];
+            if (rank.name === rankString) return null; // we found our rank
             if (rank.name === "species") break; // we got to species so we are good to go
         }
 
         return (
             <Form.Group controlId="species">
                 <Form.Label>Species Part</Form.Label>
-                <Form.Control type="text" placeholder="The species part of a name below species rank." name="speciesString" value={this.state.speciesString} onChange={this.handleChange} />
+                <Form.Control type="text" placeholder="The species part of a name below species rank." name="speciesString" value={speciesString} onChange={handleChange} />
                 <Form.Text className="text-muted">Species must have a genus name.</Form.Text>
             </Form.Group>
         );
@@ -274,57 +326,55 @@ class CardNameParts extends Component {
 
     }
 
-    renderName = () => {
+    function renderName() {
 
         let disabled = false;
         let help = "The main name part.";
 
         // if we are a genus or species and we have children we can't be changed or we break the children
         if (
-            (this.props.name.rank.name === "genus" || this.props.name.rank.name === "species")
-            && this.props.name.taxonPlacement
-            && this.props.name.taxonPlacement.children
-            && this.props.name.taxonPlacement.children.length > 0
+            (props.name.rank.name === "genus" || props.name.rank.name === "species")
+            && props.name.taxonPlacement
+            && props.name.taxonPlacement.children
+            && props.name.taxonPlacement.children.length > 0
         ) {
 
             disabled = true;
-            help = "This is the accepted name of a " + this.props.name.rank.name + " which contains other taxa so its name can't be changed."
+            help = "This is the accepted name of a " + props.name.rank.name + " which contains other taxa so its name can't be changed."
         }
 
         return (
             <Form.Group controlId="name">
                 <Form.Label>Name</Form.Label>
-                <Form.Control disabled={disabled} type="text" placeholder="The main name component" name="nameString" value={this.state.nameString} onChange={this.handleChange} />
+                <Form.Control disabled={disabled} type="text" placeholder="The main name component" name="nameString" value={nameString} onChange={handleChange} />
                 <Form.Text className="text-muted">{help}</Form.Text>
             </Form.Group>
         )
     }
 
-    render() {
+    return (
+        <Form onSubmit={handleSubmit}>
+            <Card style={{ marginBottom: "1em" }}>
+                <Card.Header>Name Parts</Card.Header>
+                <Card.Body>
 
-        return (
-            <Form onSubmit={this.handleSubmit}>
-                <Card style={{ marginBottom: "1em" }}>
-                    <Card.Header>Name Parts</Card.Header>
-                    <Card.Body>
+                    {renderRank()}
+                    {renderGenus()}
+                    {renderSpecies()}
+                    {renderName()}
 
-
-                        {this.renderRank()}
-                        {this.renderGenus()}
-                        {this.renderSpecies()}
-                        {this.renderName()}
-
-                        <Form.Group controlId="submit-button" style={{ textAlign: "right" }}>
-                            <Button disabled={this.getButtonDisabled()} variant="primary" type="submit" onClick={this.handleSave}>
-                                Save
-                            </Button>
-                        </Form.Group>
+                    <Form.Group controlId="submit-button" style={{ textAlign: "right" }}>
+                        <Button disabled={getButtonDisabled()} variant="primary" type="submit" onClick={handleSubmit}>
+                            Save
+                        </Button>
+                    </Form.Group>
 
 
-                    </Card.Body>
-                </Card>
-            </Form>
-        );
-    }
+                </Card.Body>
+            </Card>
+        </Form>
+    );
+
+
 }
 export default CardNameParts;

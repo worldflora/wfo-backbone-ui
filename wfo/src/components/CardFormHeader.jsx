@@ -2,15 +2,11 @@ import React, { Component } from "react";
 import Card from "react-bootstrap/Card";
 import Badge from "react-bootstrap/Badge";
 
-class CardFormHeader extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {};
-    }
+function CardFormHeader(props) {
 
-    getCardHeader = () => {
+    function getCardHeader() {
 
-        const { name, taxon, synOf } = this.props;
+        const { name, taxon, synOf } = props;
 
         // at initialisation everything may be null
         if (!name && !taxon && !synOf) {
@@ -42,9 +38,9 @@ class CardFormHeader extends Component {
 
     }
 
-    getHeadline = () => {
+    function getHeadline() {
 
-        const { name, taxon, synOf } = this.props;
+        const { name, taxon, synOf } = props;
 
         if (name) {
             return (<span dangerouslySetInnerHTML={{ __html: name.fullNameString }} />);
@@ -54,18 +50,18 @@ class CardFormHeader extends Component {
 
     }
 
-    render() {
+    // finally render it
 
-        const { taxon, name } = this.props;
-        return (
-            <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
-                {this.getCardHeader()}
+    const { taxon, name } = props;
+    return (
+        <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
+            {getCardHeader()}
 
-                <Card.Body>
-                    <h2>{this.getHeadline()}</h2>
-                </Card.Body>
-            </Card>
-        );
-    }
+            <Card.Body>
+                <h2>{getHeadline()}</h2>
+            </Card.Body>
+        </Card>
+    );
+
 }
 export default CardFormHeader;

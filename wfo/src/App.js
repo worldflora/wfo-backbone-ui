@@ -58,7 +58,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <ApolloProvider client={client}>
+        <ApolloProvider client={this.graphClient}>
           <Navbar bg="light" expand="lg">
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">

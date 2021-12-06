@@ -1,16 +1,13 @@
-import React, { Component } from "react";
+import React from "react";
 import Breadcrumb from "react-bootstrap/Breadcrumb";
 
 
-class CardAncestors extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {};
-    }
+function CardAncestors(props) {
 
-    renderPath = () => {
 
-        const { ancestors } = this.props;
+    function renderPath() {
+
+        const { ancestors } = props;
 
         let ants = [...ancestors].reverse();
 
@@ -33,13 +30,12 @@ class CardAncestors extends Component {
         }
     }
 
-    render() {
-        const { ancestors } = this.props;
+    // finally render
+    const { ancestors } = props;
 
-        return (<Breadcrumb style={{ marginTop: "1em" }} >
-            {this.renderPath()}
-        </Breadcrumb>);
+    return (<Breadcrumb style={{ marginTop: "1em" }} >
+        {renderPath()}
+    </Breadcrumb>);
 
-    }
 }
 export default CardAncestors;

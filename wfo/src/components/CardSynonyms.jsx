@@ -1,17 +1,13 @@
-import React, { Component } from "react";
+import React from "react";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 import Badge from "react-bootstrap/Badge";
 
-class CardSynonyms extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {};
-    }
+function CardSynonyms(props) {
 
-    renderSynonyms = () => {
-        if (this.props.synonyms && this.props.synonyms.length > 0) {
-            return this.props.synonyms.map((syn) => (
+    function renderSynonyms() {
+        if (props.synonyms && props.synonyms.length > 0) {
+            return props.synonyms.map((syn) => (
                 <ListGroup.Item
                     action
                     key={syn.id}
@@ -27,32 +23,32 @@ class CardSynonyms extends Component {
     }
 
 
-    getCountBadge = () => {
+    function getCountBadge() {
 
         const badgeStyle = {
             fontSize: "80%",
             verticalAlign: "super"
         };
 
-        if (!this.props.synonyms) return "";
+        if (!props.synonyms) return "";
 
-        return <span style={badgeStyle} >{' '}<Badge pill bg="secondary">{this.props.synonyms.length.toLocaleString()}</Badge></span>;
+        return <span style={badgeStyle} >{' '}<Badge pill bg="secondary">{props.synonyms.length.toLocaleString()}</Badge></span>;
     }
 
-    render() {
+    // finally rendering land
 
-        if (!this.props.synonyms || this.props.synonyms.length < 1) return null;
+    if (!props.synonyms || props.synonyms.length < 1) return null;
 
-        return (
-            <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
-                <Card.Header>Synonyms {this.getCountBadge()}</Card.Header>
-                <Card.Body>
-                    <ListGroup>
-                        {this.renderSynonyms()}
-                    </ListGroup>
-                </Card.Body>
-            </Card>
-        );
-    }
+    return (
+        <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
+            <Card.Header>Synonyms {getCountBadge()}</Card.Header>
+            <Card.Body>
+                <ListGroup>
+                    {renderSynonyms()}
+                </ListGroup>
+            </Card.Body>
+        </Card>
+    );
+
 }
 export default CardSynonyms;
