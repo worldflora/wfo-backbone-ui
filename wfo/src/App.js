@@ -31,7 +31,8 @@ class App extends Component {
     // set up an client to 
     this.graphClient = new ApolloClient({
       uri: process.env.REACT_APP_GRAPHQL_ENDPOINT,
-      cache: new InMemoryCache()
+      cache: new InMemoryCache(),
+      connectToDevTools: true
     });
 
     // watch the hash tag - it is how we change state

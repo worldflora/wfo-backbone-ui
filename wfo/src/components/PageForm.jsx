@@ -17,7 +17,6 @@ import { useQuery, gql } from "@apollo/client";
 */
 
 
-
 const FORM_DATA = gql`
   query getFormData($wfo: String!){
 getNameForWfoId(id: $wfo){
@@ -184,6 +183,7 @@ function PageForm(props) {
         <Container fluid>
             <Row>
                 <Col>
+
                     {getAncestorsCard()}
                 </Col>
             </Row>

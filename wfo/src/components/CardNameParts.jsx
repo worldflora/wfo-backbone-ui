@@ -3,6 +3,7 @@ import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
+import AlertUpdate from "./AlertUpdate";
 
 import { useMutation, gql } from "@apollo/client";
 
@@ -36,7 +37,8 @@ const UPDATE_NAME_PARTS = gql`
 
 function CardNameParts(props) {
 
-    const [updateNameParts, { data, loading, error }] = useMutation(UPDATE_NAME_PARTS);
+    const [updateNameParts, { data, loading, error }] = useMutation(UPDATE_NAME_PARTS, () => { console.log('hellow thenere') });
+
 
     const [rankString, setRankString] = useState(props.name ? props.name.rank.name : null);
     const [nameString, setNameString] = useState(props.name ? props.name.nameString : null);
@@ -126,28 +128,12 @@ function CardNameParts(props) {
 
     }
 
-    function getButtonDisabled() {
-
-        if (
-            rankString !== props.name.rank.name
-            ||
-            nameString !== props.name.nameString
-            ||
-            speciesString !== props.name.speciesString
-            ||
-            genusString !== props.name.genusString
-        ) {
-            return false;
-        } else {
-            return true;
-        }
-
-    }
 
     function handleSubmit(event) {
 
         event.preventDefault();
 
+        console.log("wfo: " + wfo);
         console.log("rank: " + rankString);
         console.log("name: " + nameString);
         console.log("genus: " + genusString);
@@ -163,43 +149,6 @@ function CardNameParts(props) {
             }
         });
 
-        /*
-                // we are going to issue a mutation 
-                // if successful we will update the local version of the data so it should be in line with the 
-                // version in the db
-        
-                props.graphClient.query({
-                    mutation: gql`
-        mutation {
-          updateNameParts(
-              wfo: "forgiven",
-              nameString: "banana",
-              genusString: "banana",
-              speciesString: "banana",
-              rankString: "species"
-          ){
-            name,
-            success,
-            message,
-            children{
-              name,
-              success,
-              message
-            }
-          }
-        }
-            `
-                }).then(result => {
-        
-        
-                    console.log(result);
-                    // do stuff with the result
-                    // was it successful?
-        
-                });
-        
-                console.log(event);
-            */
     }
 
 
@@ -352,24 +301,68 @@ function CardNameParts(props) {
         )
     }
 
+    function renderButton() {
+
+        // should we be disabled
+        let disabled = true;
+        let text = 'Save';
+        let spinner = null;
+
+        if (
+            rankString !== props.name.rank.name
+            ||
+            nameString !== props.name.nameString
+            ||
+            speciesString !== props.name.speciesString
+            ||
+            genusString !== props.name.genusString
+        ) {
+            disabled = false;
+        } else {
+            disabled = true;
+        }
+
+        // What should the text be?
+
+        if (loading) {
+            text = "Saving";
+            disabled = true;
+            spinner = <Spinner
+                as="span"
+                animation="border"
+                size="sm"
+                role="status"
+                aria-hidden="true"
+            />
+        } else {
+            text = "Save";
+        }
+
+        return (
+            <Form.Group controlId="submit-button" style={{ textAlign: "right" }}>
+                <Button disabled={disabled} variant="primary" type="submit" onClick={handleSubmit}>
+                    {text}
+                    {" "}
+                    {spinner}
+                </Button>
+            </Form.Group>
+
+        );
+
+
+    }
+
     return (
         <Form onSubmit={handleSubmit}>
             <Card style={{ marginBottom: "1em" }}>
                 <Card.Header>Name Parts</Card.Header>
                 <Card.Body>
-
                     {renderRank()}
                     {renderGenus()}
                     {renderSpecies()}
                     {renderName()}
-
-                    <Form.Group controlId="submit-button" style={{ textAlign: "right" }}>
-                        <Button disabled={getButtonDisabled()} variant="primary" type="submit" onClick={handleSubmit}>
-                            Save
-                        </Button>
-                    </Form.Group>
-
-
+                    <AlertUpdate response={data} />
+                    {renderButton()}
                 </Card.Body>
             </Card>
         </Form>
