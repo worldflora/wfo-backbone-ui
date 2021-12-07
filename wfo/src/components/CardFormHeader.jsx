@@ -1,46 +1,72 @@
 import React, { Component } from "react";
 import Card from "react-bootstrap/Card";
-import Badge from "react-bootstrap/Badge";
+
+import Spinner from "react-bootstrap/Spinner";
+import { useQuery, gql } from "@apollo/client";
+
+const HEADER_QUERY = gql`
+  query getHeaderInfo($wfo: String!){
+        getNameForWfoId(id: $wfo){
+            id,
+            wfo,
+            fullNameString,
+            taxonPlacement{
+                id,
+                rank{
+                    name
+                }
+                acceptedName{
+                    id
+                },
+                synonyms{
+                    id,
+                    wfo,
+                    fullNameString
+                },
+            }
+        }
+    }
+`;
 
 function CardFormHeader(props) {
 
+    const { loading, error, data } = useQuery(HEADER_QUERY, {
+        variables: { wfo: props.wfo }
+    });
+
+    let name = data ? data.getNameForWfoId : null;
+
     function getCardHeader() {
 
-        const { name, taxon, synOf } = props;
+        if (name && name.taxonPlacement) {
+            // the name has a placement in the taxonomy.
 
-        // at initialisation everything may be null
-        if (!name && !taxon && !synOf) {
-            return "";
+            if (name.status == 'deprecated') {
+                return (<Card.Header>Deprecated Name</Card.Header>);
+            }
+
+            if (name.taxonPlacement.acceptedName.id === name.id) {
+                // the name is the accepted name of the taxon it is placed in
+                // we are displaying a taxon!
+                let displayRank = name.taxonPlacement.rank.name.charAt(0).toUpperCase() + name.taxonPlacement.rank.name.slice(1);
+                return (<Card.Header>{displayRank}</Card.Header>);
+
+            } else {
+                // the name is not the accepted name of the taxon it is placed in
+                // we are displaying a synonym!
+                return (<Card.Header>Synonymous Name</Card.Header>);
+            }
+
+
         }
 
-        // if there is no name then this is an unspecified taxon
-        if (!name) {
-            return (<Card.Header>Unspecified {taxon.rank.name}</Card.Header>);
-        }
-
-        // if there is a taxon then we are displaying an accepted part of the hierarchy
-        if (taxon) {
-            let displayRank = taxon.rank.name.charAt(0).toUpperCase() + taxon.rank.name.slice(1);
-            return (<Card.Header>{displayRank}</Card.Header>);
-        }
-
-        // if there is a synOf then we are a synonym
-        if (synOf) {
-            return (<Card.Header>Synonymous Name</Card.Header>);
-        }
-
-        // got to here so we have a name but no placement in the taxonomy
-        if (name.status == 'deprecated') {
-            return (<Card.Header>Deprecated Name</Card.Header>);
-        }
+        // FIXME - unspecified taxa?
 
         return (<Card.Header>Unplaced Name</Card.Header>);
 
     }
 
     function getHeadline() {
-
-        const { name, taxon, synOf } = props;
 
         if (name) {
             return (<span dangerouslySetInnerHTML={{ __html: name.fullNameString }} />);
@@ -52,7 +78,6 @@ function CardFormHeader(props) {
 
     // finally render it
 
-    const { taxon, name } = props;
     return (
         <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
             {getCardHeader()}

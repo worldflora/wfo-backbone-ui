@@ -16,7 +16,6 @@ import { useQuery, gql } from "@apollo/client";
 
 */
 
-
 const FORM_DATA = gql`
   query getFormData($wfo: String!){
 getNameForWfoId(id: $wfo){
@@ -60,20 +59,6 @@ getNameForWfoId(id: $wfo){
         fullNameString,
         nameString
       },
-      synonyms{
-        id,
-        wfo,
-        fullNameString,
-        nameString
-      },
-      ancestors{
-        id,
-        acceptedName{
-            wfo,
-            fullNameString(abbreviateGenus: true, authors: false),
-            nameString
-        }
-      },
       parent{
         id
         acceptedName{
@@ -85,18 +70,6 @@ getNameForWfoId(id: $wfo){
               children{
                   name
               }
-          }
-        }
-      }
-      children{
-        id,
-        acceptedName{
-          wfo,
-          fullNameString(abbreviateGenus: true),
-          nameString,
-          rank{
-              name,
-              plural
           }
         }
       }
@@ -150,23 +123,6 @@ function PageForm(props) {
 
     }
 
-    function getAncestorsCard() {
-
-        // we are an accepted taxon so the ancestry is our ancestry
-        if (taxon) {
-            return <CardAncestors ancestors={taxon.ancestors} />
-        }
-
-        // we are a synonym so the ancestry is the synonym of our
-        // accepted name (including our accepted name)
-        if (synOf) {
-            let ants = [...synOf.ancestors];
-            ants.unshift(synOf);
-            return <CardAncestors ancestors={ants} />
-        }
-        return "";
-    }
-
     // finally render
 
     // only render if we are the page to be displayed
@@ -183,14 +139,13 @@ function PageForm(props) {
         <Container fluid>
             <Row>
                 <Col>
-
-                    {getAncestorsCard()}
+                    <CardAncestors wfo={props.wfo} />
                 </Col>
             </Row>
             <Row>
                 <Col>
-                    <CardFormHeader taxon={taxon} name={name} synOf={synOf} />
-                    <CardNameParts key={wfo} name={name} ranks={ranks} />
+                    <CardFormHeader wfo={props.wfo} />
+                    <CardNameParts wfo={props.wfo} />
                     <Card>
                         <Card.Body>
                             <Card.Text>
@@ -202,8 +157,8 @@ function PageForm(props) {
                     </Card>
                 </Col>
                 <Col xs={4}>
-                    <CardChildren children={taxon ? taxon.children : null} />
-                    <CardSynonyms synonyms={taxon ? taxon.synonyms : null} />
+                    <CardChildren wfo={props.wfo} />
+                    <CardSynonyms wfo={props.wfo} />
                 </Col>
             </Row>
         </Container>

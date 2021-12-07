@@ -3,11 +3,51 @@ import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 import Badge from "react-bootstrap/Badge";
 
+import Spinner from "react-bootstrap/Spinner";
+import { useQuery, gql } from "@apollo/client";
+
+const SYNONYMS_QUERY = gql`
+  query getSynonyms($wfo: String!){
+        getNameForWfoId(id: $wfo){
+            id,
+            wfo,
+            taxonPlacement{
+                id,
+                acceptedName{
+                    id
+                },
+                synonyms{
+                    id,
+                    wfo,
+                    fullNameString
+                },
+            }
+        }
+    }
+`;
+
 function CardSynonyms(props) {
 
+    const { loading, error, data } = useQuery(SYNONYMS_QUERY, {
+        variables: { wfo: props.wfo }
+    });
+
+    let name = data ? data.getNameForWfoId : null;
+    let synonyms = [];
+
+    if (name && name.taxonPlacement && name.taxonPlacement.acceptedName && name.taxonPlacement.acceptedName.id == name.id) {
+        synonyms = name.taxonPlacement.synonyms;
+    }
+
+    //    if (name && name.taxonPlacement && name.taxonPlacement.synonyms) {
+    //        synonyms = name.taxonPlacement.synonyms;
+    //    }
+
+
+
     function renderSynonyms() {
-        if (props.synonyms && props.synonyms.length > 0) {
-            return props.synonyms.map((syn) => (
+        if (synonyms && synonyms.length > 0) {
+            return synonyms.map((syn) => (
                 <ListGroup.Item
                     action
                     key={syn.id}
@@ -30,14 +70,27 @@ function CardSynonyms(props) {
             verticalAlign: "super"
         };
 
-        if (!props.synonyms) return "";
+        if (!synonyms) return null;
 
-        return <span style={badgeStyle} >{' '}<Badge pill bg="secondary">{props.synonyms.length.toLocaleString()}</Badge></span>;
+        return <span style={badgeStyle} >{' '}<Badge pill bg="secondary">{synonyms.length.toLocaleString()}</Badge></span>;
     }
 
     // finally rendering land
 
-    if (!props.synonyms || props.synonyms.length < 1) return null;
+    if (loading) {
+        return (
+            <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
+                <Card.Header>Synonyms {getCountBadge()}</Card.Header>
+                <Card.Body>
+                    <Spinner animation="border" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                </Card.Body>
+            </Card>
+        );
+    }
+
+    if (!synonyms || synonyms.length < 1) return null;
 
     return (
         <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>

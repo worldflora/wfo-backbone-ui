@@ -1,15 +1,75 @@
 import React from "react";
 import Breadcrumb from "react-bootstrap/Breadcrumb";
+import Spinner from "react-bootstrap/Spinner";
+import { useQuery, gql } from "@apollo/client";
+
+
+const ANCESTORS_QUERY = gql`
+  query getAncestors($wfo: String!){
+        getNameForWfoId(id: $wfo){
+            id,
+            wfo,
+            fullNameString(abbreviateGenus: true, authors: false),
+            taxonPlacement{
+                id,
+                acceptedName{
+                    id,
+                    wfo,
+                    fullNameString(abbreviateGenus: true, authors: false)
+                },
+                ancestors{
+                    id,
+                    acceptedName{
+                        id,
+                        wfo,
+                        fullNameString(abbreviateGenus: true, authors: false),
+                        nameString
+                    }
+                }
+            }
+        }
+    }
+`;
 
 
 function CardAncestors(props) {
 
+    const { loading, error, data } = useQuery(ANCESTORS_QUERY, {
+        variables: { wfo: props.wfo }
+    });
 
-    function renderPath() {
+    let ancestors = []; // none by default
+    let name = data ? data.getNameForWfoId : null;
 
-        const { ancestors } = props;
+    if (name && name.taxonPlacement) {
 
-        let ants = [...ancestors].reverse();
+        // the name has a placement in the taxonomy.
+        ancestors = name.taxonPlacement.ancestors;
+
+        // if the name is a synonym we add the accepted name to the ancestry
+        if (name.taxonPlacement.acceptedName.id !== name.id) {
+            ancestors = [...ancestors];
+            ancestors.unshift(name.taxonPlacement);
+        }
+
+    }
+
+    // reverse them so we walk down the ways
+    ancestors = [...ancestors].reverse();
+
+    // finally render
+    return (<Breadcrumb style={{ marginTop: "1em" }} >
+        {renderPath(ancestors)}
+    </Breadcrumb>);
+
+
+    function renderPath(ants) {
+
+        if (loading) {
+            return (<Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+            </Spinner>)
+        }
 
         if (ants && ants.length > 0) {
             return ants.map((ancestor) => {
@@ -29,13 +89,6 @@ function CardAncestors(props) {
             return <Breadcrumb.Item>No Trail</Breadcrumb.Item>
         }
     }
-
-    // finally render
-    const { ancestors } = props;
-
-    return (<Breadcrumb style={{ marginTop: "1em" }} >
-        {renderPath()}
-    </Breadcrumb>);
 
 }
 export default CardAncestors;

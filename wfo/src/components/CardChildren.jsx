@@ -2,12 +2,54 @@ import React from "react";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 import Badge from "react-bootstrap/Badge";
+import Spinner from "react-bootstrap/Spinner";
+import { useQuery, gql } from "@apollo/client";
+
+const CHILDREN_QUERY = gql`
+  query getChildren($wfo: String!){
+        getNameForWfoId(id: $wfo){
+            id,
+            wfo,
+            taxonPlacement{
+                id,
+                acceptedName{
+                    id
+                },
+                children{
+                    id,
+                    acceptedName{
+                        id,
+                        wfo,
+                        fullNameString(abbreviateGenus: true),
+                        nameString,
+                        rank{
+                            name,
+                            plural
+                        }
+                    }
+                }
+            }
+        }
+    }
+`;
 
 function CardChildren(props) {
 
+    const { loading, error, data } = useQuery(CHILDREN_QUERY, {
+        variables: { wfo: props.wfo }
+    });
+
+    let children = []; // default to none
+    let name = data ? data.getNameForWfoId : null;
+
+    // are we an accepted name in the taxonomy
+    if (name && name.taxonPlacement && name.taxonPlacement.acceptedName && name.taxonPlacement.acceptedName.id == name.id) {
+        children = name.taxonPlacement.children;
+    }
+
     function renderChildren() {
-        if (props.children && props.children.length > 0) {
-            return props.children.map((kid) => (
+        if (children && children.length > 0) {
+            return children.map((kid) => (
                 <ListGroup.Item
                     action
                     key={kid.id}
@@ -21,7 +63,6 @@ function CardChildren(props) {
         }
     }
 
-
     function getCountBadge() {
 
         const badgeStyle = {
@@ -29,15 +70,15 @@ function CardChildren(props) {
             verticalAlign: "super"
         };
 
-        if (!props.children) return "";
+        if (!children) return "";
 
-        return <span style={badgeStyle} >{' '}<Badge pill bg="secondary">{props.children.length.toLocaleString()}</Badge></span>;
+        return <span style={badgeStyle} >{' '}<Badge pill bg="secondary">{children.length.toLocaleString()}</Badge></span>;
     }
 
     function getHeader() {
 
-        if (props.children && props.children.length > 0) {
-            let rank = props.children[0].acceptedName.rank;
+        if (children && children.length > 0) {
+            let rank = children[0].acceptedName.rank;
             return rank.plural;
         }
 
@@ -47,7 +88,18 @@ function CardChildren(props) {
 
     // finally render it
 
-    const { children } = props;
+    if (loading) {
+        return (
+            <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
+                <Card.Header>{getHeader()} {getCountBadge()}</Card.Header>
+                <Card.Body>
+                    <Spinner animation="border" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                </Card.Body>
+            </Card>
+        );
+    }
 
     if (!children || children.length == 0) return null;
 
