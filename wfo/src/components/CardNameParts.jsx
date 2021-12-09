@@ -4,7 +4,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import AlertUpdate from "./AlertUpdate";
-import { useMutation, useQuery, gql, cache } from "@apollo/client";
+import { useMutation, useQuery, gql } from "@apollo/client";
 
 const NAME_PARTS_QUERY = gql`
   query getNameParts($wfo: String!){
@@ -14,6 +14,7 @@ const NAME_PARTS_QUERY = gql`
             nameString,
             genusString,
             speciesString,
+            fullNameString,
             rank{
                 name,
                 children{
@@ -34,6 +35,9 @@ const NAME_PARTS_QUERY = gql`
                             }
                         }
                     }
+                }
+                children{
+                    id
                 }
             }
         }
@@ -82,7 +86,7 @@ function CardNameParts(props) {
         variables: { wfo: props.wfo }
     });
 
-    const [updateNameParts, { mData, mLoading, mError }] = useMutation(UPDATE_NAME_PARTS, {
+    const [updateNameParts, { data: mData, loading: mLoading }] = useMutation(UPDATE_NAME_PARTS, {
         refetchQueries: [
             NAME_PARTS_QUERY, // DocumentNode object parsed with gql
             'getNameParts' // Query name
@@ -221,21 +225,20 @@ function CardNameParts(props) {
         let help = "The rank selected dictates the meaning of the parts of the name.";
         let disabled = false;
 
+        // are we an accepted taxon
         if (name && name.taxonPlacement && name.taxonPlacement.acceptedName.id == name.id) {
 
-            help = "This is the name of an accepted " + name.rank.name + " and therefore the possible ranks are restricted to those permissible within the parent taxon.";
-
-            // if we are a genus or species with children our rank can't be changed because it
-            // would change the names of our children
+            // if we are a genus or species then people depend on us for their names
+            // we can't be changed.
             if (
                 (name.rank.name === "genus" || name.rank.name === "species")
                 && name.taxonPlacement.children
                 && name.taxonPlacement.children.length > 0
             ) {
-                disabled = true;
                 help = "The is the name of an accepted " + name.rank.name + " with children whose names depend on it so the rank can't be changed.";
-
+                disabled = true;
             }
+
 
         }
 
@@ -262,6 +265,7 @@ function CardNameParts(props) {
             So what ranks can be set here?
             if we are unplaced or a synonym then anything!
             if we are an accepted name then only what is permitted below our parents
+            and nothing if we have children?
         */
 
         const options = [];
@@ -339,6 +343,8 @@ function CardNameParts(props) {
 
     }
 
+
+
     function renderName() {
 
         let disabled = false;
@@ -358,7 +364,7 @@ function CardNameParts(props) {
 
         return (
             <Form.Group controlId="name">
-                <Form.Label>Name</Form.Label>
+                <Form.Label title={name.id}>Name</Form.Label>
                 <Form.Control disabled={disabled} type="text" placeholder="The main name component" name="nameString" value={nameString} onChange={handleNameChange} />
                 <Form.Text className="text-muted">{help}</Form.Text>
             </Form.Group>
@@ -423,7 +429,7 @@ function CardNameParts(props) {
                     {renderGenus()}
                     {renderSpecies()}
                     {renderName()}
-                    <AlertUpdate response={mData} />
+                    <AlertUpdate response={mData ? mData.updateNameParts : null} loading={mLoading} wfo={props.wfo} />
                     {renderButton()}
                 </Card.Body>
             </Card>

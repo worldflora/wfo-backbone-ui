@@ -1,25 +1,45 @@
 import React, { useState } from "react";
 import Alert from "react-bootstrap/Alert";
-import Button from "react-bootstrap/Button";
+
 
 function AlertUpdate(props) {
 
+    const [wfo, setWfo] = useState(null);
     const [show, setShow] = useState(false);
     const [response, setResponse] = useState(null);
 
-    if (response != props.response) {
-        setShow(true);
+    // we hide if this is a new wfo
+    if (props.wfo != wfo) {
+        setWfo(props.wfo);
+        setShow(false);
+    }
+
+    // update the response data if it is new.
+    if (props.response !== response) {
         setResponse(props.response);
+    }
+
+    // if we aren't showing but the mutation starts loading then show us
+    if (!show && props.loading) {
+        setShow(true);
+    }
+
+    let variant = 'danger';
+    let heading = "Failure";
+    let txt = "Unknown error";
+
+    if (response && response.success) {
+        variant = 'success';
+        heading = "Success";
+        txt = response.message;
     }
 
     if (show) {
         return (
-            <Alert variant="danger" onClose={() => setShow(false)} dismissible >
-                <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
+            <Alert variant={variant} onClose={() => setShow(false)} dismissible style={{ marginTop: "1em" }}>
+                <Alert.Heading>{heading}</Alert.Heading>
                 <p>
-                    Change this and that and try again. Duis mollis, est non commodo
-                    luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit.
-                    Cras mattis consectetur purus sit amet fermentum.
+                    {txt}
                 </p>
             </Alert>
         );

@@ -4,6 +4,7 @@ import ListGroup from "react-bootstrap/ListGroup";
 import Badge from "react-bootstrap/Badge";
 import Spinner from "react-bootstrap/Spinner";
 import { useQuery, gql } from "@apollo/client";
+import Alert from "react-bootstrap/Alert";
 
 const CHILDREN_QUERY = gql`
   query getChildren($wfo: String!){
@@ -47,43 +48,76 @@ function CardChildren(props) {
         children = name.taxonPlacement.children;
     }
 
+
+    // what is the header and do we have mixed ranks?
+    let header = [];
+    let rankNames = [];
+    let rankCounts = [];
+    let warningLevel = "secondary";
+    let alert = null;
+    if (children && children.length > 0) {
+
+        children.map(kid => {
+            if (rankNames.includes(kid.acceptedName.rank.plural)) {
+                rankCounts[kid.acceptedName.rank.plural]++;
+            } else {
+                rankNames.push(kid.acceptedName.rank.plural);
+                rankCounts[kid.acceptedName.rank.plural] = 1;
+            }
+        });
+
+    }
+
+    if (rankNames.length > 1) {
+        warningLevel = "danger";
+        alert = <Alert variant={warningLevel}><strong>Mixed Ranks:</strong> Best practice is that descendants should all be at the same rank.</Alert>
+    }
+
+    for (let i = 0; i < rankNames.length; i++) {
+
+        header.push(
+            <span>
+                {rankNames[i]}
+                <span style={{
+                    fontSize: "80%",
+                    verticalAlign: "super"
+                }} >{' '}<Badge pill bg={warningLevel} >{rankCounts[rankNames[i]]}</Badge></span>
+                {" "}
+            </span>
+        );
+
+    }
+
+
+
     function renderChildren() {
+
         if (children && children.length > 0) {
-            return children.map((kid) => (
-                <ListGroup.Item
-                    action
-                    key={kid.id}
-                    onClick={(e) => { e.preventDefault(); window.location.hash = kid.acceptedName.wfo; }}
-                >
-                    <span dangerouslySetInnerHTML={{ __html: kid.acceptedName.fullNameString }} />
-                </ListGroup.Item>
-            ));
+            return children.map((kid) => {
+
+                let button = null;
+
+                if (rankNames.length > 1) {
+                    button = <span style={{
+                        fontSize: "80%",
+                        verticalAlign: "super"
+                    }} >{' '}<Badge pill bg={warningLevel} >{kid.acceptedName.rank.name}</Badge></span>
+                }
+
+                return (
+                    <ListGroup.Item
+                        action
+                        key={kid.id}
+                        onClick={(e) => { e.preventDefault(); window.location.hash = kid.acceptedName.wfo; }}
+                    >
+                        <span dangerouslySetInnerHTML={{ __html: kid.acceptedName.fullNameString }} />
+                        {button}
+                    </ListGroup.Item>
+                )
+            });
         } else {
             return (<ListGroup.Item>No sub-taxa</ListGroup.Item>);
         }
-    }
-
-    function getCountBadge() {
-
-        const badgeStyle = {
-            fontSize: "80%",
-            verticalAlign: "super"
-        };
-
-        if (!children) return "";
-
-        return <span style={badgeStyle} >{' '}<Badge pill bg="secondary">{children.length.toLocaleString()}</Badge></span>;
-    }
-
-    function getHeader() {
-
-        if (children && children.length > 0) {
-            let rank = children[0].acceptedName.rank;
-            return rank.plural;
-        }
-
-        return "Child Taxa";
-
     }
 
     // finally render it
@@ -91,7 +125,7 @@ function CardChildren(props) {
     if (loading) {
         return (
             <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
-                <Card.Header>{getHeader()} {getCountBadge()}</Card.Header>
+                <Card.Header>{header}</Card.Header>
                 <Card.Body>
                     <Spinner animation="border" role="status">
                         <span className="visually-hidden">Loading...</span>
@@ -105,8 +139,9 @@ function CardChildren(props) {
 
     return (
         <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
-            <Card.Header>{getHeader()} {getCountBadge()}</Card.Header>
+            <Card.Header>{header}</Card.Header>
             <Card.Body>
+                {alert}
                 <ListGroup>
                     {renderChildren(children)}
                 </ListGroup>

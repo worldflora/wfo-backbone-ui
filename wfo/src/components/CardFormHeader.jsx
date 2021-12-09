@@ -60,8 +60,6 @@ function CardFormHeader(props) {
 
         }
 
-        // FIXME - unspecified taxa?
-
         return (<Card.Header>Unplaced Name</Card.Header>);
 
     }
