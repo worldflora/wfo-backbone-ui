@@ -15,8 +15,6 @@ class PageHome extends Component {
 
     render() {
 
-        if (this.props.hash != 'home') return null;
-
         return (
             <Container style={{ marginTop: "2em" }}>
                 <Row>

@@ -86,7 +86,6 @@ getNameForWfoId(id: $wfo){
 }
 `;
 
-
 function PageForm(props) {
 
     const { loading, error, data, refetch } = useQuery(FORM_DATA, {
@@ -125,14 +124,6 @@ function PageForm(props) {
 
     // finally render
 
-    // only render if we are the page to be displayed
-    if (props.hash != 'form') return null;
-
-    // only render if we have a wfo to display
-
-    console.log(data);
-
-
     //if (!name) return null;
     return (
 
@@ -152,6 +143,8 @@ function PageForm(props) {
                                 <p><a href="#wfo-9499999999">#wfo-9499999999</a></p>
                                 <p><a href="#wfo-9499999998">#wfo-9499999998</a></p>
                                 <p><a href="#wfo-0000003319">#wfo-0000003319</a> - with synonyms</p>
+                                <p><a href="#home">#home</a></p>
+                                <p><a href="#alpha">#alpha</a></p>
                             </Card.Text>
                         </Card.Body>
                     </Card>

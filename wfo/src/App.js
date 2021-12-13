@@ -1,11 +1,7 @@
 import './App.css';
 import React, { Component } from "react";
-import PageHome from "./components/PageHome";
-import PageSearch from "./components/PageSearch";
-import PageForm from "./components/PageForm";
-
-import Nav from "react-bootstrap/Nav";
-import Navbar from "react-bootstrap/Navbar";
+import Container from "react-bootstrap/Container";
+import PageTabs from "./components/PageTabs";
 
 // Importing the Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -20,6 +16,7 @@ import {
 } from "@apollo/client";
 
 class App extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
@@ -35,9 +32,10 @@ class App extends Component {
       connectToDevTools: true
     });
 
+    /*
     // watch the hash tag - it is how we change state
     window.onhashchange = () => {
-      let newHash = window.location.hash.substr(1);
+      let newHash = window.location.hash.substring(1);
       console.log(newHash);
 
       let pattern = /^wfo-[0-9]{10}$/;
@@ -54,28 +52,15 @@ class App extends Component {
       }
     }
 
+    */
+
   } // end constructor
 
   render() {
     return (
       <div className="App">
         <ApolloProvider client={this.graphClient}>
-          <Navbar bg="light" expand="lg">
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="mr-auto" >
-                <Nav.Link href="#home" >Home</Nav.Link>
-                <Nav.Link href="#search"  >Search</Nav.Link>
-                <Nav.Link href="#wfo-9499999999"  >Browse</Nav.Link>
-                <Nav.Link href="#editors" >Editors</Nav.Link>
-                <Nav.Link href="#data" >Data</Nav.Link>
-                <Nav.Link href="#help" >Help</Nav.Link>
-              </Nav>
-            </Navbar.Collapse>
-          </Navbar>
-          <PageHome hash={this.state.page} user={this.state.user} />
-          <PageForm hash={this.state.page} wfo={this.state.wfo} user={this.state.user} graphClient={this.graphClient} />
-          <PageSearch hash={this.state.page} user={this.state.user} graphClient={this.graphClient} />
+          <PageTabs />
         </ApolloProvider>
       </div>
     );

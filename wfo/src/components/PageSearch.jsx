@@ -63,8 +63,5 @@ function PageSearch(props) {
         </Container>
     );
 
-
-
-
 }
 export default PageSearch
