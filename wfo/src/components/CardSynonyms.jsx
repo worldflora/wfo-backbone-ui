@@ -95,7 +95,7 @@ function CardSynonyms(props) {
     return (
         <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
             <Card.Header>Synonyms {getCountBadge()}</Card.Header>
-            <Card.Body>
+            <Card.Body style={{ maxHeight: "30em", overflow: "auto" }} >
                 <ListGroup>
                     {renderSynonyms()}
                 </ListGroup>

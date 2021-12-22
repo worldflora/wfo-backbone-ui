@@ -116,7 +116,7 @@ function CardChildren(props) {
                 )
             });
         } else {
-            return (<ListGroup.Item>No sub-taxa</ListGroup.Item>);
+            return (<ListGroup.Item key="none" >No sub-taxa</ListGroup.Item>);
         }
     }
 
@@ -140,9 +140,9 @@ function CardChildren(props) {
     return (
         <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
             <Card.Header>{header}</Card.Header>
-            <Card.Body>
+            <Card.Body style={{ maxHeight: "30em", overflow: "auto" }} >
                 {alert}
-                <ListGroup>
+                <ListGroup  >
                     {renderChildren(children)}
                 </ListGroup>
             </Card.Body>

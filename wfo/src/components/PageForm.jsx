@@ -8,6 +8,8 @@ import CardSynonyms from "./CardSynonyms";
 import CardAncestors from "./CardAncestors";
 import CardFormHeader from "./CardFormHeader";
 import CardNameParts from "./CardNameParts";
+import CardPlacement from "./CardPlacement";
+import CardNameStatus from "./CardNameStatus";
 import { useQuery, gql } from "@apollo/client";
 
 /*
@@ -137,6 +139,7 @@ function PageForm(props) {
                 <Col>
                     <CardFormHeader wfo={props.wfo} />
                     <CardNameParts wfo={props.wfo} />
+                    <CardNameStatus wfo={props.wfo} />
                     <Card>
                         <Card.Body>
                             <Card.Text>
@@ -152,6 +155,7 @@ function PageForm(props) {
                 <Col xs={4}>
                     <CardChildren wfo={props.wfo} />
                     <CardSynonyms wfo={props.wfo} />
+                    <CardPlacement wfo={props.wfo} />
                 </Col>
             </Row>
         </Container>

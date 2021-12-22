@@ -12,7 +12,7 @@ import { gql } from "@apollo/client";
 function PageTabs(props) {
 
     const [activeTabKey, setActiveTabKey] = useState('home');
-    const [activeWfoId, setActiveWfoId] = useState(null);
+    const [activeWfoId, setActiveWfoId] = useState('wfo-9499999999');
 
     const nameFieldsFragment = gql`
   fragment nameFields on NameGql {
@@ -24,7 +24,7 @@ function PageTabs(props) {
         id,
         acceptedName{
             wfo
-            fullNameString
+            fullNameString  
         }
         family: ancestorAtRank(rank: "family"){
             acceptedName{
@@ -52,8 +52,6 @@ function PageTabs(props) {
         */
         function handleHashChange(event) {
 
-            //console.log(window.location.hash);
-
             let newHash = window.location.hash.substring(1);
             let pattern = /^wfo-[0-9]{10}$/;
 
@@ -67,15 +65,7 @@ function PageTabs(props) {
                     setActiveTabKey("browse");
                 }
 
-            } else {
-
-                // it is a page so we keep the wfo the same
-                // and just switch the tab displayed - if it is new
-                if (newHash !== activeTabKey) {
-                    setActiveTabKey(newHash);
-                }
             }
-
 
         };
 
@@ -87,18 +77,12 @@ function PageTabs(props) {
         };
     }, []);
 
-    console.log(activeTabKey);
-
-    // does the activeTabKey look like a WFO ID - if so we need to change it!
-
-
     return (
         <Container style={{ marginTop: "1em" }}>
             <Tabs
                 activeKey={activeTabKey}
-                onSelect={(k) => {
-                    //                    setActiveTabKey(k);
-                    window.location.hash = k;
+                onSelect={(k, e) => {
+                    setActiveTabKey(k);
                 }}
                 id="search-tabs"
                 className="mb-3"
@@ -122,7 +106,6 @@ function PageTabs(props) {
         </Container>
 
     );
-
 
 }
 export default PageTabs

@@ -18,7 +18,7 @@ function CardSearchResults(props) {
     return (
         names.map((name, index) => {
             return (
-                <Row>
+                <Row key={index}>
                     <Col>
                         <CardSearchName name={name} index={index} distances={distances} />
                     </Col>

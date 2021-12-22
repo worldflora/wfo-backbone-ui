@@ -4,7 +4,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import AlertUpdate from "./AlertUpdate";
-import { useMutation, useQuery, gql } from "@apollo/client";
+import { useMutation, useQuery, gql, refetchQueries } from "@apollo/client";
 
 const NAME_PARTS_QUERY = gql`
   query getNameParts($wfo: String!){
@@ -201,12 +201,6 @@ function CardNameParts(props) {
 
         event.preventDefault();
 
-        console.log("wfo: " + wfo);
-        console.log("rank: " + rankString);
-        console.log("name: " + nameString);
-        console.log("genus: " + genusString);
-        console.log("species: " + speciesString);
-
         updateNameParts({
             variables: {
                 wfo: wfo,
@@ -375,7 +369,7 @@ function CardNameParts(props) {
 
         // should we be disabled
         let disabled = true;
-        let text = 'Save';
+        let text = 'Update';
         let spinner = null;
 
         if (
@@ -389,11 +383,12 @@ function CardNameParts(props) {
         ) {
             disabled = false;
         } else {
-            disabled = true;
+            // nothing has changed so don't render
+            return null;
         }
 
         if (loading) {
-            text = "Saving";
+            text = "Updating";
             disabled = true;
             spinner = <Spinner
                 as="span"
@@ -403,7 +398,7 @@ function CardNameParts(props) {
                 aria-hidden="true"
             />
         } else {
-            text = "Save";
+            text = "Update";
         }
 
         return (
@@ -416,7 +411,6 @@ function CardNameParts(props) {
             </Form.Group>
 
         );
-
 
     }
 
