@@ -3,7 +3,7 @@ import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
 import ListGroup from "react-bootstrap/ListGroup";
-import { useQuery, gql } from "@apollo/client";
+import { useQuery, gql, NetworkStatus } from "@apollo/client";
 import ListGroupItem from "react-bootstrap/esm/ListGroupItem";
 
 const PLACEMENT_QUERY = gql`
@@ -15,6 +15,8 @@ const PLACEMENT_QUERY = gql`
         canChangeParent,
         canChangeAccepted,
         filterNeeded,
+        filter,
+        action,
         possibleTaxa{
             id,
             acceptedName{
@@ -36,35 +38,50 @@ const PLACEMENT_QUERY = gql`
 
 function CardPlacement(props) {
 
+    // we track the status, genus and species of the name because if they
+    // are changed elsewhere in the ui we need to reload
     const [status, setStatus] = useState();
     const [genus, setGenus] = useState();
     const [species, setSpecies] = useState();
-    const [filter, setFilter] = useState();
+
+    const [wfo, setWfo] = useState();
+    const [filter, setFilter] = useState('');
     const [selectedAction, setSelectedAction] = useState('none');
 
-    const { loading, error, data, refetch } = useQuery(PLACEMENT_QUERY, {
-        variables: { wfo: props.wfo, action: 'none', filter: '' }
+    const { loading, data, refetch, networkStatus } = useQuery(PLACEMENT_QUERY, {
+        variables: { wfo: props.wfo, action: 'none', filter: '' },
+        notifyOnNetworkStatusChange: true
     });
 
     // console.log(data);
+
+    // if we have moved then we zero everything.
+    if (wfo !== props.wfo) {
+        setWfo(props.wfo);
+        setFilter('');
+        setSelectedAction('none');
+    }
 
     let placer = data ? data.getNamePlacer : null;
 
     if (placer) {
 
+        // look for changes in name from somewhere else
         if (
-            placer.name.status != status
+            placer.name.status !== status
             ||
-            placer.name.speciesString != species
+            placer.name.speciesString !== species
             ||
-            placer.name.genusString != genus
-
+            placer.name.genusString !== genus
         ) {
             setStatus(placer.name.status);
             setSpecies(placer.name.speciesString);
             setGenus(placer.name.genusString);
-            setSelectedAction(placer.action);
-            refetch();
+            refetch({
+                wfo: wfo,
+                action: selectedAction,
+                filter: filter
+            });
         }
 
     }
@@ -75,9 +92,10 @@ function CardPlacement(props) {
             action: e.target.value,
             filter: filter
         });
+        setSelectedAction(e.target.value);
     }
 
-    if (!placer || loading) {
+    if (!placer) {
         return (
             <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
                 <Card.Header>Placement</Card.Header>
@@ -90,13 +108,27 @@ function CardPlacement(props) {
         );
     }
 
+
+
     function handleFilterChange(e) {
-        console.log(e);
+
+        setFilter(e.target.value);
+
+        // we wait a second after they stop typing
+        let typingTimer = null;
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(() => {
+            refetch({
+                wfo: props.wfo,
+                action: selectedAction,
+                filter: e.target.value
+            })
+        }, 1000);
     }
 
     // do we need to add a filter control?
     let filterBox = null;
-    if (placer.filterNeeded) {
+    if (placer.filterNeeded || placer.filter) {
         filterBox =
             <Form.Group controlId="filterBox" style={{ marginTop: "1em" }}>
                 <Form.Control type="text" placeholder="Type beginning of name" name="filterBox" value={filter} onChange={handleFilterChange} />
@@ -105,7 +137,6 @@ function CardPlacement(props) {
 
     let possibleTaxaList = null;
     if (placer.possibleTaxa.length > 0) {
-
         possibleTaxaList =
             <ListGroup style={{ marginTop: "1em", maxHeight: "30em", overflow: "auto" }} >
                 {
@@ -116,7 +147,15 @@ function CardPlacement(props) {
                     })
                 }
             </ListGroup>
+    }
 
+    if (loading || networkStatus === NetworkStatus.refetch) {
+        possibleTaxaList =
+            <Card.Text style={{ marginTop: "1em" }}>
+                <Spinner animation="border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                </Spinner>
+            </Card.Text>
     }
 
 
@@ -137,7 +176,6 @@ function CardPlacement(props) {
                     </Form.Group>
                     {filterBox}
                 </Form>
-
                 {possibleTaxaList}
             </Card.Body>
         </Card >

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Card from "react-bootstrap/Card";
 import Badge from "react-bootstrap/Badge";
 
@@ -24,9 +24,7 @@ function CardSearchName(props) {
             orderLink = getNameLink(name.taxonPlacement.order.acceptedName.fullNameString, name.taxonPlacement.order.acceptedName.wfo);
         }
 
-        let order = name.taxonPlacement.order;
-
-        if (name.taxonPlacement.acceptedName.wfo == name.wfo) {
+        if (name.taxonPlacement.acceptedName.wfo === name.wfo) {
             placement = <span>Accepted taxon name.
                 {" "} [{familyLink}{", "}{orderLink}]
             </span>;
@@ -40,7 +38,7 @@ function CardSearchName(props) {
             </span>
         }
     } else {
-        if (name.status == 'deprecated') {
+        if (name.status === 'deprecated') {
             border = "danger";
             placement = <span>Deprecated name. Do not use.</span>;
         } else {

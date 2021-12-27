@@ -3,7 +3,6 @@ import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
-import AlertUpdate from "./AlertUpdate";
 import { useMutation, useQuery, gql } from "@apollo/client";
 
 const STATUS_QUERY = gql`
@@ -47,11 +46,11 @@ function CardNameStatus(props) {
     const [status, setStatus] = useState();
     const [wfo, setWfo] = useState();
 
-    const { loading, error, data } = useQuery(STATUS_QUERY, {
+    const { loading, data } = useQuery(STATUS_QUERY, {
         variables: { wfo: props.wfo }
     });
 
-    const [updateNameStatus, { data: mData, loading: mLoading }] = useMutation(UPDATE_STATUS, {
+    const [updateNameStatus, { loading: mLoading }] = useMutation(UPDATE_STATUS, {
         refetchQueries: [
             STATUS_QUERY, // run this query again
             'getNameStatus' // Query name
@@ -61,7 +60,7 @@ function CardNameStatus(props) {
     let name = data ? data.getNameForWfoId : null;
 
     // if the wfo has changed then update our default state
-    if (name && wfo != props.wfo) {
+    if (name && wfo !== props.wfo) {
         setWfo(props.wfo);
         setStatus(name.status);
     }
@@ -99,7 +98,7 @@ function CardNameStatus(props) {
 
         let disabled = false;
         let isAccepted = false;
-        if (name && name.taxonPlacement && name.taxonPlacement.acceptedName.id == name.id) isAccepted = true;
+        if (name && name.taxonPlacement && name.taxonPlacement.acceptedName.id === name.id) isAccepted = true;
 
         let help = "The nomenclatural status of the name affects where it can be placed in the taxonomy.";
         if (isAccepted) help = "Accepted names of taxa can only be valid, conserved or sanctioned";
@@ -116,9 +115,9 @@ function CardNameStatus(props) {
                             // if we are a taxon then we can only be certain status
                             if (isAccepted) {
                                 disabled = true;
-                                if (s == 'valid') disabled = false;
-                                if (s == 'sanctioned') disabled = false;
-                                if (s == 'conserved') disabled = false;
+                                if (s === 'valid') disabled = false;
+                                if (s === 'sanctioned') disabled = false;
+                                if (s === 'conserved') disabled = false;
                             }
 
                             return (<option disabled={disabled} value={s} key={s} >{s}</option>);
@@ -136,7 +135,7 @@ function CardNameStatus(props) {
     function renderButton() {
 
         // nothing to save don't render at all
-        if (name && name.status == status) return null;
+        if (name && name.status === status) return null;
 
         // should we be disabled
         let disabled = false;
@@ -168,7 +167,7 @@ function CardNameStatus(props) {
     }
 
 
-    if (loading) {
+    if (loading || mLoading) {
         return (
             <Card style={{ marginBottom: "1em" }}>
                 <Card.Header>Nomenclatural Status</Card.Header>

@@ -36,7 +36,7 @@ const CHILDREN_QUERY = gql`
 
 function CardChildren(props) {
 
-    const { loading, error, data } = useQuery(CHILDREN_QUERY, {
+    const { loading, data } = useQuery(CHILDREN_QUERY, {
         variables: { wfo: props.wfo }
     });
 
@@ -44,7 +44,7 @@ function CardChildren(props) {
     let name = data ? data.getNameForWfoId : null;
 
     // are we an accepted name in the taxonomy
-    if (name && name.taxonPlacement && name.taxonPlacement.acceptedName && name.taxonPlacement.acceptedName.id == name.id) {
+    if (name && name.taxonPlacement && name.taxonPlacement.acceptedName && name.taxonPlacement.acceptedName.id === name.id) {
         children = name.taxonPlacement.children;
     }
 
@@ -64,6 +64,7 @@ function CardChildren(props) {
                 rankNames.push(kid.acceptedName.rank.plural);
                 rankCounts[kid.acceptedName.rank.plural] = 1;
             }
+            return true;
         });
 
     }
@@ -135,7 +136,7 @@ function CardChildren(props) {
         );
     }
 
-    if (!children || children.length == 0) return null;
+    if (!children || children.length === 0) return null;
 
     return (
         <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>

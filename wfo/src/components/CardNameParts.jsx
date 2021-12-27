@@ -4,7 +4,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import AlertUpdate from "./AlertUpdate";
-import { useMutation, useQuery, gql, refetchQueries } from "@apollo/client";
+import { useMutation, useQuery, gql } from "@apollo/client";
 
 const NAME_PARTS_QUERY = gql`
   query getNameParts($wfo: String!){
@@ -82,7 +82,7 @@ const UPDATE_NAME_PARTS = gql`
 
 function CardNameParts(props) {
 
-    const { loading, error, data } = useQuery(NAME_PARTS_QUERY, {
+    const { loading, data } = useQuery(NAME_PARTS_QUERY, {
         variables: { wfo: props.wfo }
     });
 
@@ -105,7 +105,7 @@ function CardNameParts(props) {
     if (!name || !ranks) return null;
 
     // re-initialise the state if we have a new wfo to render
-    if (wfo != props.wfo) {
+    if (wfo !== props.wfo) {
         setWfo(props.wfo);
         setRankString(name.rank.name);
         setNameString(name.nameString);
@@ -126,10 +126,10 @@ function CardNameParts(props) {
             let rank = ranks[i];
 
             // stop at species
-            if (rank.name == "species") break;
+            if (rank.name === "species") break;
 
             // found a the rank
-            if (rank.name == newRank) {
+            if (rank.name === newRank) {
                 ns = ns.charAt(0).toUpperCase() + ns.slice(1);
                 break;
             }
@@ -155,10 +155,10 @@ function CardNameParts(props) {
             let rank = ranks[i];
 
             // stop at species
-            if (rank.name == "species") break;
+            if (rank.name === "species") break;
 
             // found a the rank
-            if (rank.name == rankString) {
+            if (rank.name === rankString) {
                 newName = newName.charAt(0).toUpperCase() + newName.slice(1);
             }
 
@@ -220,7 +220,7 @@ function CardNameParts(props) {
         let disabled = false;
 
         // are we an accepted taxon
-        if (name && name.taxonPlacement && name.taxonPlacement.acceptedName.id == name.id) {
+        if (name && name.taxonPlacement && name.taxonPlacement.acceptedName.id === name.id) {
 
             // if we are a genus or species then people depend on us for their names
             // we can't be changed.
@@ -270,10 +270,11 @@ function CardNameParts(props) {
             let disabled = false;
 
             // if we are an accepted name we disable some ranks
-            if (name.taxonPlacement && name.taxonPlacement.acceptedName.id == name.id && name.taxonPlacement.parent.acceptedName) {
+            if (name.taxonPlacement && name.taxonPlacement.acceptedName.id === name.id && name.taxonPlacement.parent.acceptedName) {
                 disabled = true;
                 name.taxonPlacement.parent.acceptedName.rank.children.map(kidRank => {
-                    if (kidRank.name == rank.name) disabled = false;
+                    if (kidRank.name === rank.name) disabled = false;
+                    return disabled;
                 });
             }
 
@@ -300,7 +301,7 @@ function CardNameParts(props) {
         // if we are part of the taxonomy then we can't be changes.
         let disabled = false;
         let help = "Ranks below genus level have a genus part to the name.";
-        if (name.taxonPlacement && name.taxonPlacement.acceptedName.id == name.id && name.taxonPlacement.parent.acceptedName) {
+        if (name.taxonPlacement && name.taxonPlacement.acceptedName.id === name.id && name.taxonPlacement.parent.acceptedName) {
             disabled = true;
             help = "This is the accepted name of a taxon and the genus part therefore has to agree with the genus it is placed in."
         }

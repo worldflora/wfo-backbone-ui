@@ -57,14 +57,8 @@ function PageTabs(props) {
 
             // are we looking at a wfo or a page?
             if (pattern.test(newHash)) {
-
-                // it is a wfo id - if it a new one then update it 
-                // and display the browser page for it
-                if (newHash !== activeTabKey) {
-                    setActiveWfoId(newHash);
-                    setActiveTabKey("browse");
-                }
-
+                setActiveWfoId(newHash);
+                setActiveTabKey("browse");
             }
 
         };

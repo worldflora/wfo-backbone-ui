@@ -9,7 +9,7 @@ function AlertUpdate(props) {
     const [response, setResponse] = useState(null);
 
     // we hide if this is a new wfo
-    if (props.wfo != wfo) {
+    if (props.wfo !== wfo) {
         setWfo(props.wfo);
         setShow(false);
     }

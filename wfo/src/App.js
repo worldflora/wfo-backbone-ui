@@ -1,6 +1,5 @@
 import './App.css';
 import React, { Component } from "react";
-import Container from "react-bootstrap/Container";
 import PageTabs from "./components/PageTabs";
 
 // Importing the Bootstrap CSS
@@ -10,9 +9,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import {
   ApolloClient,
   InMemoryCache,
-  ApolloProvider,
-  useQuery,
-  gql
+  ApolloProvider
 } from "@apollo/client";
 
 class App extends Component {

@@ -18,6 +18,9 @@ class PageHome extends Component {
                 <Row>
                     <Col>
                         <h2>Home Page</h2>
+                        <h2>Feedback</h2>
+                        <p>It is important to let us know what you think or any issues you may have.</p>
+
                     </Col>
                 </Row>
             </Container>

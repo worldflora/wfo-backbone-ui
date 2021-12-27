@@ -1,7 +1,5 @@
-import React, { Component } from "react";
+import React from "react";
 import Card from "react-bootstrap/Card";
-
-import Spinner from "react-bootstrap/Spinner";
 import { useQuery, gql } from "@apollo/client";
 
 const HEADER_QUERY = gql`
@@ -30,7 +28,7 @@ const HEADER_QUERY = gql`
 
 function CardFormHeader(props) {
 
-    const { loading, error, data } = useQuery(HEADER_QUERY, {
+    const { data } = useQuery(HEADER_QUERY, {
         variables: { wfo: props.wfo }
     });
 
@@ -41,7 +39,7 @@ function CardFormHeader(props) {
         if (name && name.taxonPlacement) {
             // the name has a placement in the taxonomy.
 
-            if (name.status == 'deprecated') {
+            if (name.status === 'deprecated') {
                 return (<Card.Header>Deprecated Name</Card.Header>);
             }
 

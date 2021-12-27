@@ -28,14 +28,14 @@ const SYNONYMS_QUERY = gql`
 
 function CardSynonyms(props) {
 
-    const { loading, error, data } = useQuery(SYNONYMS_QUERY, {
+    const { loading, data } = useQuery(SYNONYMS_QUERY, {
         variables: { wfo: props.wfo }
     });
 
     let name = data ? data.getNameForWfoId : null;
     let synonyms = [];
 
-    if (name && name.taxonPlacement && name.taxonPlacement.acceptedName && name.taxonPlacement.acceptedName.id == name.id) {
+    if (name && name.taxonPlacement && name.taxonPlacement.acceptedName && name.taxonPlacement.acceptedName.id === name.id) {
         synonyms = name.taxonPlacement.synonyms;
     }
 

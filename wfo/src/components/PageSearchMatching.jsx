@@ -26,7 +26,7 @@ ${props.nameFieldsFragment}
 }
 `;
 
-    const [runSearch, { loading, error, data, refetch }] = useLazyQuery(NAME_SEARCH);
+    const [runSearch, { loading, error, data }] = useLazyQuery(NAME_SEARCH);
 
     const [queryString, setQueryString] = useState("");
 
@@ -58,7 +58,7 @@ ${props.nameFieldsFragment}
             return <span>Nothing submitted.</span>;
         };
 
-        if (nameParts.length == 0) {
+        if (nameParts.length === 0) {
             return <span>No name parts</span>;
         }
 

@@ -34,7 +34,7 @@ const ANCESTORS_QUERY = gql`
 
 function CardAncestors(props) {
 
-    const { loading, error, data } = useQuery(ANCESTORS_QUERY, {
+    const { loading, data } = useQuery(ANCESTORS_QUERY, {
         variables: { wfo: props.wfo }
     });
 
