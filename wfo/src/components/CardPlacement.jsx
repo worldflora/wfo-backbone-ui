@@ -3,7 +3,7 @@ import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
 import Spinner from "react-bootstrap/Spinner";
 import ListGroup from "react-bootstrap/ListGroup";
-import { useQuery, gql, NetworkStatus } from "@apollo/client";
+import { useQuery, gql, NetworkStatus, useMutation } from "@apollo/client";
 import ListGroupItem from "react-bootstrap/esm/ListGroupItem";
 
 const PLACEMENT_QUERY = gql`
@@ -30,10 +30,37 @@ const PLACEMENT_QUERY = gql`
             fullNameString,
             status,
             genusString,
-            speciesString
+            speciesString,
+            taxonPlacement{
+                id
+            }
         }
     }
  }
+`;
+
+const UPDATE_PLACEMENT = gql`
+        mutation  updatePlacement(
+            $wfo: String!,
+            $action: PlacementAction!,
+            $destinationWfo: String
+            ){
+          updatePlacement(
+              wfo: $wfo,
+              action: $action,
+              destinationWfo: $destinationWfo
+          ){
+            name,
+            success,
+            message,
+            children{
+              name,
+              success,
+              message
+            },
+            taxonIds
+          }
+        }
 `;
 
 function CardPlacement(props) {
@@ -51,6 +78,24 @@ function CardPlacement(props) {
     const { loading, data, refetch, networkStatus } = useQuery(PLACEMENT_QUERY, {
         variables: { wfo: props.wfo, action: 'none', filter: '' },
         notifyOnNetworkStatusChange: true
+    });
+
+    const [updatePlacement, { loading: mLoading }] = useMutation(UPDATE_PLACEMENT, {
+        refetchQueries: [
+            PLACEMENT_QUERY, // run this query again
+            'getPlacementInfo', // Query name
+            'getHeaderInfo',
+            'getAncestors'
+
+        ],
+        update: (cache, mutationResult) => {
+            // after we have moved something we need to invalidate
+            // the cache of the source and destination taxa
+            mutationResult.data.updatePlacement.taxonIds.map(tid => {
+                cache.data.delete('TaxonGql:' + tid);
+                return true;
+            });
+        },
     });
 
     // console.log(data);
@@ -87,28 +132,22 @@ function CardPlacement(props) {
     }
 
     function handleSelectedActionChanged(e) {
+
+        // selecting remove fires that item selected
+        // with null
+        if (e.target.value === 'remove') {
+            doAction('remove', null);
+            return;
+        }
+
         refetch({
             wfo: props.wfo,
             action: e.target.value,
             filter: filter
         });
+
         setSelectedAction(e.target.value);
     }
-
-    if (!placer) {
-        return (
-            <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
-                <Card.Header>Placement</Card.Header>
-                <Card.Body>
-                    <Spinner animation="border" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </Spinner>
-                </Card.Body>
-            </Card>
-        );
-    }
-
-
 
     function handleFilterChange(e) {
 
@@ -126,30 +165,82 @@ function CardPlacement(props) {
         }, 1000);
     }
 
-    // do we need to add a filter control?
-    let filterBox = null;
-    if (placer.filterNeeded || placer.filter) {
-        filterBox =
-            <Form.Group controlId="filterBox" style={{ marginTop: "1em" }}>
-                <Form.Control type="text" placeholder="Type beginning of name" name="filterBox" value={filter} onChange={handleFilterChange} />
-            </Form.Group>;
+    function handleItemSelect(taxon) {
+        console.log(taxon);
+        console.log(selectedAction);
+        console.log(placer.name);
+
+        doAction(selectedAction, taxon ? taxon.acceptedName.wfo : null);
+
+
+    }
+
+    function doAction(action, destinationWfo) {
+
+        updatePlacement(
+            {
+                variables: {
+                    wfo: props.wfo,
+                    action: action,
+                    destinationWfo: destinationWfo
+                }
+            }
+        );
+
+    }
+
+    if (!placer) {
+        return (
+            <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
+                <Card.Header>Placement</Card.Header>
+                <Card.Body>
+                    <Spinner animation="border" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                    </Spinner>
+                </Card.Body>
+            </Card>
+        );
     }
 
     let possibleTaxaList = null;
-    if (placer.possibleTaxa.length > 0) {
-        possibleTaxaList =
-            <ListGroup style={{ marginTop: "1em", maxHeight: "30em", overflow: "auto" }} >
-                {
-                    placer.possibleTaxa.map((t, i) => {
-                        return <ListGroupItem key={i}>
-                            <span dangerouslySetInnerHTML={{ __html: t.acceptedName.fullNameString }} />
-                        </ListGroupItem>
-                    })
-                }
-            </ListGroup>
+    let filterBox = null;
+    if (selectedAction !== 'none' && selectedAction !== 'remove') {
+
+        // do we need to add a filter control?
+        if (placer.filterNeeded || placer.filter) {
+            filterBox =
+                <Form.Group controlId="filterBox" style={{ marginTop: "1em" }}>
+                    <Form.Control type="text" placeholder="Type beginning of name" autoFocus={true} name="filterBox" value={filter} onChange={handleFilterChange} />
+                </Form.Group>;
+        }
+
+        if (placer.possibleTaxa.length > 0) {
+            possibleTaxaList =
+                <ListGroup style={{ marginTop: "1em", maxHeight: "30em", overflow: "auto" }} >
+                    {
+                        placer.possibleTaxa.map((t, i) => {
+                            return <ListGroupItem
+                                key={i}
+                                action
+                                onClick={(e) => { e.preventDefault(); handleItemSelect(t); }}>
+                                <span dangerouslySetInnerHTML={{ __html: t.acceptedName.fullNameString }} />
+                            </ListGroupItem>
+                        })
+                    }
+                </ListGroup>
+        } else {
+            possibleTaxaList =
+                <ListGroup style={{ marginTop: "1em" }} >
+                    <ListGroupItem key="1">
+                        Nothing found
+                    </ListGroupItem>
+                </ListGroup>
+
+        }
+
     }
 
-    if (loading || networkStatus === NetworkStatus.refetch) {
+    if (loading || mLoading || networkStatus === NetworkStatus.refetch) {
         possibleTaxaList =
             <Card.Text style={{ marginTop: "1em" }}>
                 <Spinner animation="border" role="status">
