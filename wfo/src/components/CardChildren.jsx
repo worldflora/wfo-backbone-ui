@@ -141,12 +141,10 @@ function CardChildren(props) {
     return (
         <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
             <Card.Header>{header}</Card.Header>
-            <Card.Body style={{ maxHeight: "30em", overflow: "auto" }} >
-                {alert}
-                <ListGroup  >
-                    {renderChildren(children)}
-                </ListGroup>
-            </Card.Body>
+            {alert}
+            <ListGroup variant="flush" style={{ maxHeight: "30em", overflow: "auto" }} >
+                {renderChildren(children)}
+            </ListGroup>
         </Card>
     );
 

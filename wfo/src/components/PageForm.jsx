@@ -10,6 +10,7 @@ import CardFormHeader from "./CardFormHeader";
 import CardNameParts from "./CardNameParts";
 import CardPlacement from "./CardPlacement";
 import CardNameStatus from "./CardNameStatus";
+import CardUnplacedNames from "./CardUnplacedNames";
 
 /*
     Design pattern of using keys to refresh component
@@ -34,6 +35,7 @@ function PageForm(props) {
                     <CardFormHeader wfo={props.wfo} />
                     <CardNameParts wfo={props.wfo} />
                     <CardNameStatus wfo={props.wfo} />
+                    <CardUnplacedNames wfo={props.wfo} />
                     <Card>
                         <Card.Body>
                             <Card.Text>

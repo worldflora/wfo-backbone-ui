@@ -2,7 +2,6 @@ import React from "react";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 import Badge from "react-bootstrap/Badge";
-
 import Spinner from "react-bootstrap/Spinner";
 import { useQuery, gql } from "@apollo/client";
 
@@ -95,11 +94,9 @@ function CardSynonyms(props) {
     return (
         <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
             <Card.Header>Synonyms {getCountBadge()}</Card.Header>
-            <Card.Body style={{ maxHeight: "30em", overflow: "auto" }} >
-                <ListGroup>
-                    {renderSynonyms()}
-                </ListGroup>
-            </Card.Body>
+            <ListGroup variant="flush" style={{ maxHeight: "30em", overflow: "auto" }}>
+                {renderSynonyms()}
+            </ListGroup>
         </Card>
     );
 
