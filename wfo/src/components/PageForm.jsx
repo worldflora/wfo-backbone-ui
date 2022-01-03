@@ -2,7 +2,6 @@ import React from "react";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import Card from "react-bootstrap/Card";
 import CardChildren from "./CardChildren";
 import CardSynonyms from "./CardSynonyms";
 import CardAncestors from "./CardAncestors";
@@ -11,6 +10,8 @@ import CardNameParts from "./CardNameParts";
 import CardPlacement from "./CardPlacement";
 import CardNameStatus from "./CardNameStatus";
 import CardUnplacedNames from "./CardUnplacedNames";
+import CardNameAuthors from "./CardNameAuthors";
+import CardNamePublication from "./CardNamePublication";
 
 /*
     Design pattern of using keys to refresh component
@@ -35,21 +36,9 @@ function PageForm(props) {
                     <CardFormHeader wfo={props.wfo} />
                     <CardNameParts wfo={props.wfo} />
                     <CardNameStatus wfo={props.wfo} />
+                    <CardNameAuthors wfo={props.wfo} />
                     <CardUnplacedNames wfo={props.wfo} />
-                    <Card>
-                        <Card.Body>
-                            <Card.Text>
-
-                                <p><a href="#wfo-9499999999">#wfo-9499999999</a></p>
-                                <p><a href="#wfo-9499999998">#wfo-9499999998</a></p>
-                                <p><a href="#wfo-0000003319">#wfo-0000003319</a> - with synonyms</p>
-                                <p><a href="#home">#home</a></p>
-                                <p><a href="#alpha">#alpha</a></p>
-                                <h2>Stats</h2>
-                                <p>Some stats about this taxon</p>
-                            </Card.Text>
-                        </Card.Body>
-                    </Card>
+                    <CardNamePublication wfo={props.wfo} />
                 </Col>
                 <Col xs={4}>
                     <CardChildren wfo={props.wfo} />

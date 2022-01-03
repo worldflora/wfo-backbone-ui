@@ -1,5 +1,6 @@
 import React from "react";
 import Breadcrumb from "react-bootstrap/Breadcrumb";
+import Card from "react-bootstrap/Card";
 import Spinner from "react-bootstrap/Spinner";
 import { useQuery, gql } from "@apollo/client";
 
@@ -41,6 +42,12 @@ function CardAncestors(props) {
     let ancestors = []; // none by default
     let name = data ? data.getNameForWfoId : null;
 
+    // if we don't have a place in the taxonomy then don't render at all
+    if (name && !name.taxonPlacement) {
+        return null;
+    }
+
+    // if we don have a place then render
     if (name && name.taxonPlacement) {
 
         // the name has a placement in the taxonomy.
@@ -58,9 +65,19 @@ function CardAncestors(props) {
     ancestors = [...ancestors].reverse();
 
     // finally render
-    return (<Breadcrumb style={{ marginTop: "1em" }} >
-        {renderPath(ancestors)}
-    </Breadcrumb>);
+    return (
+
+        <Card border="warning" style={{ marginBottom: "1em" }}>
+            <Card.Body >
+                <Card.Text>
+                    <Breadcrumb listProps={{ style: { marginBottom: "0rem" } }} >
+                        {renderPath(ancestors)}
+                    </Breadcrumb>
+                </Card.Text>
+            </Card.Body>
+        </Card>
+
+    );
 
 
     function renderPath(ants) {

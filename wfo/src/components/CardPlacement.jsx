@@ -86,7 +86,6 @@ function CardPlacement(props) {
             'getPlacementInfo', // Query name
             'getHeaderInfo',
             'getAncestors'
-
         ],
         update: (cache, mutationResult) => {
             // after we have moved something we need to invalidate
@@ -216,7 +215,7 @@ function CardPlacement(props) {
 
         if (placer.possibleTaxa.length > 0) {
             possibleTaxaList =
-                <ListGroup style={{ marginTop: "1em", maxHeight: "30em", overflow: "auto" }} >
+                <ListGroup variant="flush" style={{ maxHeight: "30em", overflow: "auto" }} >
                     {
                         placer.possibleTaxa.map((t, i) => {
                             return <ListGroupItem
@@ -230,7 +229,7 @@ function CardPlacement(props) {
                 </ListGroup>
         } else {
             possibleTaxaList =
-                <ListGroup style={{ marginTop: "1em" }} >
+                <ListGroup variant="flush" style={{}} >
                     <ListGroupItem key="1">
                         Nothing found
                     </ListGroupItem>
@@ -242,18 +241,17 @@ function CardPlacement(props) {
 
     if (loading || mLoading || networkStatus === NetworkStatus.refetch) {
         possibleTaxaList =
-            <Card.Text style={{ marginTop: "1em" }}>
+            <Card.Text style={{}}>
                 <Spinner animation="border" role="status">
                     <span className="visually-hidden">Loading...</span>
                 </Spinner>
             </Card.Text>
     }
 
-
     return (
-        <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
+        <Card bg="warning" className="wfo-placement" style={{ marginBottom: "1em" }}>
             <Card.Header>Placement</Card.Header>
-            <Card.Body style={{ maxHeight: "50em", overflow: "auto" }} >
+            <Card.Body style={{ maxHeight: "50em", overflow: "auto", backgroundColor: "white", paddingBottom: "1em" }} >
                 <Form>
                     <Form.Group controlId="placementAction" >
                         <Form.Select name="placementActions" disabled={false} value={selectedAction} onChange={handleSelectedActionChanged}>
@@ -267,8 +265,9 @@ function CardPlacement(props) {
                     </Form.Group>
                     {filterBox}
                 </Form>
-                {possibleTaxaList}
+
             </Card.Body>
+            {possibleTaxaList}
         </Card >
     );
 

@@ -2,7 +2,7 @@ import React from "react";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 import Spinner from "react-bootstrap/Spinner";
-import { useQuery, gql, NetworkStatus } from "@apollo/client";
+import { useQuery, gql } from "@apollo/client";
 import ListGroupItem from "react-bootstrap/ListGroupItem";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
@@ -26,9 +26,11 @@ const UNPLACED_NAMES_QUERY = gql`
 
 function CardUnplacedNames(props) {
 
-    const { loading, data, refetch, networkStatus } = useQuery(UNPLACED_NAMES_QUERY, {
+    const { data, refetch } = useQuery(UNPLACED_NAMES_QUERY, {
         variables: { wfo: props.wfo, offset: 0 },
-        notifyOnNetworkStatusChange: true
+        notifyOnNetworkStatusChange: true,
+        fetchPolicy: "cache-and-network",
+        nextFetchPolicy: "cache-and-network"
     });
 
     function changePage(offset) {
@@ -37,6 +39,8 @@ function CardUnplacedNames(props) {
             offset: offset
         })
     }
+
+    console.log(data);
 
     // don't display if we have no names to display - but only after loading
     if (data && data.getUnplacedNames.totalUnplacedNames === 0) return null;
@@ -118,8 +122,8 @@ function CardUnplacedNames(props) {
 
 
     return (
-        <Card className="wfo-unplaced-list" style={{ marginBottom: "1em" }}>
-            <Card.Header>Unplaced Names <span style={{ fontSize: "80%", verticalAlign: "super" }} >{' '}<Badge pill bg="secondary">{getTotalUnplaced()}</Badge></span> {' '}</Card.Header>
+        <Card bg="secondary" text="white" className="wfo-unplaced-list" style={{ marginBottom: "1em" }}>
+            <Card.Header>Unplaced Names <span style={{ fontSize: "80%", verticalAlign: "super" }} >{' '}<Badge pill bg="primary">{getTotalUnplaced()}</Badge></span> {' '}</Card.Header>
             <ListGroup style={{ maxHeight: "30em", overflow: "auto" }}>
                 {getListItems()}
             </ListGroup>

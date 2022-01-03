@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
+import FloatingLabel from "react-bootstrap/FloatingLabel";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import AlertUpdate from "./AlertUpdate";
 import { useMutation, useQuery, gql } from "@apollo/client";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
 const NAME_PARTS_QUERY = gql`
   query getNameParts($wfo: String!){
@@ -237,16 +240,29 @@ function CardNameParts(props) {
         }
 
         return (
-            <Form.Group controlId="rank">
-                <Form.Label>Rank</Form.Label>
-                <Form.Select name="rankString" disabled={disabled} value={rankString} onChange={handleRankChange}>
-                    {getRanks()}
-                </Form.Select>
-                <Form.Text className="text-muted">
-                    {help}
-                </Form.Text>
-            </Form.Group>
+
+            <OverlayTrigger
+                key="rank1"
+                placement="top"
+                overlay={
+                    <Tooltip id={`tooltip-rank1`}>
+                        {help}
+                    </Tooltip>
+                }
+            >
+                <Form.Group controlId="rank">
+                    <FloatingLabel label="Rank">
+                        <Form.Select name="rankString" disabled={disabled} value={rankString} onChange={handleRankChange}>
+                            {getRanks()}
+                        </Form.Select>
+                    </FloatingLabel>
+                </Form.Group>
+
+            </OverlayTrigger>
+
+
         );
+
 
     }
 
@@ -289,12 +305,12 @@ function CardNameParts(props) {
     function renderGenus() {
 
         // we are a genus so we don't have a genus part.
-        if (name.rank.name === "genus") return null;
+        if (rankString === "genus") return null;
 
         // work through the other ranks
         for (var i = 0; i < ranks.length; i++) {
             let rank = ranks[i];
-            if (rank.name === name.rank.name) return null; // we found our rank
+            if (rank.name === rankString) return null; // we found our rank
             if (rank.name === "genus") break; // we got to genus so we are good to go
         }
 
@@ -305,40 +321,78 @@ function CardNameParts(props) {
             disabled = true;
             help = "This is the accepted name of a taxon and the genus part therefore has to agree with the genus it is placed in."
         }
+        /*
+                return (
+                    <Form.Group controlId="genus">
+                        <Form.Label >Genus Part</Form.Label>
+                        <Form.Control disabled={disabled} type="text" placeholder="Genus part of name below genus rank." name="genusString" value={genusString} onChange={handleGenusChange} />
+                        <Form.Text className="text-muted">{help}</Form.Text>
+                    </Form.Group>
+                );
+        
+                */
 
         return (
-            <Form.Group controlId="genus">
-                <Form.Label>Genus Part</Form.Label>
-                <Form.Control disabled={disabled} type="text" placeholder="Genus part of name below genus rank." name="genusString" value={genusString} onChange={handleGenusChange} />
-                <Form.Text className="text-muted">{help}</Form.Text>
-            </Form.Group>
+            <OverlayTrigger
+                key="genus"
+                placement="top"
+                overlay={
+                    <Tooltip id={`tooltip-genus`}>
+                        {help}
+                    </Tooltip>
+                }
+            >
+                <Form.Group controlId="genus" style={{ marginTop: "1em" }}>
+                    <FloatingLabel label="Genus Part">
+                        <Form.Control disabled={disabled} type="text" placeholder="Genus part of name below genus rank." name="genusString" value={genusString} onChange={handleGenusChange} />
+                    </FloatingLabel>
+                </Form.Group>
+            </OverlayTrigger>
         );
+
+
     }
 
     function renderSpecies() {
 
-        // we are a species so we don't have a genus part.
-        if (name.rank.name === "species") return null;
+        // we are a species so we don't have a species part.
+        if (rankString === "species") return null;
 
         // work through the other ranks
         for (var i = 0; i < ranks.length; i++) {
             let rank = ranks[i];
-            if (rank.name === name.rank.name) return null; // we found our rank
+            if (rank.name === rankString) return null; // we found our rank
             if (rank.name === "species") break; // we got to species so we are good to go
         }
 
+        // if we are part of a 
+        let disabled = false;
+        let help = "Ranks below species level have a Species Part to the name.";
+        if (name.taxonPlacement && name.taxonPlacement.acceptedName.id === name.id && name.taxonPlacement.parent.acceptedName) {
+            disabled = true;
+            help = "This is the accepted name of a taxon and the Species Part therefore has to agree with the species it is placed in."
+        }
+
         return (
-            <Form.Group controlId="species">
-                <Form.Label>Species Part</Form.Label>
-                <Form.Control type="text" placeholder="The species part of a name below species rank." name="speciesString" value={speciesString} onChange={handleSpeciesChange} />
-                <Form.Text className="text-muted">Species must have a genus name.</Form.Text>
-            </Form.Group>
+            <OverlayTrigger
+                key="species"
+                placement="top"
+                overlay={
+                    <Tooltip id={`tooltip-species`}>
+                        {help}
+                    </Tooltip>
+                }
+            >
+                <Form.Group controlId="species" style={{ marginTop: "1em" }}>
+                    <FloatingLabel label="Species Part">
+                        <Form.Control disabled={disabled} type="text" placeholder="The species part of a name below species rank." name="speciesString" value={speciesString} onChange={handleSpeciesChange} />
+                    </FloatingLabel>
+                </Form.Group>
+            </OverlayTrigger>
         );
 
 
     }
-
-
 
     function renderName() {
 
@@ -357,13 +411,37 @@ function CardNameParts(props) {
             help = "This is the accepted name of a " + name.rank.name + " which contains other taxa so its name can't be changed."
         }
 
+        /*
+
         return (
             <Form.Group controlId="name">
                 <Form.Label title={name.id}>Name</Form.Label>
                 <Form.Control disabled={disabled} type="text" placeholder="The main name component" name="nameString" value={nameString} onChange={handleNameChange} />
-                <Form.Text className="text-muted">{help}</Form.Text>
+                <Form.Text className="text-muted"></Form.Text>
             </Form.Group>
         )
+
+        */
+
+
+        return (
+            <OverlayTrigger
+                key="name"
+                placement="top"
+                overlay={
+                    <Tooltip id={`tooltip-name`}>
+                        {help}
+                    </Tooltip>
+                }
+            >
+                <Form.Group controlId="name" style={{ marginTop: "1em" }}>
+                    <FloatingLabel label="Main Name" >
+                        <Form.Control disabled={disabled} type="text" placeholder="The main name component" name="nameString" value={nameString} onChange={handleNameChange} />
+                    </FloatingLabel>
+                </Form.Group>
+            </OverlayTrigger>
+        )
+
     }
 
     function renderButton() {
@@ -403,7 +481,7 @@ function CardNameParts(props) {
         }
 
         return (
-            <Form.Group controlId="submit-button" style={{ textAlign: "right" }}>
+            <Form.Group controlId="submit-button" style={{ textAlign: "right", marginTop: "1em" }}>
                 <Button disabled={disabled} variant="primary" type="submit" onClick={handleSubmit}>
                     {text}
                     {" "}
@@ -417,9 +495,9 @@ function CardNameParts(props) {
 
     return (
         <Form onSubmit={handleSubmit}>
-            <Card style={{ marginBottom: "1em" }}>
+            <Card bg="secondary" text="white" style={{ marginBottom: "1em" }}>
                 <Card.Header>Name Parts</Card.Header>
-                <Card.Body>
+                <Card.Body style={{ backgroundColor: "white", color: "gray" }}>
                     {renderRank()}
                     {renderGenus()}
                     {renderSpecies()}

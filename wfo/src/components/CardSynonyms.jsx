@@ -78,7 +78,7 @@ function CardSynonyms(props) {
 
     if (loading) {
         return (
-            <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
+            <Card bg="warning" className="wfo-child-list" style={{ marginBottom: "1em" }}>
                 <Card.Header>Synonyms {getCountBadge()}</Card.Header>
                 <Card.Body>
                     <Spinner animation="border" role="status">
@@ -92,7 +92,7 @@ function CardSynonyms(props) {
     if (!synonyms || synonyms.length < 1) return null;
 
     return (
-        <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
+        <Card bg="warning" className="wfo-child-list" style={{ marginBottom: "1em" }}>
             <Card.Header>Synonyms {getCountBadge()}</Card.Header>
             <ListGroup variant="flush" style={{ maxHeight: "30em", overflow: "auto" }}>
                 {renderSynonyms()}

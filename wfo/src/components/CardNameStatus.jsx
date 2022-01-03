@@ -4,6 +4,9 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import { useMutation, useQuery, gql } from "@apollo/client";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
+import AlertUpdate from "./AlertUpdate";
 
 const STATUS_QUERY = gql`
    query getNameStatus($wfo: String!){
@@ -50,7 +53,7 @@ function CardNameStatus(props) {
         variables: { wfo: props.wfo }
     });
 
-    const [updateNameStatus, { loading: mLoading }] = useMutation(UPDATE_STATUS, {
+    const [updateNameStatus, { loading: mLoading, data: mData }] = useMutation(UPDATE_STATUS, {
         refetchQueries: [
             STATUS_QUERY, // run this query again
             'getNameStatus' // Query name
@@ -104,29 +107,37 @@ function CardNameStatus(props) {
         if (isAccepted) help = "Accepted names of taxa can only be valid, conserved or sanctioned";
 
         return (
-            <Form.Group controlId="rank">
-                <Form.Label>Status</Form.Label>
-                <Form.Select name="status" disabled={false} value={status} onChange={handleStatusChange}>
-                    {
-                        statuses.map(s => {
+            <OverlayTrigger
+                key="status-overlay"
+                placement="top"
+                overlay={
+                    <Tooltip id={`tooltip-status`}>
+                        {help}
+                    </Tooltip>
+                }
+            >
+                <Form.Group controlId="status">
+                    <Form.Select name="status" disabled={false} value={status} onChange={handleStatusChange}>
+                        {
+                            statuses.map(s => {
 
-                            disabled = false;
+                                disabled = false;
 
-                            // if we are a taxon then we can only be certain status
-                            if (isAccepted) {
-                                disabled = true;
-                                if (s === 'valid') disabled = false;
-                                if (s === 'sanctioned') disabled = false;
-                                if (s === 'conserved') disabled = false;
-                            }
+                                // if we are a taxon then we can only be certain status
+                                if (isAccepted) {
+                                    disabled = true;
+                                    if (s === 'valid') disabled = false;
+                                    if (s === 'sanctioned') disabled = false;
+                                    if (s === 'conserved') disabled = false;
+                                }
 
-                            return (<option disabled={disabled} value={s} key={s} >{s}</option>);
+                                return (<option disabled={disabled} value={s} key={s} >{s}</option>);
 
-                        })
-                    }
-                </Form.Select>
-                <Form.Text className="text-muted">{help}</Form.Text>
-            </Form.Group>
+                            })
+                        }
+                    </Form.Select>
+                </Form.Group>
+            </OverlayTrigger>
         );
 
 
@@ -153,7 +164,7 @@ function CardNameStatus(props) {
         }
 
         return (
-            <Form.Group controlId="submit-button" style={{ textAlign: "right" }}>
+            <Form.Group controlId="submit-button" style={{ textAlign: "right", marginTop: "1em" }}>
                 <Button disabled={disabled} variant="primary" type="submit" onClick={handleSubmit}>
                     Update
                     {" "}
@@ -166,26 +177,13 @@ function CardNameStatus(props) {
 
     }
 
-
-    if (loading || mLoading) {
-        return (
-            <Card style={{ marginBottom: "1em" }}>
-                <Card.Header>Nomenclatural Status</Card.Header>
-                <Card.Body>
-                    <Spinner animation="border" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </Spinner>
-                </Card.Body>
-            </Card>
-        );
-    }
-
     return (
         <Form onSubmit={handleSubmit}>
-            <Card style={{ marginBottom: "1em" }}>
+            <Card bg="secondary" text="white" style={{ marginBottom: "1em" }}>
                 <Card.Header>Nomenclatural Status</Card.Header>
-                <Card.Body style={{ maxHeight: "30em", overflow: "auto" }} >
+                <Card.Body style={{ backgroundColor: "white", color: "gray" }} >
                     {renderStates()}
+                    <AlertUpdate response={mData ? mData.updateNameStatus : null} loading={mLoading} wfo={props.wfo} />
                     {renderButton()}
                 </Card.Body>
             </Card>

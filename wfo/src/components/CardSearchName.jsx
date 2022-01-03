@@ -14,6 +14,9 @@ function CardSearchName(props) {
 
     if (name.taxonPlacement) {
 
+        // anything placed in the taxonomy is orange
+        border = "warning";
+
         let familyLink = "";
         if (name.taxonPlacement.family) {
             familyLink = getNameLink(name.taxonPlacement.family.acceptedName.fullNameString, name.taxonPlacement.family.acceptedName.wfo);
@@ -28,7 +31,7 @@ function CardSearchName(props) {
             placement = <span>Accepted taxon name.
                 {" "} [{familyLink}{", "}{orderLink}]
             </span>;
-            border = "success";
+
         } else {
             let accepted = name.taxonPlacement.acceptedName;
             placement = <span>
@@ -42,7 +45,7 @@ function CardSearchName(props) {
             border = "danger";
             placement = <span>Deprecated name. Do not use.</span>;
         } else {
-            border = "primary";
+            border = "secondary";
             if (name.status) {
                 placement = <span>This name has not been placed in taxonomy. Nomenclatural status: {name.status}</span>;
             } else {
@@ -59,7 +62,7 @@ function CardSearchName(props) {
 
 
     return (
-        <Card border={border} style={{ marginBottom: '0.5em' }}>
+        <Card border={border} style={{ marginBottom: '0.5em', borderLeftWidth: '1em', borderRightWidth: '1em' }}>
             <Card.Body>
                 <Card.Text>
                     <p>

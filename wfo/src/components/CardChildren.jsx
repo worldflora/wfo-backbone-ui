@@ -139,7 +139,7 @@ function CardChildren(props) {
     if (!children || children.length === 0) return null;
 
     return (
-        <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
+        <Card bg="warning" className="wfo-child-list" style={{ marginBottom: "1em" }}>
             <Card.Header>{header}</Card.Header>
             {alert}
             <ListGroup variant="flush" style={{ maxHeight: "30em", overflow: "auto" }} >
