@@ -19,6 +19,7 @@ class PageHome extends Component {
                 <Row>
                     <Col>
                         <h2>Home Page</h2>
+                        <p>We believe we can make a significant contribution to addressing the biodiversity crisis by collaborating to build a single, shared data set. This dataset will become the definitive source for botanical nomenclature and also include a global consensus classification of plants.</p>
                         <h2>Feedback</h2>
                         <p>It is important to let us know what you think or any issues you may have.</p>
                         <Card>

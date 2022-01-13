@@ -40,8 +40,6 @@ function CardUnplacedNames(props) {
         })
     }
 
-    console.log(data);
-
     // don't display if we have no names to display - but only after loading
     if (data && data.getUnplacedNames.totalUnplacedNames === 0) return null;
 

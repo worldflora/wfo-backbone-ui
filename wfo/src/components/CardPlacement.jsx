@@ -29,8 +29,10 @@ const PLACEMENT_QUERY = gql`
             id,
             fullNameString,
             status,
+            nameString,
             genusString,
             speciesString,
+            authorsString,
             taxonPlacement{
                 id
             }
@@ -109,6 +111,10 @@ function CardPlacement(props) {
     let placer = data ? data.getNamePlacer : null;
 
     if (placer) {
+
+        // we render nothing if we are an autonym because our placement 
+        // is handled automatically
+        if (placer.name.nameString === placer.name.speciesString && !placer.name.authorsString) return null;
 
         // look for changes in name from somewhere else
         if (

@@ -12,6 +12,8 @@ import CardNameStatus from "./CardNameStatus";
 import CardUnplacedNames from "./CardUnplacedNames";
 import CardNameAuthors from "./CardNameAuthors";
 import CardNamePublication from "./CardNamePublication";
+import CardNameComment from "./CardNameComment";
+import CardNameTypeRelationships from "./CardNameTypeRelationships";
 
 /*
     Design pattern of using keys to refresh component
@@ -37,13 +39,15 @@ function PageForm(props) {
                     <CardNameParts wfo={props.wfo} />
                     <CardNameStatus wfo={props.wfo} />
                     <CardNameAuthors wfo={props.wfo} />
-                    <CardUnplacedNames wfo={props.wfo} />
                     <CardNamePublication wfo={props.wfo} />
+                    <CardUnplacedNames wfo={props.wfo} />
+                    <CardNameComment wfo={props.wfo} />
                 </Col>
                 <Col xs={4}>
                     <CardChildren wfo={props.wfo} />
                     <CardSynonyms wfo={props.wfo} />
                     <CardPlacement wfo={props.wfo} />
+                    <CardNameTypeRelationships wfo={props.wfo} />
                 </Col>
             </Row>
         </Container>

@@ -122,7 +122,7 @@ function CardNamePublication(props) {
         if (!yearValid) return null;
 
         if (name) {
-            if (name.citationMicro === citationMicro && name.year === parseInt(year)) return null;
+            if (name.citationMicro === citationMicro && (name.year === parseInt(year) || (name.year == null && year.length === 0))) return null;
         }
 
         // should we be disabled
