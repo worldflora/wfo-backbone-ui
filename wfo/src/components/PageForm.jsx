@@ -14,6 +14,7 @@ import CardNameAuthors from "./CardNameAuthors";
 import CardNamePublication from "./CardNamePublication";
 import CardNameComment from "./CardNameComment";
 import CardNameTypeRelationships from "./CardNameTypeRelationships";
+import CardTaxonHybridStatus from "./CardTaxonHybridStatus";
 
 /*
     Design pattern of using keys to refresh component
@@ -23,6 +24,8 @@ import CardNameTypeRelationships from "./CardNameTypeRelationships";
 
 
 function PageForm(props) {
+
+    if (!props.wfo) return null;
 
     //if (!name) return null;
     return (
@@ -47,6 +50,8 @@ function PageForm(props) {
                     <CardChildren wfo={props.wfo} />
                     <CardSynonyms wfo={props.wfo} />
                     <CardPlacement wfo={props.wfo} />
+                    <CardTaxonHybridStatus wfo={props.wfo} />
+
                     <CardNameTypeRelationships wfo={props.wfo} />
                 </Col>
             </Row>

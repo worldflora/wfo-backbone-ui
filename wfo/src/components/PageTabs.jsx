@@ -16,7 +16,7 @@ function PageTabs(props) {
 
     const nameFieldsFragment = gql`
   fragment nameFields on NameGql {
-        id,
+        id
         wfo,
         status,
         fullNameString,

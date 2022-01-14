@@ -18,6 +18,7 @@ const CHILDREN_QUERY = gql`
                 },
                 children{
                     id,
+                    fullNameString(abbreviateGenus: true),
                     acceptedName{
                         id,
                         wfo,
@@ -111,7 +112,7 @@ function CardChildren(props) {
                         key={kid.id}
                         onClick={(e) => { e.preventDefault(); window.location.hash = kid.acceptedName.wfo; }}
                     >
-                        <span dangerouslySetInnerHTML={{ __html: kid.acceptedName.fullNameString }} />
+                        <span dangerouslySetInnerHTML={{ __html: kid.fullNameString }} />
                         {button}
                     </ListGroup.Item>
                 )

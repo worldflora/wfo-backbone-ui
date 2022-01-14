@@ -171,12 +171,8 @@ function CardPlacement(props) {
     }
 
     function handleItemSelect(taxon) {
-        console.log(taxon);
-        console.log(selectedAction);
-        console.log(placer.name);
 
         doAction(selectedAction, taxon ? taxon.acceptedName.wfo : null);
-
 
     }
 
