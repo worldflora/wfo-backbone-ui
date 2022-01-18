@@ -6,6 +6,7 @@ import PageSearchMatching from "./PageSearchMatching";
 import PageSearchAlpha from "./PageSearchAlpha";
 import PageHome from "./PageHome";
 import PageForm from "./PageForm";
+import PageAdd from "./PageAdd";
 import { gql } from "@apollo/client";
 
 
@@ -96,6 +97,11 @@ function PageTabs(props) {
                 <Tab eventKey="browse" title="Browse" >
                     <PageForm wfo={activeWfoId} />
                 </Tab>
+
+                <Tab eventKey="add" title="Add Name" >
+                    <PageAdd />
+                </Tab>
+
             </Tabs>
         </Container>
 

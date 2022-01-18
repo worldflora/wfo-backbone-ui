@@ -74,6 +74,7 @@ function CardAncestors(props) {
                         {renderPath(ancestors)}
                     </Breadcrumb>
                 </Card.Text>
+
             </Card.Body>
         </Card>
 

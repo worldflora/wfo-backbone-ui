@@ -48,16 +48,17 @@ function CardTaxonHybridStatus(props) {
     const [isHybrid, setHybridStatus] = useState(false);
     const [wfo, setWfo] = useState('');
 
-    const { loading, data } = useQuery(HYBRID_QUERY, {
+    const { data } = useQuery(HYBRID_QUERY, {
         variables: { wfo: props.wfo }
     });
 
 
     // FIXME - HOW DO I UPDATE THE HEADERS OF CHILDREN?
 
-    const [updateHybridStatus] = useMutation(UPDATE_HYBRID, {
+    const [updateHybridStatus, { loading: updateLoading }] = useMutation(UPDATE_HYBRID, {
         refetchQueries: [
-            'getHeaderInfo'
+            'getHeaderInfo',
+            'getChildren'
         ],
         update(cache) {
             cache.modify({
@@ -92,6 +93,8 @@ function CardTaxonHybridStatus(props) {
         return null;
     }
 
+
+
     function handleStatusChange(e) {
         setHybridStatus(e.target.checked);
         updateHybridStatus({
@@ -102,6 +105,12 @@ function CardTaxonHybridStatus(props) {
         });
     }
 
+    let label = null;
+    if (updateLoading) {
+        label = " Updating... ";
+    } else {
+        label = isHybrid ? "This is a hybrid taxon" : "This is not a hybrid taxon";
+    }
 
     return (
         <Form >
@@ -121,7 +130,7 @@ function CardTaxonHybridStatus(props) {
                             <Form.Check
                                 type="checkbox"
                                 id="hybrid"
-                                label="Hybrid taxon"
+                                label={label}
                                 onChange={handleStatusChange}
                                 checked={isHybrid}
                             />

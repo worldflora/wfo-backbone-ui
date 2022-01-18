@@ -15,13 +15,8 @@ import CardNamePublication from "./CardNamePublication";
 import CardNameComment from "./CardNameComment";
 import CardNameTypeRelationships from "./CardNameTypeRelationships";
 import CardTaxonHybridStatus from "./CardTaxonHybridStatus";
-
-/*
-    Design pattern of using keys to refresh component
-    https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html#recommendation-fully-controlled-component
-
-*/
-
+import CardNameIdentifiers from "./CardNameIdentifiers";
+import CardNameHomonyms from "./CardNameHomonyms";
 
 function PageForm(props) {
 
@@ -45,14 +40,15 @@ function PageForm(props) {
                     <CardNamePublication wfo={props.wfo} />
                     <CardUnplacedNames wfo={props.wfo} />
                     <CardNameComment wfo={props.wfo} />
+                    <CardNameIdentifiers wfo={props.wfo} />
                 </Col>
                 <Col xs={4}>
                     <CardChildren wfo={props.wfo} />
                     <CardSynonyms wfo={props.wfo} />
                     <CardPlacement wfo={props.wfo} />
                     <CardTaxonHybridStatus wfo={props.wfo} />
-
                     <CardNameTypeRelationships wfo={props.wfo} />
+                    <CardNameHomonyms wfo={props.wfo} />
                 </Col>
             </Row>
         </Container>
