@@ -1,12 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import Card from "react-bootstrap/Card";
-import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
-import Spinner from "react-bootstrap/Spinner";
-import { useMutation, useQuery, gql } from "@apollo/client";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Tooltip from "react-bootstrap/Tooltip";
-import AlertUpdate from "./AlertUpdate";
+import { useQuery, gql } from "@apollo/client";
 
 
 const IDENTIFIERS_QUERY = gql`
@@ -43,7 +37,7 @@ function CardNameIdentifiers(props) {
                                 let dv;
                                 try {
                                     let url = new URL(v);
-                                    dv = <a target={id.kind} href={v}>{v}</a>;
+                                    dv = <a target={id.kind} href={url.href}>{v}</a>;
                                 } catch (_) {
                                     dv = v;
                                 }

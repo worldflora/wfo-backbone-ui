@@ -70,7 +70,7 @@ function PageAdd(props) {
                 setButtonDisabled(true);
 
                 mutationResult.data.createName.children.map(kid => {
-                    if (kid.name == "HomonymsFound") {
+                    if (kid.name === "HomonymsFound") {
                         console.log(kid);
                         if (kid.names && kid.names.length > 0) {
                             setHomonyms(kid.names);
@@ -79,6 +79,7 @@ function PageAdd(props) {
                         }
                         setHomonymsChecked([]);
                     }
+                    return true;
                 });
             } else {
                 // things are groovy
@@ -121,7 +122,7 @@ function PageAdd(props) {
 
         let homonymWfos = [];
         homonyms.map(h => {
-            homonymWfos.push(h.wfo);
+            return homonymWfos.push(h.wfo);
         });
 
         // do it for real
@@ -183,6 +184,7 @@ function PageAdd(props) {
                     if (i > -1) checklist.splice(i, 1);
                 }
             }
+            return true;
         });
 
         // run through the homonyms again to see if they 
@@ -190,6 +192,7 @@ function PageAdd(props) {
         let allChecked = true;
         homonyms.map(h => {
             if (checklist.indexOf(h.id) < 0) allChecked = false;
+            return true;
         });
 
         if (allChecked) {

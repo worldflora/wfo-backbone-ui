@@ -25,6 +25,9 @@ class App extends Component {
     // set up an client to 
     this.graphClient = new ApolloClient({
       uri: process.env.REACT_APP_GRAPHQL_ENDPOINT,
+      headers: {
+        "wfo_access_token": process.env.REACT_APP_GRAPHQL_ACCESS_TOKEN
+      },
       cache: new InMemoryCache(),
       connectToDevTools: true
     });
