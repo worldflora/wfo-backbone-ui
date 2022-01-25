@@ -25,6 +25,7 @@ const CHILDREN_QUERY = gql`
                         fullNameString(abbreviateGenus: true),
                         nameString,
                         rank{
+                            id,
                             name,
                             plural
                         }
@@ -78,7 +79,7 @@ function CardChildren(props) {
     for (let i = 0; i < rankNames.length; i++) {
 
         header.push(
-            <span>
+            <span key={i}>
                 {rankNames[i]}
                 <span style={{
                     fontSize: "80%",
@@ -100,10 +101,10 @@ function CardChildren(props) {
                 let button = null;
 
                 if (rankNames.length > 1) {
-                    button = <span style={{
+                    button = <span key={kid.id + '_bspan'} style={{
                         fontSize: "80%",
                         verticalAlign: "super"
-                    }} >{' '}<Badge pill bg={warningLevel} >{kid.acceptedName.rank.name}</Badge></span>
+                    }} >{' '}<Badge key={kid.id + '_button'} pill bg={warningLevel} >{kid.acceptedName.rank.name}</Badge></span>
                 }
 
                 return (
@@ -112,14 +113,15 @@ function CardChildren(props) {
                         key={kid.id}
                         onClick={(e) => { e.preventDefault(); window.location.hash = kid.acceptedName.wfo; }}
                     >
-                        <span dangerouslySetInnerHTML={{ __html: kid.fullNameString }} />
+                        <span key={kid.id + '_name_span'} dangerouslySetInnerHTML={{ __html: kid.fullNameString }} />
                         {button}
                     </ListGroup.Item>
                 )
             });
         } else {
-            return (<ListGroup.Item key="none" >No sub-taxa</ListGroup.Item>);
+            return (<ListGroup.Item key="12345" >No sub-taxa</ListGroup.Item>);
         }
+
     }
 
     // finally render it

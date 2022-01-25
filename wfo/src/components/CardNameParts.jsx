@@ -19,6 +19,7 @@ const NAME_PARTS_QUERY = gql`
             speciesString,
             fullNameString,
             rank{
+                id,
                 name,
                 children{
                     name
@@ -33,7 +34,9 @@ const NAME_PARTS_QUERY = gql`
                     acceptedName{
                         id,
                         rank{
+                            id,
                             children{
+                                id,
                                 name
                             }
                         }

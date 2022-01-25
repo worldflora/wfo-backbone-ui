@@ -30,9 +30,9 @@ function CardNameIdentifiers(props) {
             <Card.Header>Identifiers</Card.Header>
             <Card.Body style={{ backgroundColor: "white", color: "gray" }} >
                 {
-                    name.identifiers.map(id => {
-                        return (<dl><dt>{id.displayName}:</dt> {
-                            id.values.map(v => {
+                    name.identifiers.map((id, index) => {
+                        return (<dl key={index}><dt>{id.displayName}:</dt> {
+                            id.values.map((v, vindex) => {
 
                                 let dv;
                                 try {
@@ -42,7 +42,7 @@ function CardNameIdentifiers(props) {
                                     dv = v;
                                 }
 
-                                return <dd style={{ paddingLeft: "3em" }}>{dv}{","}</dd>
+                                return <dd key={vindex} style={{ paddingLeft: "3em" }}>{dv}{","}</dd>
                             })
                         } </dl>);
                     })

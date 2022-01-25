@@ -69,11 +69,9 @@ function CardAncestors(props) {
 
         <Card border="warning" style={{ marginBottom: "1em" }}>
             <Card.Body >
-                <Card.Text>
-                    <Breadcrumb listProps={{ style: { marginBottom: "0rem" } }} >
-                        {renderPath(ancestors)}
-                    </Breadcrumb>
-                </Card.Text>
+                <Breadcrumb listProps={{ style: { marginBottom: "0rem" } }} >
+                    {renderPath(ancestors)}
+                </Breadcrumb>
 
             </Card.Body>
         </Card>
@@ -98,13 +96,13 @@ function CardAncestors(props) {
                         </Breadcrumb.Item>
                     );
                 } else {
-                    return <Breadcrumb.Item>Home</Breadcrumb.Item>
+                    return <Breadcrumb.Item key="home" >Home</Breadcrumb.Item>
                 }
 
 
             });
         } else {
-            return <Breadcrumb.Item>No Trail</Breadcrumb.Item>
+            return <Breadcrumb.Item key="no_trail" >No Trail</Breadcrumb.Item>
         }
     }
 

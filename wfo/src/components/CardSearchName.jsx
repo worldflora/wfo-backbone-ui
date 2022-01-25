@@ -65,12 +65,10 @@ function CardSearchName(props) {
         <Card border={border} style={{ marginBottom: '0.5em', borderLeftWidth: '1em', borderRightWidth: '1em' }}>
             <Card.Body>
                 <Card.Text>
-                    <p>
-                        <Badge pill variant="secondary">{distances[index]}</Badge>{" "}
-                        {getNameLink(name.fullNameString, name.wfo)}
-                        {" "}
-                        {placement}
-                    </p>
+                    <Badge pill variant="secondary">{distances[index]}</Badge>{" "}
+                    {getNameLink(name.fullNameString, name.wfo)}
+                    {" "}
+                    {placement}
                 </Card.Text>
             </Card.Body>
         </Card>

@@ -99,8 +99,6 @@ function CardPlacement(props) {
         },
     });
 
-    // console.log(data);
-
     // if we have moved then we zero everything.
     if (wfo !== props.wfo) {
         setWfo(props.wfo);
@@ -243,11 +241,9 @@ function CardPlacement(props) {
 
     if (loading || mLoading || networkStatus === NetworkStatus.refetch) {
         possibleTaxaList =
-            <Card.Text style={{}}>
-                <Spinner animation="border" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                </Spinner>
-            </Card.Text>
+            <Spinner animation="border" role="status">
+                <span className="visually-hidden">Loading...</span>
+            </Spinner>
     }
 
     return (
@@ -267,7 +263,6 @@ function CardPlacement(props) {
                     </Form.Group>
                     {filterBox}
                 </Form>
-
             </Card.Body>
             {possibleTaxaList}
         </Card >

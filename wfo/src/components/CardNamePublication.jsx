@@ -152,7 +152,7 @@ function CardNamePublication(props) {
     }
 
     return (
-        <Form onSubmit={handleSubmit} noValidate="true">
+        <Form onSubmit={handleSubmit} noValidate={true}>
             <Card bg="secondary" text="white" style={{ marginBottom: "1em" }}>
                 <Card.Header>Publication</Card.Header>
                 <Card.Body style={{ backgroundColor: "white", color: "gray" }} >

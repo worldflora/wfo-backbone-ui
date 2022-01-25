@@ -13,6 +13,7 @@ const HEADER_QUERY = gql`
                 id,
                 fullNameString,
                 rank{
+                    id,
                     name
                 }
                 acceptedName{

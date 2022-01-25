@@ -7,15 +7,13 @@ import PageSearchAlpha from "./PageSearchAlpha";
 import PageHome from "./PageHome";
 import PageForm from "./PageForm";
 import PageAdd from "./PageAdd";
-import { gql } from "@apollo/client";
+import LoginLogout from "./LoginLogout";
+import { gql, useQuery } from "@apollo/client";
 
 
-function PageTabs(props) {
+// used in the search a-z and matching pages
+const nameFieldsFragment = gql`
 
-    const [activeTabKey, setActiveTabKey] = useState('home');
-    const [activeWfoId, setActiveWfoId] = useState('wfo-9499999999');
-
-    const nameFieldsFragment = gql`
   fragment nameFields on NameGql {
         id
         wfo,
@@ -41,16 +39,46 @@ function PageTabs(props) {
         }
     }
   }
+
 `;
 
 
+// we load the user here and pass it down to 
+// components that need authorization
+const USER_QUERY = gql`
+   query{
+        getUser{
+            id,
+            isAnonymous,
+            name,
+            orcid,
+            orcidLogInUri,
+            orcidLogOutUri
+        }
+    }
+`;
 
+
+function PageTabs(props) {
+
+    const [activeTabKey, setActiveTabKey] = useState('home');
+    const [activeWfoId, setActiveWfoId] = useState('wfo-9499999999');
+    const [user, setUser] = useState();
+
+    const { data, refetch, startPolling, stopPolling } = useQuery(USER_QUERY);
+
+    if (data && data.getUser) {
+        if (!user || data.getUser.id !== user.id) {
+            setUser(data.getUser);
+        }
+    }
+
+    /*
+    * This is how we handle register and deregister of event listeners 
+    * Nice description of how/why here; https://www.pluralsight.com/guides/event-listeners-in-react-components
+    */
     React.useEffect(() => {
 
-        /*
-        * This is how we handle register and deregister of event listeners 
-        * Nice description of how/why here; https://www.pluralsight.com/guides/event-listeners-in-react-components
-        */
         function handleHashChange(event) {
 
             let newHash = window.location.hash.substring(1);
@@ -72,8 +100,17 @@ function PageTabs(props) {
         };
     }, []);
 
+    // nearly all content needs to have a handle on the current user.
+    // so we fetch it here.
+
+
+
+
     return (
         <Container style={{ marginTop: "1em" }}>
+
+            <LoginLogout user={user} refeshUser={refetch} startPolling={startPolling} stopPolling={stopPolling} />
+
             <Tabs
                 activeKey={activeTabKey}
                 onSelect={(k, e) => {
@@ -83,7 +120,7 @@ function PageTabs(props) {
                 className="mb-3"
             >
                 <Tab eventKey="home" title="Home" >
-                    <PageHome />
+                    <PageHome user={user} />
                 </Tab>
 
                 <Tab eventKey="alpha" title="A-Z">

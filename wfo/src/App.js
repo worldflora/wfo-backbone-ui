@@ -29,7 +29,8 @@ class App extends Component {
         "wfo_access_token": process.env.REACT_APP_GRAPHQL_ACCESS_TOKEN
       },
       cache: new InMemoryCache(),
-      connectToDevTools: true
+      connectToDevTools: true,
+      credentials: 'include'
     });
 
     /*
