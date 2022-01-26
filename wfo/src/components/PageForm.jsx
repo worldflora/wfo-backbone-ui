@@ -17,6 +17,7 @@ import CardNameTypeRelationships from "./CardNameTypeRelationships";
 import CardTaxonHybridStatus from "./CardTaxonHybridStatus";
 import CardNameIdentifiers from "./CardNameIdentifiers";
 import CardNameHomonyms from "./CardNameHomonyms";
+import CardEditors from "./CardEditors";
 
 function PageForm(props) {
 
@@ -49,6 +50,7 @@ function PageForm(props) {
                     <CardTaxonHybridStatus wfo={props.wfo} />
                     <CardNameTypeRelationships wfo={props.wfo} />
                     <CardNameHomonyms wfo={props.wfo} />
+                    <CardEditors wfo={props.wfo} />
                 </Col>
             </Row>
         </Container>

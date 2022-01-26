@@ -34,8 +34,8 @@ class PageHome extends Component {
                             If you are just looking for <strong>stable nomenclatural data</strong> (lists of genera and species) then visit <a href="https://wfoplantlist.org/">wfoplantlist.org</a>
                         </p>
                         <p>
-                            If you are a taxonomist, even if you aren't an active data editor, you can browse the live data here by logging in with your ORCID ID at the top right of this page.
-                            We require login as this editing application and not a website capable of supporting high levels of traffic.
+                            If you are a taxonomist, even if you aren't an active data editor, you can browse the live data here by logging in with your <a href="https://orcid.org/">ORCID ID</a> at the top right of this page.
+                            We require login as this is an editing application and not a website capable of supporting high levels of traffic.
                         </p>
                         <h2>Feedback</h2>
                         <p>It is important to let us know what you think or any issues you may have.</p>
