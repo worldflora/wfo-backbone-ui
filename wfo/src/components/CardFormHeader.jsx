@@ -17,7 +17,8 @@ const HEADER_QUERY = gql`
                     name
                 }
                 acceptedName{
-                    id
+                    id,
+                    fullNameString
                 },
                 synonyms{
                     id,
@@ -70,8 +71,7 @@ function CardFormHeader(props) {
                 header = <Card.Header>Synonymous Name</Card.Header>;
             }
 
-            // the headline comes from the taxon
-            headline = <span dangerouslySetInnerHTML={{ __html: name.taxonPlacement.fullNameString }} />;
+            headline = <span dangerouslySetInnerHTML={{ __html: name.fullNameString }} />;
 
         } else {
 

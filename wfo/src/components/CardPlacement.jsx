@@ -5,6 +5,8 @@ import Spinner from "react-bootstrap/Spinner";
 import ListGroup from "react-bootstrap/ListGroup";
 import { useQuery, gql, NetworkStatus, useMutation } from "@apollo/client";
 import ListGroupItem from "react-bootstrap/esm/ListGroupItem";
+import CardPlacementFilter from "./CardPlacementFilter";
+import CardPlacementList from "./CardPlacementList";
 
 
 // FIXME: Prevent placing in a taxon you don't own.
@@ -80,6 +82,8 @@ function CardPlacement(props) {
 
     const [wfo, setWfo] = useState();
     const [filter, setFilter] = useState('');
+    const [filterNeeded, setFilterNeeded] = useState(false);
+    const [possibleTaxa, setPossibleTaxa] = useState([]);
     const [selectedAction, setSelectedAction] = useState('none');
 
     const { loading, data, refetch, networkStatus } = useQuery(PLACEMENT_QUERY, {
@@ -91,7 +95,6 @@ function CardPlacement(props) {
         refetchQueries: [
             PLACEMENT_QUERY, // run this query again
             'getPlacementInfo', // Query name
-            'getHeaderInfo',
             'getAncestors'
         ],
         update: (cache, mutationResult) => {
@@ -108,6 +111,7 @@ function CardPlacement(props) {
     if (wfo !== props.wfo) {
         setWfo(props.wfo);
         setFilter('');
+        setFilterNeeded(false);
         setSelectedAction('none');
     }
 
@@ -115,13 +119,30 @@ function CardPlacement(props) {
 
     if (placer) {
 
-
         // we render nothing if we can't edit the taxon.
         if (!placer.name.canEdit) return null;
 
         // we render nothing if we are an autonym because our placement 
         // is handled automatically
         if (placer.name.nameString === placer.name.speciesString && !placer.name.authorsString) return null;
+
+        // has the need for a filter changed?
+        if (placer.filterNeeded !== filterNeeded) setFilterNeeded(placer.filterNeeded);
+
+        // has the list of taxa changed
+        if (!loading) {
+            if (placer.possibleTaxa.length != possibleTaxa.length) {
+                setPossibleTaxa(placer.possibleTaxa);
+            } else {
+                for (let i = 0; i < placer.possibleTaxa.length; i++) {
+                    if (placer.possibleTaxa[i].id !== possibleTaxa[i].id) {
+                        setPossibleTaxa(placer.possibleTaxa);
+                        break;
+                    }
+                }
+            }
+
+        }
 
         // look for changes in name from somewhere else
         if (
@@ -141,9 +162,6 @@ function CardPlacement(props) {
             });
         }
 
-    } else {
-        // don't render if we don't have data to do so
-        return null;
     }
 
     function handleSelectedActionChanged(e) {
@@ -201,16 +219,7 @@ function CardPlacement(props) {
     }
 
     let possibleTaxaList = null;
-    let filterBox = null;
-    if (selectedAction !== 'none' && selectedAction !== 'remove') {
-
-        // do we need to add a filter control?
-        if (placer.filterNeeded || placer.filter) {
-            filterBox =
-                <Form.Group controlId="filterBox" style={{ marginTop: "1em" }}>
-                    <Form.Control type="text" placeholder="Type beginning of name" autoFocus={true} name="filterBox" value={filter} onChange={handleFilterChange} />
-                </Form.Group>;
-        }
+    if (placer && selectedAction !== 'none' && selectedAction !== 'remove') {
 
         if (placer.possibleTaxa.length > 0) {
             possibleTaxaList =
@@ -239,12 +248,14 @@ function CardPlacement(props) {
 
     }
 
+    /*
     if (loading || mLoading || networkStatus === NetworkStatus.refetch) {
         possibleTaxaList =
             <Spinner animation="border" role="status">
                 <span className="visually-hidden">Loading...</span>
             </Spinner>
     }
+    */
 
     return (
         <Card bg="warning" className="wfo-placement" style={{ marginBottom: "1em" }}>
@@ -254,17 +265,17 @@ function CardPlacement(props) {
                     <Form.Group controlId="placementAction" >
                         <Form.Select name="placementActions" disabled={false} value={selectedAction} onChange={handleSelectedActionChanged}>
                             <option value="none">-- Choose action --</option>
-                            <option disabled={!placer.canBeRaised} value="raise" >Raise to accepted taxon within ... </option>
-                            <option disabled={!placer.canBeSunk} value="sink" >Sink into synonymy within ... </option>
-                            <option disabled={!placer.canChangeParent} value="change_parent"  >Change parent taxon to ...</option>
-                            <option disabled={!placer.canChangeAccepted} value="change_accepted" >Change to synonym of ...</option>
-                            <option disabled={!placer.canBeRemoved} value="remove" >Remove from taxonomy.</option>
+                            <option disabled={!placer || !placer.canBeRaised} value="raise" >Raise to accepted taxon within ... </option>
+                            <option disabled={!placer || !placer.canBeSunk} value="sink" >Sink into synonymy within ... </option>
+                            <option disabled={!placer || !placer.canChangeParent} value="change_parent"  >Change parent taxon to ...</option>
+                            <option disabled={!placer || !placer.canChangeAccepted} value="change_accepted" >Change to synonym of ...</option>
+                            <option disabled={!placer || !placer.canBeRemoved} value="remove" >Remove from taxonomy.</option>
                         </Form.Select>
                     </Form.Group>
-                    {filterBox}
+                    <CardPlacementFilter filter={filter} filterNeeded={filterNeeded} handleFilterChange={handleFilterChange} />
                 </Form>
             </Card.Body>
-            {possibleTaxaList}
+            <CardPlacementList selectedAction={selectedAction} possibleTaxa={possibleTaxa} handleItemSelect={handleItemSelect} />
         </Card >
     );
 
