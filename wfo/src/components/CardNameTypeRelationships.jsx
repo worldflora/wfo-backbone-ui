@@ -12,6 +12,7 @@ const TYPE_REL_QUERY = gql`
    query getTypeRelationships($wfo: String!){
         getNameForWfoId(id: $wfo) {
             id,
+            canEdit,
             wfo,
             fullNameString,
             nameString,
@@ -94,7 +95,28 @@ function CardNameTypeRelationships(props) {
 
     let basionymListItem = null;
 
+
     if (name.basionym) {
+
+        let basionymRemoveBadge = null;
+        if (name.canEdit) {
+            basionymRemoveBadge =
+                <>
+                    {' '}
+                    <Badge pill bg="danger" onClick={e => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        updateBasionym({
+                            variables: {
+                                wfo: props.wfo,
+                                basionymWfo: null
+                            }
+                        });
+                    }}>Remove</Badge>
+                </>;
+        }
+
+
         basionymListItem =
             <ListGroup.Item
                 action
@@ -108,18 +130,8 @@ function CardNameTypeRelationships(props) {
                 }} >
                     {' '}
                     <Badge pill bg="success" >Basionym</Badge>
-                    {' '}
-                    <Badge pill bg="danger" onClick={e => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        updateBasionym({
-                            variables: {
-                                wfo: props.wfo,
-                                basionymWfo: null
-                            }
-                        });
-                    }}>Remove</Badge></span>
-
+                    {basionymRemoveBadge}
+                </span>
             </ListGroup.Item >
     }
 
@@ -141,11 +153,21 @@ function CardNameTypeRelationships(props) {
 
     let basionymAddFormSwitch = null;
     if (!name.basionym && name.homotypicNames.length === 0 && !showPicker) {
-        basionymAddFormSwitch = <ListGroup.Item
-            action
-            key="add_bas"
-            onClick={(e) => { e.preventDefault(); setShowPicker(true) }}
-        >Add Basionym ...</ListGroup.Item>;
+
+        if (name.canEdit) {
+            // they get a button if they can edit this name
+            basionymAddFormSwitch = <ListGroup.Item
+                action
+                key="add_bas"
+                onClick={(e) => { e.preventDefault(); setShowPicker(true) }}
+            >Add Basionym ...</ListGroup.Item>;
+        } else {
+            // just get a place holder if not
+            basionymAddFormSwitch = <ListGroup.Item
+                key="add_bas"
+            >None set</ListGroup.Item>;
+        }
+
     }
 
     let basionymAddForm = null;

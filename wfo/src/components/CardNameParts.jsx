@@ -13,6 +13,7 @@ const NAME_PARTS_QUERY = gql`
   query getNameParts($wfo: String!){
         getNameForWfoId(id: $wfo){
             id,
+            canEdit,
             wfo,
             nameString,
             genusString,
@@ -62,9 +63,9 @@ const UPDATE_NAME_PARTS = gql`
         mutation  updateNameParts(
             $wfo: String!,
             $rankString: String!,
-            $nameString: String!,
-            $genusString: String!,
-            $speciesString: String!
+            $nameString: String,
+            $genusString: String,
+            $speciesString: String
             ){
           updateNameParts(
               wfo: $wfo,
@@ -101,9 +102,9 @@ function CardNameParts(props) {
 
     const [wfo, setWfo] = useState();
     const [rankString, setRankString] = useState();
-    const [nameString, setNameString] = useState();
-    const [genusString, setGenusString] = useState();
-    const [speciesString, setSpeciesString] = useState();
+    const [nameString, setNameString] = useState("");
+    const [genusString, setGenusString] = useState("");
+    const [speciesString, setSpeciesString] = useState("");
 
     let name = data ? data.getNameForWfoId : null;
     let ranks = data ? data.getAllRanks : [];
@@ -242,6 +243,11 @@ function CardNameParts(props) {
 
         }
 
+        // override all that if they can't edit.
+        if (!name.canEdit) {
+            disabled = true;
+        }
+
         return (
 
             <OverlayTrigger
@@ -324,16 +330,11 @@ function CardNameParts(props) {
             disabled = true;
             help = "This is the accepted name of a taxon and the genus part therefore has to agree with the genus it is placed in."
         }
-        /*
-                return (
-                    <Form.Group controlId="genus">
-                        <Form.Label >Genus Part</Form.Label>
-                        <Form.Control disabled={disabled} type="text" placeholder="Genus part of name below genus rank." name="genusString" value={genusString} onChange={handleGenusChange} />
-                        <Form.Text className="text-muted">{help}</Form.Text>
-                    </Form.Group>
-                );
-        
-                */
+
+        // override all that if they can't edit.
+        if (!name.canEdit) {
+            disabled = true;
+        }
 
         return (
             <OverlayTrigger
@@ -376,6 +377,12 @@ function CardNameParts(props) {
             help = "This is the accepted name of a taxon and the Species Part therefore has to agree with the species it is placed in."
         }
 
+        // override all that if they can't edit.
+        if (!name.canEdit) {
+            disabled = true;
+        }
+
+
         return (
             <OverlayTrigger
                 key="species"
@@ -409,23 +416,14 @@ function CardNameParts(props) {
             && name.taxonPlacement.children
             && name.taxonPlacement.children.length > 0
         ) {
-
             disabled = true;
-            help = "This is the accepted name of a " + name.rank.name + " which contains other taxa so its name can't be changed."
+            help = "This is the accepted name of a " + name.rank.name + " which contains other taxa so its name can't be changed.";
         }
 
-        /*
-
-        return (
-            <Form.Group controlId="name">
-                <Form.Label title={name.id}>Name</Form.Label>
-                <Form.Control disabled={disabled} type="text" placeholder="The main name component" name="nameString" value={nameString} onChange={handleNameChange} />
-                <Form.Text className="text-muted"></Form.Text>
-            </Form.Group>
-        )
-
-        */
-
+        // override all that if they can't edit.
+        if (!name.canEdit) {
+            disabled = true;
+        }
 
         return (
             <OverlayTrigger

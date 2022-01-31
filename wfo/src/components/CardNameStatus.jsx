@@ -12,6 +12,7 @@ const STATUS_QUERY = gql`
    query getNameStatus($wfo: String!){
         getNameForWfoId(id: $wfo){
             id,
+            canEdit,
             status,
             taxonPlacement{
                 id,
@@ -117,7 +118,7 @@ function CardNameStatus(props) {
                 }
             >
                 <Form.Group controlId="status">
-                    <Form.Select name="status" disabled={false} value={status} onChange={handleStatusChange}>
+                    <Form.Select name="status" disabled={name && name.canEdit ? false : true} value={status} onChange={handleStatusChange}>
                         {
                             statuses.map(s => {
 

@@ -4,7 +4,7 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import ListGroup from "react-bootstrap/ListGroup";
 import Badge from "react-bootstrap/Badge";
-import { useQuery, useLazyQuery, gql } from "@apollo/client";
+import { useQuery, useMutation, useLazyQuery, gql } from "@apollo/client";
 
 const EDITORS_QUERY = gql`
    query getEditors($wfo: String!){
@@ -40,6 +40,37 @@ const POSSIBLE_EDITORS_QUERY = gql`
     }
 `;
 
+const ADD_CURATOR_MUTATION = gql`
+   mutation addCurator($wfo: String!, $userId: Int!){
+        addCurator(wfo: $wfo, userId: $userId){
+            name,
+            success,
+            message,
+            children{
+              name,
+              success,
+              message
+            }
+        }
+    }
+`;
+
+const REMOVE_CURATOR_MUTATION = gql`
+   mutation removeCurator($wfo: String!, $userId: Int!){
+        removeCurator(wfo: $wfo, userId: $userId){
+            name,
+            success,
+            message,
+            children{
+              name,
+              success,
+              message
+            }
+        }
+    }
+`;
+
+
 function CardEditors(props) {
 
     const { data } = useQuery(EDITORS_QUERY, {
@@ -48,11 +79,29 @@ function CardEditors(props) {
 
     const [getPossibleEditors, { data: possiblesData }] = useLazyQuery(POSSIBLE_EDITORS_QUERY);
 
+    const [addCurator] = useMutation(ADD_CURATOR_MUTATION, {
+        refetchQueries: [
+            'getEditors',
+            'getChildren'
+        ]
+    });
+
+    const [removeCurator] = useMutation(REMOVE_CURATOR_MUTATION, {
+        refetchQueries: [
+            'getEditors',
+            'getChildren'
+        ]
+    });
+
     const [hidePossibleEditors, setHidePossibleEditors] = useState(true);
 
-    // do nothing if we don't have a name to play
+    // do nothing if we don't have a name to play with
     let name = data ? data.getNameForWfoId : null;
     if (!name) return null;
+
+    // do nothing is we haven't been placed in the taxonomy
+    // anyone can edit unplaced names
+    if (!name.taxonPlacement) return null;
 
     let editorList = <ListGroup.Item>None</ListGroup.Item>;
     if (name.editors.length > 0) {
@@ -71,7 +120,7 @@ function CardEditors(props) {
             if (isCurator) {
                 statusBadge = <Badge pill bg="success" >Curator</Badge>;
                 if (name.canEdit) {
-                    removeBadge = <Badge pill bg="danger" onClick={() => console.log("bye bye")} >Remove</Badge>;
+                    removeBadge = <Badge pill bg="danger" onClick={() => removeCurator({ variables: { userId: user.id, wfo: props.wfo } })} >Remove</Badge>;
                 }
             }
 
@@ -89,7 +138,6 @@ function CardEditors(props) {
     }
 
     let editorsOptions = null;
-    console.log(possiblesData);
     if (possiblesData && possiblesData.getPossibleEditors) {
         editorsOptions = [];
         possiblesData.getPossibleEditors.map(ed => {
@@ -101,7 +149,7 @@ function CardEditors(props) {
                 return true;
             });
 
-            editorsOptions.push(<option disabled={disabled} key={ed.id}>{ed.name}</option>);
+            editorsOptions.push(<option disabled={disabled} key={ed.id} value={ed.id} >{ed.name}</option>);
             return true;
         })
 
@@ -128,7 +176,7 @@ function CardEditors(props) {
         } else {
             possiblesComponent =
                 <Card.Body style={{ backgroundColor: "white", padding: "0.2em" }}>
-                    <Form.Select onChange={e => setHidePossibleEditors(true)}>
+                    <Form.Select onChange={curatorSelected}>
                         <option key="trigger">-- Select Curator --</option>
                         {editorsOptions}
                     </Form.Select>
@@ -137,6 +185,16 @@ function CardEditors(props) {
 
     }
 
+
+    function curatorSelected(e) {
+        setHidePossibleEditors(true);
+        addCurator({
+            variables: {
+                wfo: props.wfo,
+                userId: parseInt(e.target.value)
+            }
+        });
+    }
 
     return (
         <Card bg="light" text="dark" style={{ marginBottom: "1em", maxHeight: "50em", overflow: "auto", backgroundColor: "white" }}>

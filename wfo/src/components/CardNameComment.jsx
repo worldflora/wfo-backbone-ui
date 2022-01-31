@@ -13,6 +13,7 @@ const COMMENT_QUERY = gql`
    query getNameComment($wfo: String!){
         getNameForWfoId(id: $wfo){
             id,
+            canEdit,
             comment
         }
     }
@@ -86,6 +87,7 @@ function CardNameComment(props) {
 
         if (name) {
             if (name.comment === comment) return null;
+            if (name.comment === null && comment === "") return null;
         }
 
         // should we be disabled
@@ -129,7 +131,7 @@ function CardNameComment(props) {
                         }
                     >
                         <Form.Group controlId="authors">
-                            <Form.Control type="text" as="textarea" placeholder="Comments" name="comment" value={comment} onChange={handleCommentChange} />
+                            <Form.Control type="text" as="textarea" disabled={name && name.canEdit ? false : true} placeholder="Comments" name="comment" value={comment} onChange={handleCommentChange} />
                         </Form.Group>
 
                     </OverlayTrigger>

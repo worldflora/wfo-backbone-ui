@@ -9,6 +9,7 @@ const HYBRID_QUERY = gql`
    query getHybridStatus($wfo: String!){
         getNameForWfoId(id: $wfo){
             id,
+            canEdit,
             wfo,
             taxonPlacement{
                 id,
@@ -52,9 +53,6 @@ function CardTaxonHybridStatus(props) {
         variables: { wfo: props.wfo }
     });
 
-
-    // FIXME - HOW DO I UPDATE THE HEADERS OF CHILDREN?
-
     const [updateHybridStatus, { loading: updateLoading }] = useMutation(UPDATE_HYBRID, {
         refetchQueries: [
             'getHeaderInfo',
@@ -78,6 +76,9 @@ function CardTaxonHybridStatus(props) {
 
     // if we don't have a name then don't render at all
     if (!name) return null;
+
+    // can we edit?
+    if (!name.canEdit) return null;
 
     // if the wfo has changed then update our default state
     if (name && wfo !== props.wfo) {

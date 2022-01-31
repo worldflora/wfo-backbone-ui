@@ -14,6 +14,7 @@ const PUBLICATION_QUERY = gql`
    query getPublication($wfo: String!){
         getNameForWfoId(id: $wfo){
             id,
+            canEdit,
             citationMicro,
             year
         }
@@ -121,9 +122,12 @@ function CardNamePublication(props) {
         // if the year is invalid do nothing
         if (!yearValid) return null;
 
-        if (name) {
-            if (name.citationMicro === citationMicro && (name.year === parseInt(year) || (name.year == null && year.length === 0))) return null;
-        }
+        // we only render if something has changed
+        if (
+            (name.citationMicro === citationMicro || (name.citationMicro === null && citationMicro === ""))
+            &&
+            (name.year === parseInt(year) || (name.year == null && year.length === 0))
+        ) return null;
 
         // should we be disabled
         let spinner = null;
@@ -167,7 +171,7 @@ function CardNamePublication(props) {
                     >
                         <Form.Group controlId="micro-citation">
                             <FloatingLabel label="Citation, abbreviated">
-                                <Form.Control type="text" placeholder="Abbreviated citation of publication" name="citationMicro" value={citationMicro} onChange={handleCitationMicroChange} />
+                                <Form.Control type="text" disabled={name && name.canEdit ? false : true} placeholder="Abbreviated citation of publication" name="citationMicro" value={citationMicro} onChange={handleCitationMicroChange} />
                             </FloatingLabel>
                         </Form.Group>
                     </OverlayTrigger>
@@ -183,7 +187,7 @@ function CardNamePublication(props) {
                     >
                         <Form.Group controlId="year">
                             <FloatingLabel label="Year">
-                                <Form.Control type="text" style={{ color: yearValid ? 'black' : 'red', marginTop: "1em" }} placeholder="Year of publication" name="year" value={year} onChange={handleYearChange} />
+                                <Form.Control type="text" disabled={name && name.canEdit ? false : true} style={{ color: yearValid ? 'black' : 'red', marginTop: "1em" }} placeholder="Year of publication" name="year" value={year} onChange={handleYearChange} />
                             </FloatingLabel>
                         </Form.Group>
                     </OverlayTrigger>

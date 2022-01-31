@@ -13,6 +13,7 @@ const AUTHORS_QUERY = gql`
    query getNameAuthors($wfo: String!){
         getNameForWfoId(id: $wfo){
             id,
+            canEdit,
             authorsString
         }
     }
@@ -84,7 +85,10 @@ function CardNameAuthors(props) {
     function renderButton() {
 
         // nothing to save don't render at all
-        if (name && name.authorsString === authorsString) return null;
+        if (name) {
+            if (name.authorsString === authorsString) return null;
+            if (name.authorsString === null && authorsString === "") return null;
+        }
 
         // should we be disabled
         let spinner = null;
@@ -127,7 +131,7 @@ function CardNameAuthors(props) {
                         }
                     >
                         <Form.Group controlId="authors">
-                            <Form.Control type="text" placeholder="Abbreviated author names" name="authorsString" value={authorsString} onChange={handleAuthorsChange} />
+                            <Form.Control type="text" disabled={name && name.canEdit ? false : true} placeholder="Abbreviated author names" name="authorsString" value={authorsString} onChange={handleAuthorsChange} />
                         </Form.Group>
 
                     </OverlayTrigger>

@@ -132,7 +132,7 @@ function PageTabs(props) {
                 </Tab>
 
                 <Tab eventKey="browse" title="Browse" >
-                    <PageForm wfo={activeWfoId} />
+                    <PageForm wfo={activeWfoId} user={user} />
                 </Tab>
 
                 <Tab eventKey="add" title="Add Name" >

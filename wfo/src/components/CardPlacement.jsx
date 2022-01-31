@@ -6,6 +6,9 @@ import ListGroup from "react-bootstrap/ListGroup";
 import { useQuery, gql, NetworkStatus, useMutation } from "@apollo/client";
 import ListGroupItem from "react-bootstrap/esm/ListGroupItem";
 
+
+// FIXME: Prevent placing in a taxon you don't own.
+
 const PLACEMENT_QUERY = gql`
   query getPlacementInfo($wfo: String! $action: PlacementAction $filter: String ){
     getNamePlacer(id: $wfo action: $action filter: $filter){
@@ -21,12 +24,14 @@ const PLACEMENT_QUERY = gql`
             id,
             acceptedName{
                 id,
+                canEdit,
                 wfo,
                 fullNameString
             }
         }
         name{
             id,
+            canEdit,
             fullNameString,
             status,
             nameString,
@@ -110,6 +115,10 @@ function CardPlacement(props) {
 
     if (placer) {
 
+
+        // we render nothing if we can't edit the taxon.
+        if (!placer.name.canEdit) return null;
+
         // we render nothing if we are an autonym because our placement 
         // is handled automatically
         if (placer.name.nameString === placer.name.speciesString && !placer.name.authorsString) return null;
@@ -132,6 +141,9 @@ function CardPlacement(props) {
             });
         }
 
+    } else {
+        // don't render if we don't have data to do so
+        return null;
     }
 
     function handleSelectedActionChanged(e) {
@@ -188,19 +200,6 @@ function CardPlacement(props) {
 
     }
 
-    if (!placer) {
-        return (
-            <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
-                <Card.Header>Placement</Card.Header>
-                <Card.Body>
-                    <Spinner animation="border" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                    </Spinner>
-                </Card.Body>
-            </Card>
-        );
-    }
-
     let possibleTaxaList = null;
     let filterBox = null;
     if (selectedAction !== 'none' && selectedAction !== 'remove') {
@@ -221,6 +220,7 @@ function CardPlacement(props) {
                             return <ListGroupItem
                                 key={i}
                                 action
+                                disabled={!t.acceptedName.canEdit}
                                 onClick={(e) => { e.preventDefault(); handleItemSelect(t); }}>
                                 <span dangerouslySetInnerHTML={{ __html: t.acceptedName.fullNameString }} />
                             </ListGroupItem>
