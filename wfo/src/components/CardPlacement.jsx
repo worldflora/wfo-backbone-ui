@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 import Card from "react-bootstrap/Card";
 import Form from "react-bootstrap/Form";
-import Spinner from "react-bootstrap/Spinner";
-import ListGroup from "react-bootstrap/ListGroup";
-import { useQuery, gql, NetworkStatus, useMutation } from "@apollo/client";
-import ListGroupItem from "react-bootstrap/esm/ListGroupItem";
+import { useQuery, gql, useMutation } from "@apollo/client";
 import CardPlacementFilter from "./CardPlacementFilter";
 import CardPlacementList from "./CardPlacementList";
 
@@ -86,12 +83,12 @@ function CardPlacement(props) {
     const [possibleTaxa, setPossibleTaxa] = useState([]);
     const [selectedAction, setSelectedAction] = useState('none');
 
-    const { loading, data, refetch, networkStatus } = useQuery(PLACEMENT_QUERY, {
+    const { loading, data, refetch } = useQuery(PLACEMENT_QUERY, {
         variables: { wfo: props.wfo, action: 'none', filter: '' },
         notifyOnNetworkStatusChange: true
     });
 
-    const [updatePlacement, { loading: mLoading }] = useMutation(UPDATE_PLACEMENT, {
+    const [updatePlacement] = useMutation(UPDATE_PLACEMENT, {
         refetchQueries: [
             PLACEMENT_QUERY, // run this query again
             'getPlacementInfo', // Query name
@@ -131,7 +128,7 @@ function CardPlacement(props) {
 
         // has the list of taxa changed
         if (!loading) {
-            if (placer.possibleTaxa.length != possibleTaxa.length) {
+            if (placer.possibleTaxa.length !== possibleTaxa.length) {
                 setPossibleTaxa(placer.possibleTaxa);
             } else {
                 for (let i = 0; i < placer.possibleTaxa.length; i++) {
@@ -216,46 +213,11 @@ function CardPlacement(props) {
             }
         );
 
-    }
-
-    let possibleTaxaList = null;
-    if (placer && selectedAction !== 'none' && selectedAction !== 'remove') {
-
-        if (placer.possibleTaxa.length > 0) {
-            possibleTaxaList =
-                <ListGroup variant="flush" style={{ maxHeight: "30em", overflow: "auto" }} >
-                    {
-                        placer.possibleTaxa.map((t, i) => {
-                            return <ListGroupItem
-                                key={i}
-                                action
-                                disabled={!t.acceptedName.canEdit}
-                                onClick={(e) => { e.preventDefault(); handleItemSelect(t); }}>
-                                <span dangerouslySetInnerHTML={{ __html: t.acceptedName.fullNameString }} />
-                            </ListGroupItem>
-                        })
-                    }
-                </ListGroup>
-        } else {
-            possibleTaxaList =
-                <ListGroup variant="flush" style={{}} >
-                    <ListGroupItem key="1">
-                        Nothing found
-                    </ListGroupItem>
-                </ListGroup>
-
-        }
+        setPossibleTaxa([]);
+        setFilter('');
+        setSelectedAction('none');
 
     }
-
-    /*
-    if (loading || mLoading || networkStatus === NetworkStatus.refetch) {
-        possibleTaxaList =
-            <Spinner animation="border" role="status">
-                <span className="visually-hidden">Loading...</span>
-            </Spinner>
-    }
-    */
 
     return (
         <Card bg="warning" className="wfo-placement" style={{ marginBottom: "1em" }}>

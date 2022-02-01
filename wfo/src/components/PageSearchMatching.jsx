@@ -91,7 +91,7 @@ ${props.nameFieldsFragment}
             <Form onSubmit={handleSubmit}>
                 <Row className="align-items-center">
                     <Col>
-                        <Form.Control type="text" placeholder="Enter a name of interest" value={queryString} onChange={handleChange} />
+                        <Form.Control type="text" placeholder="Enter a name of interest include rank" value={queryString} onChange={handleChange} />
                     </Col>
                     <Col xs="auto">
                         <Button type="submit">Search</Button>

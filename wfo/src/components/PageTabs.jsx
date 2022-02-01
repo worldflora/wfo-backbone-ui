@@ -100,10 +100,15 @@ function PageTabs(props) {
         };
     }, []);
 
-    // nearly all content needs to have a handle on the current user.
-    // so we fetch it here.
 
-
+    // authorisation over ride
+    // can only be on home page
+    if (!user || user.isAnonymous) {
+        if (activeTabKey !== "home") {
+            setActiveTabKey("home");
+            window.location.hash = 'home';
+        }
+    }
 
 
     return (
@@ -123,21 +128,30 @@ function PageTabs(props) {
                     <PageHome user={user} />
                 </Tab>
 
-                <Tab eventKey="alpha" title="A-Z">
+                <Tab eventKey="alpha" title="A-Z" disabled={!user || user.isAnonymous}>
                     <PageSearchAlpha nameFieldsFragment={nameFieldsFragment} />
                 </Tab>
 
-                <Tab eventKey="match" title="Matching">
+                <Tab eventKey="match" title="Matching" disabled={!user || user.isAnonymous}>
                     <PageSearchMatching nameFieldsFragment={nameFieldsFragment} />
                 </Tab>
 
-                <Tab eventKey="browse" title="Browse" >
+                <Tab eventKey="browse" title="Browse" disabled={!user || user.isAnonymous} >
                     <PageForm wfo={activeWfoId} user={user} />
                 </Tab>
 
-                <Tab eventKey="add" title="Add Name" >
+                <Tab eventKey="add" title="Add Name" disabled={!user || user.isAnonymous}>
                     <PageAdd />
                 </Tab>
+
+                <Tab eventKey="editors" title="Editors" disabled={!user || user.isAnonymous}>
+                    <Container style={{ marginTop: "2em" }}>
+                        <p>A list of the editors in the system and links to what they are curators for?</p>
+                        <p>Perhaps a list of recent changes?</p>
+
+                    </Container>
+                </Tab>
+
 
             </Tabs>
         </Container>

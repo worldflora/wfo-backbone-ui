@@ -122,7 +122,9 @@ function LoginLogout(props) {
                             })
                                 .then(response => response.json())
                                 .then(data => console.log(data))
-                                .then(props.refeshUser());
+                                .then(props.refeshUser())
+                                .then(window.location.reload());
+
                         }
                     }>
                     {user.name}

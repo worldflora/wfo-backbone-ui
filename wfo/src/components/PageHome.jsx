@@ -53,10 +53,8 @@ class PageHome extends Component {
                                 <Card.Text><a href="#wfo-9499999999">#wfo-9499999999</a></Card.Text>
                                 <Card.Text><a href="#wfo-9499999998">#wfo-9499999998</a></Card.Text>
                                 <Card.Text><a href="#wfo-0000003319">#wfo-0000003319</a> - with synonyms</Card.Text>
-                                <Card.Text><a href="#home">#home</a></Card.Text>
-                                <Card.Text><a href="#alpha">#alpha</a></Card.Text>
-                                <Card.Header>Stats</Card.Header>
-                                <Card.Text>Some stats about this taxon</Card.Text>
+                                <Card.Title>Activity</Card.Title>
+                                <Card.Text>Some information about what is going on?</Card.Text>
                             </Card.Body>
                         </Card>
                     </Col>
