@@ -74,6 +74,32 @@ function PageTabs(props) {
     }
 
     /*
+    function hashChanged(newHash) {
+
+        // let newHash = window.location.hash.substring(1);
+        let pattern = /^wfo-[0-9]{10}$/;
+
+        // are we looking at a wfo or a page?
+        if (pattern.test(newHash)) {
+            if (activeWfoId !== newHash) setActiveWfoId(newHash); // update the name we are looking at if it is new.
+            if (activeTabKey !== "browse") setActiveTabKey("browse"); // display it in the browse tab
+        } else {
+            if (newHash === "browse") {
+                // we never have a browse anchor because it is synonymous with a wfo-id
+                // if they have clicked on browse we just update the hash but don't change
+                // the tab
+                window.location.hash = activeWfoId;
+            } else {
+                // we switch to the tab 
+                setActiveTabKey(newHash);
+            }
+
+        }
+
+    }
+    */
+
+    /*
     * This is how we handle register and deregister of event listeners 
     * Nice description of how/why here; https://www.pluralsight.com/guides/event-listeners-in-react-components
     */
@@ -81,14 +107,27 @@ function PageTabs(props) {
 
         function handleHashChange(event) {
 
+
             let newHash = window.location.hash.substring(1);
             let pattern = /^wfo-[0-9]{10}$/;
 
             // are we looking at a wfo or a page?
             if (pattern.test(newHash)) {
-                setActiveWfoId(newHash);
-                setActiveTabKey("browse");
+                if (activeWfoId !== newHash) setActiveWfoId(newHash); // update the name we are looking at if it is new.
+                if (activeTabKey !== "browse") setActiveTabKey("browse"); // display it in the browse tab
+            } else {
+                if (newHash === "browse") {
+                    // we never have a browse anchor because it is synonymous with a wfo-id
+                    // if they have clicked on browse we just update the hash but don't change
+                    // the tab
+                    window.location.hash = activeWfoId;
+                } else {
+                    // we switch to the tab 
+                    setActiveTabKey(newHash);
+                }
+
             }
+
 
         };
 
@@ -98,7 +137,7 @@ function PageTabs(props) {
         return () => {
             window.removeEventListener('hashchange', handleHashChange);
         };
-    }, []);
+    }, [activeWfoId, activeTabKey]);
 
 
     // authorisation over ride
@@ -120,6 +159,7 @@ function PageTabs(props) {
                 activeKey={activeTabKey}
                 onSelect={(k, e) => {
                     setActiveTabKey(k);
+                    window.location.hash = k;
                 }}
                 id="search-tabs"
                 className="mb-3"
@@ -152,6 +192,20 @@ function PageTabs(props) {
                     </Container>
                 </Tab>
 
+                <Tab eventKey="data" title="Data" disabled={!user || user.isAnonymous}>
+                    <Container style={{ marginTop: "2em" }}>
+                        <p>Downloads of latest data.</p>
+                        <ul>
+                            <li>Name matching file with every name: ScientificName, Author, wfoid, and excluded_reason (nightly)</li>
+                            <li>Name matching file with every name: ScientificName, Author, wfoid, and excluded_reason (monthly delta)</li>
+                            <li>Everything as DarwinCore (nightly))</li>
+                            <li>Links out to the official six monthly builds</li>
+                        </ul>
+                        <p>Outline of API, how it might be used and how to get access to it.</p>
+                        <p>Details of command line tools.</p>
+
+                    </Container>
+                </Tab>
 
             </Tabs>
         </Container>

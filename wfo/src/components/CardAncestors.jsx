@@ -64,6 +64,8 @@ function CardAncestors(props) {
     // reverse them so we walk down the ways
     ancestors = [...ancestors].reverse();
 
+    console.log(ancestors);
+
     // finally render
     return (
 
@@ -96,13 +98,13 @@ function CardAncestors(props) {
                         </Breadcrumb.Item>
                     );
                 } else {
-                    return <Breadcrumb.Item key="home" >Home</Breadcrumb.Item>
+                    return <Breadcrumb.Item key="home" >No Name</Breadcrumb.Item>
                 }
 
 
             });
         } else {
-            return <Breadcrumb.Item key="no_trail" >No Trail</Breadcrumb.Item>
+            return <Breadcrumb.Item key="no_trail" >International Code of Nomenclature for algae, fungi, and plants</Breadcrumb.Item>
         }
     }
 

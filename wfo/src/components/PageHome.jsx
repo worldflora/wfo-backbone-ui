@@ -37,16 +37,9 @@ class PageHome extends Component {
                             If you are a taxonomist, even if you aren't an active data editor, you can browse the live data here by logging in with your <a href="https://orcid.org/">ORCID ID</a> at the top right of this page.
                             We require login as this is an editing application and not a website capable of supporting high levels of traffic.
                         </p>
-                        <h2>Feedback</h2>
-                        <p>It is important to let us know what you think or any issues you may have.</p>
-
-                    </Col>
-
-
-                    <Col xs={4}>
                         <Card>
                             <Card.Header>
-                                Some test links
+                                Some test links during dev
                             </Card.Header>
                             <Card.Body>
 
@@ -57,9 +50,43 @@ class PageHome extends Component {
                                 <Card.Text>Some information about what is going on?</Card.Text>
                             </Card.Body>
                         </Card>
+
+                    </Col>
+
+
+                    <Col xs={4}>
+                        <Card>
+                            <Card.Header>
+                                <strong>Feedback</strong>
+                            </Card.Header>
+                            <Card.Body>
+                                <Card.Title>
+                                    Data Issues
+                                </Card.Title>
+                                <Card.Text>
+                                    In the case of missing or incorrect data.
+                                </Card.Text>
+                                <ol>
+                                    <li>If you can edit the associated name go ahead and correct it.</li>
+                                    <li>If you can't edit it check if there is an editor listed on the right of the page and contact them about your corrections.</li>
+                                    <li>If there is no editor set for this name or you can't contact them please contact the TENs manager <a href="mailto:aelliott@rbge.org.uk">Alan Elliott</a> directly.</li>
+                                </ol>
+                                <Card.Title>
+                                    System Issues
+                                </Card.Title>
+                                <ol>
+                                    <li>If Rhakhis has become unresponsive please contact the technical lead <a href="mailto:rhyam@rbge.org.uk">Roger Hyam</a> directly.</li>
+                                    <li>If you come across anything that looks like a bug or have a suggested improvement please <a href="https://github.com/rogerhyam/wfo-backbone-ui/issues/">raised an issue in GitHub</a>.
+                                        Don't assume that it has already been raised or is too big or too small. Check the <a href="https://github.com/rogerhyam/wfo-backbone-ui/issues/">GitHub issues page</a> and if in doubt create a new issue.
+                                        It is far preferable to have to deal with too many issues than find out later that there was something we could have fixed.
+                                    </li>
+                                </ol>
+                            </Card.Body>
+                        </Card>
+
                     </Col>
                 </Row>
-            </Container>
+            </Container >
         );
 
 

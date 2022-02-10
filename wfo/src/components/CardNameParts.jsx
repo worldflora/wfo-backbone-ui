@@ -223,7 +223,7 @@ function CardNameParts(props) {
 
     function renderRank() {
 
-        let help = "The rank selected dictates the meaning of the parts of the name.";
+        //let help = "The rank selected dictates the meaning of the parts of the name.";
         let disabled = false;
 
         // are we an accepted taxon
@@ -236,7 +236,7 @@ function CardNameParts(props) {
                 && name.taxonPlacement.children
                 && name.taxonPlacement.children.length > 0
             ) {
-                help = "The is the name of an accepted " + name.rank.name + " with children whose names depend on it so the rank can't be changed.";
+                //help = "The is the name of an accepted " + name.rank.name + " with children whose names depend on it so the rank can't be changed.";
                 disabled = true;
             }
 
@@ -248,30 +248,16 @@ function CardNameParts(props) {
             disabled = true;
         }
 
+        // overlay trigger has been removed because it is buggy and too tricky to fix
         return (
-
-            <OverlayTrigger
-                key="rank1"
-                placement="top"
-                overlay={
-                    <Tooltip id={`tooltip-rank1`}>
-                        {help}
-                    </Tooltip>
-                }
-            >
-                <Form.Group controlId="rank">
-                    <FloatingLabel label="Rank">
-                        <Form.Select name="rankString" disabled={disabled} value={rankString} onChange={handleRankChange}>
-                            {getRanks()}
-                        </Form.Select>
-                    </FloatingLabel>
-                </Form.Group>
-
-            </OverlayTrigger>
-
-
+            <Form.Group controlId="rank">
+                <FloatingLabel label="Rank">
+                    <Form.Select name="rankString" disabled={disabled} value={rankString} onChange={handleRankChange}>
+                        {getRanks()}
+                    </Form.Select>
+                </FloatingLabel>
+            </Form.Group>
         );
-
 
     }
 
@@ -295,7 +281,7 @@ function CardNameParts(props) {
             let disabled = false;
 
             // if we are an accepted name we disable some ranks
-            if (name.taxonPlacement && name.taxonPlacement.acceptedName.id === name.id && name.taxonPlacement.parent.acceptedName) {
+            if (name.taxonPlacement && name.taxonPlacement.acceptedName.id === name.id && name.taxonPlacement.parent && name.taxonPlacement.parent.acceptedName) {
                 disabled = true;
                 name.taxonPlacement.parent.acceptedName.rank.children.map(kidRank => {
                     if (kidRank.name === rank.name) disabled = false;

@@ -4,8 +4,6 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import { useMutation, useQuery, gql } from "@apollo/client";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import Tooltip from "react-bootstrap/Tooltip";
 import AlertUpdate from "./AlertUpdate";
 
 const STATUS_QUERY = gql`
@@ -104,41 +102,32 @@ function CardNameStatus(props) {
         let isAccepted = false;
         if (name && name.taxonPlacement && name.taxonPlacement.acceptedName.id === name.id) isAccepted = true;
 
-        let help = "The nomenclatural status of the name affects where it can be placed in the taxonomy.";
-        if (isAccepted) help = "Accepted names of taxa can only be valid, conserved or sanctioned";
+        //let help = "The nomenclatural status of the name affects where it can be placed in the taxonomy.";
+        //if (isAccepted) help = "Accepted names of taxa can only be valid, conserved or sanctioned";
 
         return (
-            <OverlayTrigger
-                key="status-overlay"
-                placement="top"
-                overlay={
-                    <Tooltip id={`tooltip-status`}>
-                        {help}
-                    </Tooltip>
-                }
-            >
-                <Form.Group controlId="status">
-                    <Form.Select name="status" disabled={name && name.canEdit ? false : true} value={status} onChange={handleStatusChange}>
-                        {
-                            statuses.map(s => {
+            <Form.Group controlId="status">
 
-                                disabled = false;
+                <Form.Select name="status" disabled={name && name.canEdit ? false : true} value={status} onChange={handleStatusChange}>
+                    {
+                        statuses.map(s => {
 
-                                // if we are a taxon then we can only be certain status
-                                if (isAccepted) {
-                                    disabled = true;
-                                    if (s === 'valid') disabled = false;
-                                    if (s === 'sanctioned') disabled = false;
-                                    if (s === 'conserved') disabled = false;
-                                }
+                            disabled = false;
 
-                                return (<option disabled={disabled} value={s} key={s} >{s}</option>);
+                            // if we are a taxon then we can only be certain status
+                            if (isAccepted) {
+                                disabled = true;
+                                if (s === 'valid') disabled = false;
+                                if (s === 'sanctioned') disabled = false;
+                                if (s === 'conserved') disabled = false;
+                            }
 
-                            })
-                        }
-                    </Form.Select>
-                </Form.Group>
-            </OverlayTrigger>
+                            return (<option disabled={disabled} value={s} key={s} >{s}</option>);
+
+                        })
+                    }
+                </Form.Select>
+            </Form.Group>
         );
 
 
