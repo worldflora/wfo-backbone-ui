@@ -7,6 +7,7 @@ import PageSearchAlpha from "./PageSearchAlpha";
 import PageHome from "./PageHome";
 import PageForm from "./PageForm";
 import PageAdd from "./PageAdd";
+import CardDownloads from "./CardDownloads";
 import LoginLogout from "./LoginLogout";
 import { gql, useQuery } from "@apollo/client";
 
@@ -194,15 +195,22 @@ function PageTabs(props) {
 
                 <Tab eventKey="data" title="Data" disabled={!user || user.isAnonymous}>
                     <Container style={{ marginTop: "2em" }}>
-                        <p>Downloads of latest data.</p>
-                        <ul>
-                            <li>Name matching file with every name: ScientificName, Author, wfoid, and excluded_reason (nightly)</li>
-                            <li>Name matching file with every name: ScientificName, Author, wfoid, and excluded_reason (monthly delta)</li>
-                            <li>Everything as DarwinCore (nightly))</li>
-                            <li>Links out to the official six monthly builds</li>
-                        </ul>
-                        <p>Outline of API, how it might be used and how to get access to it.</p>
-                        <p>Details of command line tools.</p>
+                        <h2>Data Downloads</h2>
+
+                        <CardDownloads header="Lookup Files" directoryName="lookup" fileEnding="gz" >
+                            A common request is for a list that can be used in a look up table or in a name matching algorithm.
+                            This section contains these lists. Unless indicated otherwise they are generated nightly.
+                            The download links are stable so you can periodically poll them if you need to.
+                        </CardDownloads>
+
+                        <CardDownloads header="Darwin Core Archives" directoryName="dwc" fileEnding="zip" >
+                            Darwin Core Archive is a widely used exchange format. For compatibility we provide
+                            a set of DwC Archive files, one for each family recognized in the taxonomy.
+                            These are generated on rotation but should never be more than a few days old.
+                            This is a long list so use ctrl-f to search for the family you are after.
+                        </CardDownloads>
+
+                        <p>If the data you are looking for isn't here in the format or with the frequency you need it please <a href="mailto:rhyam@rbge.org.uk">contact us</a> and we will try and get you what you need.</p>
 
                     </Container>
                 </Tab>

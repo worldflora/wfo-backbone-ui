@@ -64,8 +64,6 @@ function CardAncestors(props) {
     // reverse them so we walk down the ways
     ancestors = [...ancestors].reverse();
 
-    console.log(ancestors);
-
     // finally render
     return (
 
