@@ -203,12 +203,23 @@ function PageTabs(props) {
                             The download links are stable so you can periodically poll them if you need to.
                         </CardDownloads>
 
+                        <CardDownloads header="HTML Proofing Files" directoryName="html" fileEnding="zip" >
+                            Sometimes it is easier to review lists of names as documents rather than as database entry screens or spreadsheets.
+                            We therefore produce lists for each family in HTML format that can be loaded into a word processor and in extremis
+                            printed out. This is somewhat experimental so it would be good to hear what you have to say. At the moment
+                            both homotypic names and synonyms are printed within an accepted name so there is some duplication but this makes
+                            it easier to spot errors. Larger families are divided into files of less than 2,000 names (about 100 pages of A4).
+                            This is a long list so use ctrl-f to search for the family you are after. They are updated every few days.
+                        </CardDownloads>
+
                         <CardDownloads header="Darwin Core Archives" directoryName="dwc" fileEnding="zip" >
                             Darwin Core Archive is a widely used exchange format. For compatibility we provide
                             a set of DwC Archive files, one for each family recognized in the taxonomy.
                             These are generated on rotation but should never be more than a few days old.
                             This is a long list so use ctrl-f to search for the family you are after.
                         </CardDownloads>
+
+
 
                         <p>If the data you are looking for isn't here in the format or with the frequency you need it please <a href="mailto:rhyam@rbge.org.uk">contact us</a> and we will try and get you what you need.</p>
 
