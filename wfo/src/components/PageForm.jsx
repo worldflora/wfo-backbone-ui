@@ -25,15 +25,14 @@ function PageForm(props) {
 
     //if (!name) return null;
     return (
-
-        <Container fluid>
+        <Container>
             <Row>
                 <Col>
                     <CardAncestors wfo={props.wfo} />
                 </Col>
             </Row>
             <Row>
-                <Col>
+                <Col md={8}>
                     <CardFormHeader wfo={props.wfo} />
                     <CardNameParts wfo={props.wfo} />
                     <CardNameStatus wfo={props.wfo} />
@@ -43,7 +42,7 @@ function PageForm(props) {
                     <CardNameComment wfo={props.wfo} />
                     <CardNameIdentifiers wfo={props.wfo} />
                 </Col>
-                <Col xs={4}>
+                <Col md={4}>
                     <CardChildren wfo={props.wfo} />
                     <CardSynonyms wfo={props.wfo} />
                     <CardPlacement wfo={props.wfo} />

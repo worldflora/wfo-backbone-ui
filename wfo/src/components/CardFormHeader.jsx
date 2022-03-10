@@ -1,5 +1,6 @@
 import React from "react";
 import Card from "react-bootstrap/Card";
+import Badge from "react-bootstrap/Badge";
 import { useQuery, gql } from "@apollo/client";
 
 const HEADER_QUERY = gql`
@@ -39,14 +40,16 @@ function CardFormHeader(props) {
     let name = data ? data.getNameForWfoId : null;
 
     // by default it is unplaced
-    let header = <Card.Header>Unplaced Name</Card.Header>;
+    let header = "Unplaced Name";
     let headline = "";
     let variant = "secondary";
     let text = "light";
 
+    let linkBadge = null;
+
     // it may be deprecated
     if (name && name.status === 'deprecated') {
-        header = <Card.Header>Deprecated Name</Card.Header>
+        header = "Deprecated Name";
         headline = <span dangerouslySetInnerHTML={{ __html: name.fullNameString }} />;
     }
 
@@ -62,13 +65,12 @@ function CardFormHeader(props) {
             if (name.taxonPlacement.acceptedName.id === name.id) {
                 // the name is the accepted name of the taxon it is placed in
                 // we are displaying a taxon!
-                let displayRank = name.taxonPlacement.rank.name.charAt(0).toUpperCase() + name.taxonPlacement.rank.name.slice(1);
-                header = <Card.Header>{displayRank}</Card.Header>
+                header = name.taxonPlacement.rank.name.charAt(0).toUpperCase() + name.taxonPlacement.rank.name.slice(1);
 
             } else {
                 // the name is not the accepted name of the taxon it is placed in
                 // we are displaying a synonym!
-                header = <Card.Header>Synonymous Name</Card.Header>;
+                header = "Synonymous Name";
             }
 
             headline = <span dangerouslySetInnerHTML={{ __html: name.fullNameString }} />;
@@ -80,6 +82,14 @@ function CardFormHeader(props) {
 
         }
 
+        linkBadge = <Badge
+            style={{ float: "right" }}
+            bg="secondary"
+            text="light"
+            pill
+        >
+            <a style={{ textDecoration: "none", color: "white" }} href={"http://www.worldfloraonline.org/taxon/" + name.wfo}>{name.wfo} ↗</a></Badge>
+
     }
 
 
@@ -87,8 +97,14 @@ function CardFormHeader(props) {
 
     return (
         <Card bg={variant} text={text} className="wfo-child-list" style={{ marginBottom: "1em" }}>
-            {header}
+            <Card.Header>
+                {linkBadge}
+                <div>
+                    {header}
+                </div>
+            </Card.Header>
             <Card.Body style={{ backgroundColor: "white", color: "black" }}>
+
                 <h2>{headline}</h2>
             </Card.Body>
         </Card>

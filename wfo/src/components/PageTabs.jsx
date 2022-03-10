@@ -70,35 +70,33 @@ function PageTabs(props) {
 
     if (data && data.getUser) {
         if (!user || data.getUser.id !== user.id) {
+
             setUser(data.getUser);
-        }
-    }
 
-    /*
-    function hashChanged(newHash) {
-
-        // let newHash = window.location.hash.substring(1);
-        let pattern = /^wfo-[0-9]{10}$/;
-
-        // are we looking at a wfo or a page?
-        if (pattern.test(newHash)) {
-            if (activeWfoId !== newHash) setActiveWfoId(newHash); // update the name we are looking at if it is new.
-            if (activeTabKey !== "browse") setActiveTabKey("browse"); // display it in the browse tab
-        } else {
-            if (newHash === "browse") {
-                // we never have a browse anchor because it is synonymous with a wfo-id
-                // if they have clicked on browse we just update the hash but don't change
-                // the tab
-                window.location.hash = activeWfoId;
+            // if we have just logged in then we should check what the
+            // hash is. They could have come here with a wfo in the hash 
+            // and then logged in or refreshed the page in which case
+            // the user
+            let currentHash = window.location.hash.substring(1);
+            let pattern = /^wfo-[0-9]{10}$/;
+            if (pattern.test(currentHash)) {
+                if (activeWfoId !== currentHash) setActiveWfoId(currentHash); // update the name we are looking at if it is new.
+                if (activeTabKey !== "browse") setActiveTabKey("browse"); // display it in the browse tab
             } else {
-                // we switch to the tab 
-                setActiveTabKey(newHash);
+                setActiveTabKey(currentHash);
             }
 
         }
-
     }
-    */
+
+    // authorisation over ride
+    // can only be on home page
+    if (!user || user.isAnonymous) {
+        if (activeTabKey !== "home") {
+            setActiveTabKey("home");
+        }
+    }
+
 
     /*
     * This is how we handle register and deregister of event listeners 
@@ -139,16 +137,6 @@ function PageTabs(props) {
             window.removeEventListener('hashchange', handleHashChange);
         };
     }, [activeWfoId, activeTabKey]);
-
-
-    // authorisation over ride
-    // can only be on home page
-    if (!user || user.isAnonymous) {
-        if (activeTabKey !== "home") {
-            setActiveTabKey("home");
-            window.location.hash = 'home';
-        }
-    }
 
 
     return (
