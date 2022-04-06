@@ -10,9 +10,9 @@ const ANCESTORS_QUERY = gql`
         getNameForWfoId(id: $wfo){
             id,
             wfo,
-            fullNameString(abbreviateGenus: true, authors: false),
             taxonPlacement{
                 id,
+                fullNameString(abbreviateGenus: true, authors: false),
                 acceptedName{
                     id,
                     wfo,
@@ -20,6 +20,7 @@ const ANCESTORS_QUERY = gql`
                 },
                 ancestors{
                     id,
+                    fullNameString(abbreviateGenus: true, authors: false),
                     acceptedName{
                         id,
                         wfo,
@@ -92,7 +93,7 @@ function CardAncestors(props) {
                 if (ancestor.acceptedName) {
                     return (
                         <Breadcrumb.Item key={ancestor.id} href="#" onClick={(e) => { e.preventDefault(); window.location.hash = ancestor.acceptedName.wfo; }} >
-                            <span dangerouslySetInnerHTML={{ __html: ancestor.acceptedName.fullNameString }} />
+                            <span dangerouslySetInnerHTML={{ __html: ancestor.fullNameString }} />
                         </Breadcrumb.Item>
                     );
                 } else {

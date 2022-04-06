@@ -7,6 +7,8 @@ import PageSearchAlpha from "./PageSearchAlpha";
 import PageHome from "./PageHome";
 import PageForm from "./PageForm";
 import PageAdd from "./PageAdd";
+import PageStats from "./PageStats";
+import PageUsers from "./PageUsers";
 import CardDownloads from "./CardDownloads";
 import LoginLogout from "./LoginLogout";
 import { gql, useQuery } from "@apollo/client";
@@ -173,12 +175,12 @@ function PageTabs(props) {
                     <PageAdd />
                 </Tab>
 
-                <Tab eventKey="editors" title="Editors" disabled={!user || user.isAnonymous}>
-                    <Container style={{ marginTop: "2em" }}>
-                        <p>A list of the editors in the system and links to what they are curators for?</p>
-                        <p>Perhaps a list of recent changes?</p>
+                <Tab eventKey="stats" title="Stats" disabled={!user || user.isAnonymous}>
+                    <PageStats />
+                </Tab>
 
-                    </Container>
+                <Tab eventKey="users" title="Users" disabled={!user || user.isAnonymous}>
+                    <PageUsers />
                 </Tab>
 
                 <Tab eventKey="data" title="Data" disabled={!user || user.isAnonymous}>
@@ -207,6 +209,9 @@ function PageTabs(props) {
                             This is a long list so use ctrl-f to search for the family you are after.
                         </CardDownloads>
 
+                        <CardDownloads header="Statistics" directoryName="stats" fileEnding="gz" >
+                            Statistics summarizing data and activity within the system.
+                        </CardDownloads>
 
 
                         <p>If the data you are looking for isn't here in the format or with the frequency you need it please <a href="mailto:rhyam@rbge.org.uk">contact us</a> and we will try and get you what you need.</p>

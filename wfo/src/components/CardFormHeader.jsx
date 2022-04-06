@@ -66,14 +66,16 @@ function CardFormHeader(props) {
                 // the name is the accepted name of the taxon it is placed in
                 // we are displaying a taxon!
                 header = name.taxonPlacement.rank.name.charAt(0).toUpperCase() + name.taxonPlacement.rank.name.slice(1);
+                headline = <span dangerouslySetInnerHTML={{ __html: name.taxonPlacement.fullNameString }} />;
 
             } else {
                 // the name is not the accepted name of the taxon it is placed in
                 // we are displaying a synonym!
                 header = "Synonymous Name";
+                headline = <span dangerouslySetInnerHTML={{ __html: name.fullNameString }} />;
             }
 
-            headline = <span dangerouslySetInnerHTML={{ __html: name.fullNameString }} />;
+
 
         } else {
 
@@ -104,7 +106,6 @@ function CardFormHeader(props) {
                 </div>
             </Card.Header>
             <Card.Body style={{ backgroundColor: "white", color: "black" }}>
-
                 <h2>{headline}</h2>
             </Card.Body>
         </Card>

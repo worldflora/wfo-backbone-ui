@@ -15,7 +15,8 @@ const EDITORS_QUERY = gql`
             editors{
                 id,
                 name,
-                orcid
+                orcid,
+                uri
             },
             curators{
                 id
@@ -35,7 +36,8 @@ const POSSIBLE_EDITORS_QUERY = gql`
         getPossibleEditors{
             id,
             name,
-            orcid
+            orcid,
+            uri
         }
     }
 `;
@@ -124,15 +126,41 @@ function CardEditors(props) {
                 }
             }
 
-            editorList.push(
-                <ListGroup.Item key={user.id}>
-                    <a href={'https://orcid.org/' + user.orcid} target="orcid" >{user.name}</a>
-                    <span style={{
-                        fontSize: "80%",
-                        verticalAlign: "super"
-                    }} >{' '}{statusBadge}{' '}{removeBadge}</span>
-                </ListGroup.Item>
-            );
+            // FIXME - be smarter about the user link.
+            // if there is a URI this overides the ORCID.
+            // if no URI or ORCID then no link at all.
+            if (user.uri) {
+                editorList.push(
+                    <ListGroup.Item key={user.id}>
+                        <a href={user.uri} target="orcid" >{user.name}</a>
+                        <span style={{
+                            fontSize: "80%",
+                            verticalAlign: "super"
+                        }} >{' '}{statusBadge}{' '}{removeBadge}</span>
+                    </ListGroup.Item>
+                );
+            } else if (user.orcid) {
+                editorList.push(
+                    <ListGroup.Item key={user.id}>
+                        <a href={'https://orcid.org/' + user.orcid} target="orcid" >{user.name}</a>
+                        <span style={{
+                            fontSize: "80%",
+                            verticalAlign: "super"
+                        }} >{' '}{statusBadge}{' '}{removeBadge}</span>
+                    </ListGroup.Item>
+                );
+            } else {
+                editorList.push(
+                    <ListGroup.Item key={user.id}>
+                        {user.name}
+                        <span style={{
+                            fontSize: "80%",
+                            verticalAlign: "super"
+                        }} >{' '}{statusBadge}{' '}{removeBadge}</span>
+                    </ListGroup.Item>
+                );
+            }
+
             return true;
         });
     }
