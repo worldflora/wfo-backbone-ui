@@ -85,6 +85,7 @@ function PageTabs(props) {
                 if (activeWfoId !== currentHash) setActiveWfoId(currentHash); // update the name we are looking at if it is new.
                 if (activeTabKey !== "browse") setActiveTabKey("browse"); // display it in the browse tab
             } else {
+                if (!currentHash) currentHash = 'home';
                 setActiveTabKey(currentHash);
             }
 

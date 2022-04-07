@@ -23,8 +23,8 @@ class PageHome extends Component {
                             interacting with <a target="wikipedia" href="https://en.wikipedia.org/wiki/API">APIs</a> or by using this graphical interface directly.
                         </p>
                         <p>
-                            Although the primary role of the Rhakhis is to maintain the taxonomy for the <a href="http://www.worldfloraonline.org/">World Flora Online</a> we want to make all the data
-                            as accessible as possible to anyone who may need it. We make versioned releases with DOIs every six months, nightly exports of the current data
+                            Although the primary role of the Rhakhis is to maintain the taxonomy for the <a href="http://www.worldfloraonline.org/">World Flora Online</a> we want to make the data
+                            as accessible as possible to anyone who may need it. We make versioned releases with DOIs every six months, frequent exports of the current data
                             in multiple formats and providing access via APIs. If we don't already provide what you need please contact us.
                         </p>
                         <p>
@@ -34,20 +34,19 @@ class PageHome extends Component {
                             If you are just looking for <strong>stable nomenclatural data</strong> (lists of genera and species) then visit <a href="https://wfoplantlist.org/">wfoplantlist.org</a>
                         </p>
                         <p>
-                            If you are a taxonomist, even if you aren't an active data editor, you can browse the live data here by logging in with your <a href="https://orcid.org/">ORCID ID</a> at the top right of this page.
-                            We require login as this is an editing application and not a website capable of supporting high levels of traffic.
+                            If you are a taxonomist, even if you aren't an active data editor, you can browse the live data here by logging in with your <a href="https://orcid.org/">ORCID iD</a> at the top right of this page.
+                            We require login because this is primarily an editing application not a website capable of supporting high levels of traffic.
                         </p>
                         <Card>
                             <Card.Header>
-                                Some test links during dev
+                                Getting Started
                             </Card.Header>
                             <Card.Body>
-
-                                <Card.Text><a href="#wfo-9499999999">#wfo-9499999999</a></Card.Text>
-                                <Card.Text><a href="#wfo-9499999998">#wfo-9499999998</a></Card.Text>
-                                <Card.Text><a href="#wfo-0000003319">#wfo-0000003319</a> - with synonyms</Card.Text>
-                                <Card.Title>Activity</Card.Title>
-                                <Card.Text>Some information about what is going on?</Card.Text>
+                                <Card.Text>You will need to login with your <a href="https://orcid.org/">ORCID iD</a> to use Rhakhis.</Card.Text>
+                                <Card.Text>Under the <a href="#alpha">A-Z tab</a> you can just start typing the name you are interested in and matching names will be suggested - like looking it up in an index.</Card.Text>
+                                <Card.Text>The <a href="#browse">Browse tab</a> allows you to navigate the hierarchy of names and synonyms.</Card.Text>
+                                <Card.Text>If you want to find a name that you might not be sure of the ending you can use the <a href="#match">Matching tab</a>.</Card.Text>
+                                <Card.Text>Under the <a href="#data">Data tab</a> you'll find snapshot of data in different formats to download.</Card.Text>
                             </Card.Body>
                         </Card>
 
