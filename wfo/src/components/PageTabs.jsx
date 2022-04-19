@@ -65,7 +65,7 @@ const USER_QUERY = gql`
 function PageTabs(props) {
 
     const [activeTabKey, setActiveTabKey] = useState('home');
-    const [activeWfoId, setActiveWfoId] = useState('wfo-9499999999');
+    const [activeWfoId, setActiveWfoId] = useState('wfo-9971000003'); // default to Code WFO
     const [user, setUser] = useState();
 
     const { data, refetch, startPolling, stopPolling } = useQuery(USER_QUERY);

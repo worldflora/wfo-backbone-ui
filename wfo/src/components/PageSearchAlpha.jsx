@@ -28,7 +28,9 @@ function PageSearchAlpha(props) {
 }
 `;
 
-    const [runSearch, { loading, error, data }] = useLazyQuery(NAME_SEARCH);
+    const [runSearch, { loading, error, data }] = useLazyQuery(NAME_SEARCH, {
+        fetchPolicy: "network-only" // we want to always run the search as the results might have changed 
+    });
 
     const [queryString, setQueryString] = useState("");
 

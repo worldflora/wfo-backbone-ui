@@ -312,7 +312,7 @@ function CardNameParts(props) {
         // if we are part of the taxonomy then we can't be changes.
         let disabled = false;
         let help = "Ranks below genus level have a genus part to the name.";
-        if (name.taxonPlacement && name.taxonPlacement.acceptedName.id === name.id && name.taxonPlacement.parent.acceptedName) {
+        if (name.taxonPlacement && name.taxonPlacement.acceptedName.id === name.id && name.taxonPlacement.parent && name.taxonPlacement.parent.acceptedName) {
             disabled = true;
             help = "This is the accepted name of a taxon and the genus part therefore has to agree with the genus it is placed in."
         }
@@ -358,7 +358,7 @@ function CardNameParts(props) {
         // if we are part of a 
         let disabled = false;
         let help = "Ranks below species level have a Species Part to the name.";
-        if (name.taxonPlacement && name.taxonPlacement.acceptedName.id === name.id && name.taxonPlacement.parent.acceptedName) {
+        if (name.taxonPlacement && name.taxonPlacement.acceptedName.id === name.id && name.taxonPlacement.parent && name.taxonPlacement.parent.acceptedName) {
             disabled = true;
             help = "This is the accepted name of a taxon and the Species Part therefore has to agree with the species it is placed in."
         }

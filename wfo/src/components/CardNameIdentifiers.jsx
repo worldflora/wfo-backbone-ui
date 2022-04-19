@@ -60,7 +60,7 @@ function CardNameIdentifiers(props) {
 
                                 // if this is an tpl id then we link to that
                                 if (id.kind === 'tpl') {
-                                    dv = <a target='tpl' href={'http://www.theplantlist.org/tpl/record/' + v}>{v}</a>;
+                                    dv = <a target='tpl' href={'http://www.theplantlist.org/tpl1.1/record/' + v}>{v}</a>;
                                 }
 
                                 // we add a comma if we are not on the last one

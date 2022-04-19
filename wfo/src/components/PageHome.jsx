@@ -23,7 +23,7 @@ class PageHome extends Component {
                             interacting with <a target="wikipedia" href="https://en.wikipedia.org/wiki/API">APIs</a> or by using this graphical interface directly.
                         </p>
                         <p>
-                            Although the primary role of the Rhakhis is to maintain the taxonomy for the <a href="http://www.worldfloraonline.org/">World Flora Online</a> we want to make the data
+                            Although the primary role of Rhakhis is to maintain the taxonomy for the <a href="http://www.worldfloraonline.org/">World Flora Online</a> we want to make the data
                             as accessible as possible to anyone who may need it. We make versioned releases with DOIs every six months, frequent exports of the current data
                             in multiple formats and providing access via APIs. If we don't already provide what you need please contact us.
                         </p>
