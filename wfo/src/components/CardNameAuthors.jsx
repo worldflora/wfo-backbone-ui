@@ -7,7 +7,7 @@ import { useMutation, useQuery, gql } from "@apollo/client";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import AlertUpdate from "./AlertUpdate";
-
+import CardReferencesList from "./CardReferencesList";
 
 const AUTHORS_QUERY = gql`
    query getNameAuthors($wfo: String!){
@@ -138,6 +138,7 @@ function CardNameAuthors(props) {
                     <AlertUpdate response={mData ? mData.updateAuthorsString : null} loading={mLoading} wfo={props.wfo} />
                     {renderButton()}
                 </Card.Body>
+                <CardReferencesList modalHeader={"Author Link"} modalText={"Link to an author of this plant name. Wikidata or ORCiD are recommended sources."} linkTo="name" wfo={props.wfo} permittedKinds={['person']} addButtonText="Add Person" />
             </Card>
         </Form>
 

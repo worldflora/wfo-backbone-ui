@@ -68,9 +68,14 @@ function PageTabs(props) {
     const [activeWfoId, setActiveWfoId] = useState('wfo-9971000003'); // default to Code WFO
     const [user, setUser] = useState();
 
-    const { data, refetch, startPolling, stopPolling } = useQuery(USER_QUERY);
+    const { data, refetch, startPolling, stopPolling } = useQuery(USER_QUERY,
+        {
+            pollInterval: 500
+        }
+    );
 
     if (data && data.getUser) {
+
         if (!user || data.getUser.id !== user.id) {
 
             setUser(data.getUser);
@@ -108,7 +113,6 @@ function PageTabs(props) {
     React.useEffect(() => {
 
         function handleHashChange(event) {
-
 
             let newHash = window.location.hash.substring(1);
             let pattern = /^wfo-[0-9]{10}$/;
@@ -168,7 +172,7 @@ function PageTabs(props) {
                     <PageSearchMatching nameFieldsFragment={nameFieldsFragment} />
                 </Tab>
 
-                <Tab eventKey="browse" title="Browse" disabled={!user || user.isAnonymous} >
+                <Tab eventKey="browse" title="Browse" disabled={!user || user.isAnonymous} key={user} >
                     <PageForm wfo={activeWfoId} user={user} />
                 </Tab>
 

@@ -31,8 +31,6 @@ function PageUsers(props) {
 
     const { data, loading, refetch } = useQuery(USERS_QUERY);
 
-    console.log(data);
-
 
     function getUserList(listEditors, listGods) {
         if (!data) {
@@ -53,7 +51,7 @@ function PageUsers(props) {
                             {
                                 user.taxaCurated.map((taxon, i) => {
 
-                                    return <span><a key={taxon.id} href={'#' + taxon.acceptedName.wfo} dangerouslySetInnerHTML={{ __html: taxon.acceptedName.fullNameString }} /> {i < user.taxaCurated.length - 1 ? "," : ""}&nbsp;</span>
+                                    return <span key={taxon.id}><a href={'#' + taxon.acceptedName.wfo} dangerouslySetInnerHTML={{ __html: taxon.acceptedName.fullNameString }} /> {i < user.taxaCurated.length - 1 ? "," : ""}&nbsp;</span>
                                 })
                             }
 

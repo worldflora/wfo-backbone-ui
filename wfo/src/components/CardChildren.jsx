@@ -10,11 +10,23 @@ const CHILDREN_QUERY = gql`
   query getChildren($wfo: String!){
         getNameForWfoId(id: $wfo){
             id,
+            nameString,
+            genusString,
             wfo,
+            rank{
+                id,
+                name,
+                isBelowGenus
+            }
             taxonPlacement{
                 id,
                 acceptedName{
-                    id
+                    id,
+                    rank{
+                        id,
+                        name,
+                        isBelowGenus
+                    }
                 },
                 children{
                     id,
@@ -27,7 +39,8 @@ const CHILDREN_QUERY = gql`
                         rank{
                             id,
                             name,
-                            plural
+                            plural,
+                            isBelowGenus
                         }
                     }
                 }
@@ -57,6 +70,7 @@ function CardChildren(props) {
     let rankCounts = [];
     let warningLevel = "secondary";
     let alert = null;
+
     if (children && children.length > 0) {
 
         children.map(kid => {
@@ -69,11 +83,43 @@ function CardChildren(props) {
             return true;
         });
 
+    } else {
+        // no children no render
+        return null;
     }
 
+    // check for autonyms
+    if (name.rank.name === 'genus' || name.rank.isBelowGenus) {
+
+        let autonymFound = false;
+
+        // work through the kids and check there is one with our name
+        for (let i = 0; i < children.length; i++) {
+            const kid = children[i];
+            if (kid.acceptedName.nameString.toLowerCase() === name.nameString.toLowerCase()) {
+                autonymFound = true;
+                break;
+            }
+        }
+
+        if (!autonymFound) {
+            warningLevel = "danger";
+            alert = <Alert variant={warningLevel}><strong>Missing Autonym:</strong> The code specifies that there should be an autonym in this list.</Alert>
+        }
+
+    }
+
+    // check for mixed ranks
     if (rankNames.length > 1) {
         warningLevel = "danger";
         alert = <Alert variant={warningLevel}><strong>Mixed Ranks:</strong> Best practice is that descendants should all be at the same rank.</Alert>
+    } else {
+        // we only have a single rank
+        // if it is 'species' we can cancel any autonym alert
+        if (rankNames[0] === 'Species') {
+            warningLevel = "secondary";
+            alert = null;
+        }
     }
 
     for (let i = 0; i < rankNames.length; i++) {
@@ -138,8 +184,6 @@ function CardChildren(props) {
             </Card>
         );
     }
-
-    if (!children || children.length === 0) return null;
 
     return (
         <Card bg="warning" className="wfo-child-list" style={{ marginBottom: "1em" }}>

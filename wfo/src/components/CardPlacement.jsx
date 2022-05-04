@@ -110,6 +110,7 @@ function CardPlacement(props) {
         setFilter('');
         setFilterNeeded(false);
         setSelectedAction('none');
+        refetch();
     }
 
     let placer = data ? data.getNamePlacer : null;
@@ -121,7 +122,7 @@ function CardPlacement(props) {
 
         // we render nothing if we are an autonym because our placement 
         // is handled automatically
-        if (placer.name.nameString === placer.name.speciesString && !placer.name.authorsString) return null;
+        //if (placer.name.nameString === placer.name.speciesString && !placer.name.authorsString) return null;
 
         // has the need for a filter changed?
         if (placer.filterNeeded !== filterNeeded) setFilterNeeded(placer.filterNeeded);
@@ -203,6 +204,11 @@ function CardPlacement(props) {
 
     function doAction(action, destinationWfo) {
 
+        console.log(props.wfo);
+        console.log(destinationWfo);
+        console.log(action);
+
+
         updatePlacement(
             {
                 variables: {
@@ -216,6 +222,7 @@ function CardPlacement(props) {
         setPossibleTaxa([]);
         setFilter('');
         setSelectedAction('none');
+        refetch();
 
     }
 

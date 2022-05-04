@@ -18,6 +18,7 @@ import CardTaxonHybridStatus from "./CardTaxonHybridStatus";
 import CardNameIdentifiers from "./CardNameIdentifiers";
 import CardNameHomonyms from "./CardNameHomonyms";
 import CardEditors from "./CardEditors";
+import CardReferences from "./CardReferences";
 
 function PageForm(props) {
 
@@ -38,6 +39,18 @@ function PageForm(props) {
                     <CardNameStatus wfo={props.wfo} />
                     <CardNameAuthors wfo={props.wfo} />
                     <CardNamePublication wfo={props.wfo} />
+                    <CardReferences
+                        wfo={props.wfo}
+                        linkTo="name"
+                        headerColour='secondary'
+                        headerTextColour='white'
+                        headerText="Nomenclatural References"
+                        modalHeader="Nomenclatural Reference"
+                        permittedKinds={['literature', 'specimen', 'database']}
+                        addButtonText="Add Reference"
+                    >
+                        A reference supporting the nomenclature of this name
+                    </CardReferences>
                     <CardUnplacedNames wfo={props.wfo} />
                     <CardNameComment wfo={props.wfo} />
                     <CardNameIdentifiers wfo={props.wfo} />
@@ -46,6 +59,18 @@ function PageForm(props) {
                     <CardChildren wfo={props.wfo} />
                     <CardSynonyms wfo={props.wfo} />
                     <CardPlacement wfo={props.wfo} />
+                    <CardReferences
+                        wfo={props.wfo}
+                        linkTo="taxon"
+                        headerColour='warning'
+                        headerTextColour='black'
+                        headerText="Taxonomic Sources"
+                        modalHeader="Taxonomic Source"
+                        permittedKinds={['literature']}
+                        addButtonText="Add Source"
+                    >
+                        References about taxonomic sources..
+                    </CardReferences>
                     <CardTaxonHybridStatus wfo={props.wfo} />
                     <CardNameTypeRelationships wfo={props.wfo} />
                     <CardNameHomonyms wfo={props.wfo} />
