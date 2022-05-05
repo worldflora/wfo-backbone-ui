@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import ListGroup from "react-bootstrap/ListGroup";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
-import { useMutation, useQuery, gql } from "@apollo/client";
+import { useQuery, gql } from "@apollo/client";
 import CardReferencesModal from "./CardReferencesModal";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
 const REFERENCES_QUERY = gql`
    query getNameForWfoId($wfo: String!){
@@ -40,9 +42,6 @@ function CardReferencesList(props) {
 
         refsData.map(usage => {
 
-            // don't render references that are not of the kind we want
-            if (props.permittedKinds.indexOf(usage.reference.kind) === -1) return;
-
             // don't render references that are not linking to the things we want
             if (props.linkTo !== usage.subjectType) return;
 
@@ -51,7 +50,12 @@ function CardReferencesList(props) {
                 <ListGroup.Item key={usage.id} >
                     <Row>
                         <Col>
-                            <p style={{ marginBottom: "0.3em" }}><strong>{usage.reference.kind.charAt(0).toUpperCase() + usage.reference.kind.slice(1)}: </strong><a href={usage.reference.linkUri} target={usage.reference.kind} >{usage.reference.displayText}</a></p>
+                            <p style={{ marginBottom: "0.3em" }}>
+                                <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{usage.id}</Tooltip>}>
+                                    <strong>{usage.reference.kind.charAt(0).toUpperCase() + usage.reference.kind.slice(1)}: </strong>
+                                </OverlayTrigger>
+                                <a href={usage.reference.linkUri} target={usage.reference.kind} >{usage.reference.displayText}</a>
+                            </p>
                             <p style={{ marginBottom: "0.3em", color: "gray" }}>{usage.comment}</p>
                         </Col>
                         <Col lg="2"><CardReferencesModal
@@ -60,9 +64,10 @@ function CardReferencesList(props) {
                             wfo={props.wfo}
                             linkTo={props.linkTo}
                             refetchList={refetch}
-                            permittedKinds={props.permittedKinds}
+                            preferredKind={props.preferredKind}
                             refUsage={usage}
-                        /></Col>
+                        />
+                        </Col>
                     </Row>
                 </ListGroup.Item>
             );
@@ -82,7 +87,7 @@ function CardReferencesList(props) {
                             wfo={props.wfo}
                             linkTo={props.linkTo}
                             refetchList={refetch}
-                            permittedKinds={props.permittedKinds}
+                            preferredKind={props.preferredKind}
                             addButtonText={props.addButtonText}
                             refUsage={null}
                         /></Col>

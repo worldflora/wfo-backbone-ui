@@ -32,7 +32,7 @@ function CardReferences(props) {
     return (
         <Card bg={props.headerColour} text={props.headerTextColour} style={{ marginBottom: "1em" }}>
             <Card.Header>{props.headerText}</Card.Header>
-            <CardReferencesList modalHeader={props.modalHeader} modalText={props.children} linkTo={props.linkTo} wfo={props.wfo} permittedKinds={props.permittedKinds} addButtonText={props.addButtonText} />
+            <CardReferencesList modalHeader={props.modalHeader} modalText={props.children} linkTo={props.linkTo} wfo={props.wfo} preferredKind={props.preferredKind} addButtonText={props.addButtonText} />
         </Card>
 
     );

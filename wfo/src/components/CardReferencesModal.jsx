@@ -3,10 +3,10 @@ import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
-import { useMutation, useQuery, gql } from "@apollo/client";
+import { useMutation, useLazyQuery, gql } from "@apollo/client";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
-import AlertUpdate from "./AlertUpdate";
+import Alert from "react-bootstrap/Alert";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 
 const UPDATE_REFERENCE = gql`
@@ -40,21 +40,72 @@ const UPDATE_REFERENCE = gql`
         }
 `;
 
+const REFERENCE_BY_URI_QUERY = gql`
+   query getReferenceByUri($uri:    String!){
+        getReferenceByUri(uri:  $uri){
+            id,
+            kind,
+            linkUri,
+            thumbnailUri,
+            displayText
+        }
+    }
+`;
+
 
 function CardReferencesModal(props) {
 
     const [modalShow, setModalShow] = React.useState(false);
+    const [refId, setRefId] = React.useState(null);
     const [refKind, setRefKind] = React.useState('');
     const [linkUri, setLinkUri] = React.useState('');
     const [displayText, setDisplayText] = React.useState('');
     const [comment, setComment] = React.useState('');
     const [urlValid, setUrlValid] = React.useState('false');
+    const [duplicate, setDuplicate] = React.useState();
+
 
     const [updateReference, { loading: mLoading, data: mData, error: mError }] = useMutation(UPDATE_REFERENCE, {
         refetchQueries: ['getNameForWfoId']
     });
 
+    const [getDuplicate, { loading: dupeLoading, error: dupeError, data: dupeData }] = useLazyQuery(REFERENCE_BY_URI_QUERY, {
+        fetchPolicy: "network-only" // we want to always run the search as the results might have changed 
+    });
+
+    // if we have duplicate data and either don't already have a duplicate or the duplicate we have 
+    // is of another record
+    if (dupeData && dupeData.getReferenceByUri && (!duplicate || duplicate.linkUri !== dupeData.getReferenceByUri.linkUri)) {
+
+        setDuplicate(dupeData.getReferenceByUri);
+        setRefKind(dupeData.getReferenceByUri.kind);
+        setLinkUri(dupeData.getReferenceByUri.linkUri);
+        setDisplayText(dupeData.getReferenceByUri.displayText);
+        setRefId(parseInt(dupeData.getReferenceByUri.id));
+
+    }
+
+    // if we have called but not found a duplicate
+    if (dupeData && !dupeData.getReferenceByUri) {
+        // imagine pasting in an exsiting uri, the data is loaded and refId set to the duplicate
+        // the user then changes the URI! We need to reset the refId or we'll overwrite the originally
+        // loaded duplicate.
+        if (props.refUsage) {
+            if (props.refUsage.reference.id !== refId) setRefId(parseInt(props.refUsage.reference.id));
+        } else {
+            if (refId) setRefId(null);
+        }
+
+        if (duplicate) setDuplicate(null);
+    }
+
+    console.log(dupeData);
+    console.log(duplicate);
+
     function hide() {
+        // the only way I can destroy the constant dupeData!!
+        getDuplicate({ variables: { 'uri': 'banana' } });
+        if (duplicate) setDuplicate(null);
         setModalShow(false);
     }
 
@@ -63,11 +114,13 @@ function CardReferencesModal(props) {
             if (props.refUsage.reference.displayText !== displayText) setDisplayText(props.refUsage.reference.displayText);
             if (props.refUsage.reference.linkUri !== linkUri) setLinkUri(props.refUsage.reference.linkUri);
             if (props.refUsage.reference.kind !== refKind) setRefKind(props.refUsage.reference.kind);
+            if (props.refUsage.reference.id !== refId) setRefId(parseInt(props.refUsage.reference.id));
             if (props.refUsage.comment !== comment) setComment(props.refUsage.comment);
         } else {
             if (displayText !== "") setDisplayText("");
             if (linkUri !== "") setLinkUri("");
-            if (refKind !== "") setRefKind("");
+            if (refKind !== props.preferredKind) setRefKind(props.preferredKind); // default to preferred kind.
+            if (refId) setRefId(null);
             if (comment !== "") setComment("");
         }
         setModalShow(true)
@@ -105,6 +158,9 @@ function CardReferencesModal(props) {
 
         setLinkUri(event.target.value);
 
+        console.log(event.target.value);
+        getDuplicate({ variables: { 'uri': event.target.value } });
+
         // change the urlValid state only if it has changed.
         if (isValidHttpUrl(linkUri) !== urlValid) setUrlValid(!urlValid);
 
@@ -130,21 +186,12 @@ function CardReferencesModal(props) {
                     comment: comment,
                     subjectType: props.linkTo,
                     wfo: props.wfo,
-                    referenceId: getReferenceId()
+                    referenceId: refId
                 }
             }
         );
 
         hide();
-    }
-
-    function getReferenceId() {
-        // do we have an existing ref?
-        let referenceId = null;
-        if (props.refUsage && props.refUsage.reference) {
-            referenceId = parseInt(props.refUsage.reference.id);
-        }
-        return referenceId;
     }
 
     function deleteRef() {
@@ -157,7 +204,7 @@ function CardReferencesModal(props) {
                     comment: comment,
                     subjectType: props.linkTo,
                     wfo: props.wfo,
-                    referenceId: getReferenceId()
+                    referenceId: refId
                 }
             }
         );
@@ -183,24 +230,25 @@ function CardReferencesModal(props) {
 
     // set up the kind of reference
     let permittedKindPicker = null;
+    const kinds = ['literature', 'database', 'specimen', 'person'];
+    permittedKindPicker = (
+        <Form.Group controlId="reference_kind">
+            <FloatingLabel label="Reference Type">
+                <Form.Select name="referenceKind" value={refKind} onChange={kindSelectChanged} style={{ marginBottom: "1em" }} >
+                    {kinds.map(kind => {
+                        return (<option value={kind} key={kind} >{kind.charAt(0).toUpperCase() + kind.slice(1)}</option>)
+                    })}
+                </Form.Select>
+            </FloatingLabel>
+        </Form.Group >
+    );
 
-    if (props.permittedKinds.length === 1) {
-        // if we only have one permitted kind
-        if (refKind !== props.permittedKinds[0]) setRefKind(props.permittedKinds[0]);
-    } else {
-        // we have multiple kinds to pick between
-        if (!refKind) setRefKind(props.permittedKinds[0]); // default to first kind
-        permittedKindPicker = (
-            <Form.Group controlId="reference_kind">
-                <FloatingLabel label="Reference Type">
-                    <Form.Select name="referenceKind" value={refKind} onChange={kindSelectChanged} style={{ marginBottom: "1em" }} >
-                        {props.permittedKinds.map(kind => {
-                            return (<option value={kind} key={kind} >{kind.charAt(0).toUpperCase() + kind.slice(1)}</option>)
-                        })}
-                    </Form.Select>
-                </FloatingLabel>
-            </Form.Group >
-        );
+    // add a spinner for loading events
+    let spinner = null;
+    if (mLoading || dupeLoading) {
+        spinner = <Spinner animation="border" role="status" variant="secondary">
+            <span className="visually-hidden">Loading...</span>
+        </Spinner>
     }
 
     return (
@@ -218,7 +266,7 @@ function CardReferencesModal(props) {
                 <Form noValidate={true}>
                     <Modal.Header closeButton>
                         <Modal.Title id="contained-modal-title-vcenter">
-                            {props.headerText}
+                            {props.headerText}{refId ? " ~ Ref. #" + refId + ":" + refKind : null}
                         </Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
@@ -241,23 +289,22 @@ function CardReferencesModal(props) {
                         >
                             <Form.Group controlId="reference-uri" style={{ marginTop: "1em" }}>
                                 <FloatingLabel label="URI web link.">
-                                    <Form.Control type="text" disabled={false} value={linkUri} onChange={linkUriChanged} onInput={linkUriChanged} onBlur={linkUriChanged} placeholder="https://example.com/123" name="uri" style={{ color: urlValid ? 'black' : 'red' }} />
+                                    <Form.Control type="text" disabled={false} value={linkUri} onChange={linkUriChanged} onBlur={linkUriChanged} placeholder="https://example.com/123" name="uri" />
                                 </FloatingLabel>
                             </Form.Group>
                         </OverlayTrigger>
-
                         <OverlayTrigger
                             key="reference-display-text-overlay"
                             placement="top"
                             overlay={
                                 <Tooltip id={`tooltip-reference-display-text`}>
-                                    Either a full literature style citation or link text.
+                                    A full literature style citation, link text, person name etc.
                                     This is the human readable form of the URI link.
                                 </Tooltip>
                             }
                         >
                             <Form.Group controlId="reference-display-text" style={{ marginTop: "1em" }}>
-                                <FloatingLabel label="Citation or link text.">
+                                <FloatingLabel label="Display text">
                                     <Form.Control type="text" disabled={false} placeholder="Citation/link text" name="display-text" value={displayText} onChange={displayTextChanged} />
                                 </FloatingLabel>
                             </Form.Group>
@@ -281,7 +328,8 @@ function CardReferencesModal(props) {
 
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button variant="danger" disabled={!getReferenceId()} onClick={deleteRef}>Delete</Button>
+                        {spinner}
+                        <Button variant="danger" disabled={!refId} onClick={deleteRef}>Delete</Button>
                         <Button onClick={hide}>Cancel</Button>
                         <Button onClick={save} disabled={disableSaveButton()}>Save</Button>
                     </Modal.Footer>

@@ -46,7 +46,7 @@ function PageForm(props) {
                         headerTextColour='white'
                         headerText="Nomenclatural References"
                         modalHeader="Nomenclatural Reference"
-                        permittedKinds={['literature', 'specimen', 'database']}
+                        preferredKind={'literature'}
                         addButtonText="Add Reference"
                     >
                         A reference supporting the nomenclature of this name
@@ -66,7 +66,7 @@ function PageForm(props) {
                         headerTextColour='black'
                         headerText="Taxonomic Sources"
                         modalHeader="Taxonomic Source"
-                        permittedKinds={['literature']}
+                        preferredKind={'literature'}
                         addButtonText="Add Source"
                     >
                         References about taxonomic sources..

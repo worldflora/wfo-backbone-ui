@@ -119,7 +119,7 @@ function CardNameAuthors(props) {
     return (
         <Form onSubmit={handleSubmit}>
             <Card bg="secondary" text="white" style={{ marginBottom: "1em" }}>
-                <Card.Header>Authors</Card.Header>
+                <Card.Header>Author String</Card.Header>
                 <Card.Body style={{ backgroundColor: "white", color: "gray" }} >
                     <OverlayTrigger
                         key="status-overlay"
@@ -138,7 +138,6 @@ function CardNameAuthors(props) {
                     <AlertUpdate response={mData ? mData.updateAuthorsString : null} loading={mLoading} wfo={props.wfo} />
                     {renderButton()}
                 </Card.Body>
-                <CardReferencesList modalHeader={"Author Link"} modalText={"Link to an author of this plant name. Wikidata or ORCiD are recommended sources."} linkTo="name" wfo={props.wfo} permittedKinds={['person']} addButtonText="Add Person" />
             </Card>
         </Form>
 
