@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
@@ -6,7 +6,6 @@ import Spinner from "react-bootstrap/Spinner";
 import { useMutation, useLazyQuery, gql } from "@apollo/client";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
-import Alert from "react-bootstrap/Alert";
 import FloatingLabel from "react-bootstrap/FloatingLabel";
 
 const UPDATE_REFERENCE = gql`
@@ -65,11 +64,11 @@ function CardReferencesModal(props) {
     const [duplicate, setDuplicate] = React.useState();
 
 
-    const [updateReference, { loading: mLoading, data: mData, error: mError }] = useMutation(UPDATE_REFERENCE, {
+    const [updateReference, { loading: mLoading }] = useMutation(UPDATE_REFERENCE, {
         refetchQueries: ['getNameForWfoId']
     });
 
-    const [getDuplicate, { loading: dupeLoading, error: dupeError, data: dupeData }] = useLazyQuery(REFERENCE_BY_URI_QUERY, {
+    const [getDuplicate, { loading: dupeLoading, data: dupeData }] = useLazyQuery(REFERENCE_BY_URI_QUERY, {
         fetchPolicy: "network-only" // we want to always run the search as the results might have changed 
     });
 

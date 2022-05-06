@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import ListGroup from "react-bootstrap/ListGroup";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
@@ -30,7 +30,7 @@ const REFERENCES_QUERY = gql`
 
 function CardReferencesList(props) {
 
-    const { data, loading, refetch } = useQuery(REFERENCES_QUERY, {
+    const { data, refetch } = useQuery(REFERENCES_QUERY, {
         variables: { wfo: props.wfo }
     });
 
@@ -43,7 +43,7 @@ function CardReferencesList(props) {
         refsData.map(usage => {
 
             // don't render references that are not linking to the things we want
-            if (props.linkTo !== usage.subjectType) return;
+            if (props.linkTo !== usage.subjectType) return null;
 
             // fixme we should add thumbnails properly
             refsItems.push(
@@ -71,6 +71,8 @@ function CardReferencesList(props) {
                     </Row>
                 </ListGroup.Item>
             );
+            return true;
+
         });
     }
 

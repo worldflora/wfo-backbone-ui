@@ -7,7 +7,6 @@ import { useMutation, useQuery, gql } from "@apollo/client";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
 import AlertUpdate from "./AlertUpdate";
-import CardReferencesList from "./CardReferencesList";
 
 const AUTHORS_QUERY = gql`
    query getNameAuthors($wfo: String!){

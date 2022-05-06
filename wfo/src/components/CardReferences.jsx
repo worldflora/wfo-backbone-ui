@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import Card from "react-bootstrap/Card";
-import { useMutation, useQuery, gql } from "@apollo/client";
+import { useQuery, gql } from "@apollo/client";
 import CardReferencesList from "./CardReferencesList";
 
 const CHILDREN_QUERY = gql`
