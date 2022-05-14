@@ -21,7 +21,7 @@ const REFERENCES_QUERY = gql`
                 displayText,
                 linkUri,
                 kind,
-                
+                thumbnailUri
             }
         }
        }
@@ -38,18 +38,25 @@ function CardReferencesList(props) {
     if (data) {
         let refsData = data.getNameForWfoId.references;
 
-        console.log(refsData);
-
         refsData.map(usage => {
 
             // don't render references that are not linking to the things we want
             if (props.linkTo !== usage.subjectType) return null;
+
+            let thumbnail = null;
+            if (usage.reference.thumbnailUri) {
+                thumbnail = <a href={usage.reference.linkUri} target={usage.reference.kind} >
+                    <img alt={usage.reference.displayText} src={usage.reference.thumbnailUri} style={{ maxHeight: "70px", float: "right" }} />
+                </a>
+
+            }
 
             // fixme we should add thumbnails properly
             refsItems.push(
                 <ListGroup.Item key={usage.id} >
                     <Row>
                         <Col>
+                            {thumbnail}
                             <p style={{ marginBottom: "0.3em" }}>
                                 <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{usage.id}</Tooltip>}>
                                     <strong>{usage.reference.kind.charAt(0).toUpperCase() + usage.reference.kind.slice(1)}: </strong>

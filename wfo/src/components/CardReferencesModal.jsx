@@ -98,9 +98,6 @@ function CardReferencesModal(props) {
         if (duplicate) setDuplicate(null);
     }
 
-    console.log(dupeData);
-    console.log(duplicate);
-
     function hide() {
         // the only way I can destroy the constant dupeData!!
         getDuplicate({ variables: { 'uri': 'banana' } });
