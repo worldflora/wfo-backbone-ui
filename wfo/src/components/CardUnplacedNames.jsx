@@ -18,7 +18,8 @@ const UNPLACED_NAMES_QUERY = gql`
             unplacedNames{
                 id,
                 wfo,
-                fullNameString
+                fullNameString,
+                gbifOccurrenceCount
             }  
         }
     }
@@ -101,10 +102,18 @@ function CardUnplacedNames(props) {
             return loopData;
         } else {
             return names.map(n => {
+
+                let gbifOccurrences = null;
+                console.log(n.gbifOccurrenceCount);
+                if (n.gbifOccurrenceCount) {
+                    gbifOccurrences = <span>&nbsp;[GBIF Occurrences: {n.gbifOccurrenceCount.toLocaleString("en-GB")}]</span>
+                }
+
                 return <ListGroupItem action
                     key={n.id}
                     onClick={(e) => { e.preventDefault(); window.location.hash = n.wfo; }}>
                     <span dangerouslySetInnerHTML={{ __html: n.fullNameString }} />
+                    {gbifOccurrences}
                 </ListGroupItem>
             })
         }
