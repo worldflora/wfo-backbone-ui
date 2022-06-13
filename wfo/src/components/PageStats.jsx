@@ -24,7 +24,9 @@ const STATS_QUERY = gql`
     genera,
     species,
     subspecies,
-    varieties
+    varieties,
+    gbifGapSpecies,
+    gbifGapOccurrences
   }
  }
 `;
@@ -42,58 +44,70 @@ function PageAdd(props) {
     let orderSelect = null;
 
     if (data) {
-        table = (<Table striped bordered hover size="sm">
-            <thead>
-                <tr style={{ textAlign: "center" }}>
-                    <th>Phylum</th>
-                    <th>Order</th>
-                    <th>Family</th>
-                    <th>Taxa</th>
-                    <th>With Editors</th>
-                    <th>Synomyms</th>
-                    <th>Unplaced</th>
-                    <th>Genera</th>
-                    <th>Species</th>
-                    <th>Subspecies</th>
-                    <th>Varieties</th>
-                </tr>
-            </thead>
-            <tbody>
-                {data.getStatsBasicSummary.map(row => {
-
-                    // we haven't set a phylum so we are rendering all phyla and nothing below
-                    if (!phylumFilter && row.order) return null;
-
-                    // if we have a phylumFilter but it doesn't match then don't render row
-                    if (phylumFilter && phylumFilter !== row.phylum) return null;
-
-                    // if we have picked a phylum but not selected an order then show order summaries
-                    if (phylumFilter && !orderFilter && row.family) return null;
-
-                    // if we have a orderFilter but it doesn't match then don't render row
-                    if ((orderFilter && orderFilter !== row.order)) return null;
-
-                    return (
-                        <tr key={row.id}>
-                            <td>{row.phylum ? (row.phylumWfo ? <a href={'#' + row.phylumWfo}>{row.phylum}</a> : row.phylum) : "- Any -"}</td>
-                            <td>{row.order ? (row.orderWfo ? <a href={'#' + row.orderWfo}>{row.order}</a> : row.order) : "- Any -"}</td>
-                            <td>{row.family ? (row.familyWfo ? <a href={'#' + row.familyWfo}>{row.family}</a> : row.family) : "- Any -"}</td>
-                            <td style={{ textAlign: "right" }}>{row.taxa.toLocaleString("en-GB")}</td>
-                            <td style={{ textAlign: "right" }}>{row.withEditors.toLocaleString("en-GB")}</td>
-                            <td style={{ textAlign: "right" }}>{row.synonyms.toLocaleString("en-GB")}</td>
-                            <td style={{ textAlign: "right" }}>{row.unplaced.toLocaleString("en-GB")}</td>
-                            <td style={{ textAlign: "right" }}>{row.genera.toLocaleString("en-GB")}</td>
-                            <td style={{ textAlign: "right" }}>{row.species.toLocaleString("en-GB")}</td>
-                            <td style={{ textAlign: "right" }}>{row.subspecies.toLocaleString("en-GB")}</td>
-                            <td style={{ textAlign: "right" }}>{row.varieties.toLocaleString("en-GB")}</td>
+        table = (
+            <>
+                <Table striped bordered hover size="sm">
+                    <thead>
+                        <tr style={{ textAlign: "center" }}>
+                            <th>Phylum</th>
+                            <th>Order</th>
+                            <th>Family</th>
+                            <th>Taxa</th>
+                            <th>With Editors</th>
+                            <th>Synomyms</th>
+                            <th>Unplaced</th>
+                            <th>Genera</th>
+                            <th>Species</th>
+                            <th>Subspecies</th>
+                            <th>Varieties</th>
+                            <th>GBIF Gap Sp.</th>
+                            <th>GBIF Gap Occ.</th>
                         </tr>
+                    </thead>
+                    <tbody>
+                        {data.getStatsBasicSummary.map(row => {
 
-                    );
+                            // we haven't set a phylum so we are rendering all phyla and nothing below
+                            if (!phylumFilter && row.order) return null;
 
-                })}
+                            // if we have a phylumFilter but it doesn't match then don't render row
+                            if (phylumFilter && phylumFilter !== row.phylum) return null;
 
-            </tbody>
-        </Table>);
+                            // if we have picked a phylum but not selected an order then show order summaries
+                            if (phylumFilter && !orderFilter && row.family) return null;
+
+                            // if we have a orderFilter but it doesn't match then don't render row
+                            if ((orderFilter && orderFilter !== row.order)) return null;
+
+                            return (
+                                <tr key={row.id}>
+                                    <td>{row.phylum ? (row.phylumWfo ? <a href={'#' + row.phylumWfo}>{row.phylum}</a> : row.phylum) : "- Any -"}</td>
+                                    <td>{row.order ? (row.orderWfo ? <a href={'#' + row.orderWfo}>{row.order}</a> : row.order) : "- Any -"}</td>
+                                    <td>{row.family ? (row.familyWfo ? <a href={'#' + row.familyWfo}>{row.family}</a> : row.family) : "- Any -"}</td>
+                                    <td style={{ textAlign: "right" }}>{row.taxa.toLocaleString("en-GB")}</td>
+                                    <td style={{ textAlign: "right" }}>{row.withEditors.toLocaleString("en-GB")}</td>
+                                    <td style={{ textAlign: "right" }}>{row.synonyms.toLocaleString("en-GB")}</td>
+                                    <td style={{ textAlign: "right" }}>{row.unplaced.toLocaleString("en-GB")}</td>
+                                    <td style={{ textAlign: "right" }}>{row.genera.toLocaleString("en-GB")}</td>
+                                    <td style={{ textAlign: "right" }}>{row.species.toLocaleString("en-GB")}</td>
+                                    <td style={{ textAlign: "right" }}>{row.subspecies.toLocaleString("en-GB")}</td>
+                                    <td style={{ textAlign: "right" }}>{row.varieties.toLocaleString("en-GB")}</td>
+                                    <td style={{ textAlign: "right" }}>{row.gbifGapSpecies.toLocaleString("en-GB")}</td>
+                                    <td style={{ textAlign: "right" }}>{row.gbifGapOccurrences.toLocaleString("en-GB")}</td>
+                                </tr>
+
+                            );
+
+                        })}
+
+                    </tbody>
+                </Table>
+                <ul style={{ marginTop: "2em" }} >
+                    <li>GBIF Gap Sp. = Unplaced species names with occurrences in GBIF.</li>
+                    <li>GBIF Gap Occ. = Total occurrence records in GBIF tagged with unplaced species names.</li>
+                </ul>
+            </>
+        );
 
         const phyla = [];
         data.getStatsBasicSummary.map(row => {
