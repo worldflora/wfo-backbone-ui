@@ -10,6 +10,7 @@ import PageAdd from "./PageAdd";
 import PageStats from "./PageStats";
 import PageUsers from "./PageUsers";
 import CardDownloads from "./CardDownloads";
+import CardSandboxWarning from "./CardSandboxWarning";
 import LoginLogout from "./LoginLogout";
 import { gql, useQuery } from "@apollo/client";
 
@@ -148,8 +149,11 @@ function PageTabs(props) {
 
     return (
         <Container style={{ marginTop: "1em" }}>
+            <CardSandboxWarning />
 
             <LoginLogout user={user} refeshUser={refetch} startPolling={startPolling} stopPolling={stopPolling} />
+
+
 
             <Tabs
                 activeKey={activeTabKey}
