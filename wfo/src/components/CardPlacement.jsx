@@ -101,6 +101,10 @@ function CardPlacement(props) {
                 cache.data.delete('TaxonGql:' + tid);
                 return true;
             });
+            setPossibleTaxa([]);
+            setFilter('');
+            setSelectedAction('none');
+            refetch({ wfo: props.wfo, action: 'none', filter: '' });
         },
     });
 
@@ -110,7 +114,7 @@ function CardPlacement(props) {
         setFilter('');
         setFilterNeeded(false);
         setSelectedAction('none');
-        refetch();
+        refetch({ wfo: props.wfo, action: 'none', filter: '' });
     }
 
     let placer = data ? data.getNamePlacer : null;
@@ -204,11 +208,6 @@ function CardPlacement(props) {
 
     function doAction(action, destinationWfo) {
 
-        console.log(props.wfo);
-        console.log(destinationWfo);
-        console.log(action);
-
-
         updatePlacement(
             {
                 variables: {
@@ -219,11 +218,12 @@ function CardPlacement(props) {
             }
         );
 
+        /*
         setPossibleTaxa([]);
         setFilter('');
         setSelectedAction('none');
         refetch();
-
+        */
     }
 
     return (

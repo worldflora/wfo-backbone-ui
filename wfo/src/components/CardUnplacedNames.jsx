@@ -35,7 +35,6 @@ function CardUnplacedNames(props) {
     });
 
     function changePage(offset) {
-        console.log(offset);
         refetch({
             offset: offset
         })
@@ -104,7 +103,7 @@ function CardUnplacedNames(props) {
             return names.map(n => {
 
                 let gbifOccurrences = null;
-                console.log(n.gbifOccurrenceCount);
+                //console.log(n.gbifOccurrenceCount);
                 if (n.gbifOccurrenceCount) {
                     gbifOccurrences = <span>&nbsp;[GBIF Occurrences: {n.gbifOccurrenceCount.toLocaleString("en-GB")}]</span>
                 }

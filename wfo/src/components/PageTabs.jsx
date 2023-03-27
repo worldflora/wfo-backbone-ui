@@ -8,6 +8,7 @@ import PageHome from "./PageHome";
 import PageForm from "./PageForm";
 import PageAdd from "./PageAdd";
 import PageStats from "./PageStats";
+import PageActivity from "./PageActivity";
 import PageUsers from "./PageUsers";
 import CardDownloads from "./CardDownloads";
 import CardSandboxWarning from "./CardSandboxWarning";
@@ -190,6 +191,10 @@ function PageTabs(props) {
 
                 <Tab eventKey="users" title="Users" disabled={!user || user.isAnonymous}>
                     <PageUsers />
+                </Tab>
+
+                <Tab eventKey="activity" title="Activity" disabled={!user || user.isAnonymous}>
+                    <PageActivity nameFieldsFragment={nameFieldsFragment} />
                 </Tab>
 
                 <Tab eventKey="data" title="Data" disabled={!user || user.isAnonymous}>

@@ -124,6 +124,7 @@ function CardReferencesModal(props) {
 
     function disableSaveButton() {
 
+
         // can't save malformed url
         if (!isValidHttpUrl(linkUri)) return true;
 
@@ -208,6 +209,7 @@ function CardReferencesModal(props) {
     }
 
     function isValidHttpUrl(string) {
+
         let url;
 
         try {
