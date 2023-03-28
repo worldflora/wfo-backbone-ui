@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import ButtonGroup from "react-bootstrap/ButtonGroup";
+import CardSearchResults from "./CardSearchResults";
+import SelectUser from "./SelectUser";
 
 import {
     useQuery,
@@ -16,36 +16,56 @@ function handleSubmit(event) {
 }
 
 function PageActivity(props) {
-
+ 
+    const [offset, setOffset] = useState(0);
+    const [limit, setLimit] = useState(5);
+    const [userId, setUserId] = useState();
 
     const NAME_ACTIVITY = gql`
-  ${props.nameFieldsFragment}
-  query getRecentChanges{
-        getRecentChanges{
+    ${props.nameFieldsFragment}
+    query getRecentChanges($limit: Int, $offset: Int, $userId: Int ){
+        getRecentChanges(limit: $limit, offset: $offset, userId: $userId){
             ...nameFields
         }
     }
-`;
+    `;
 
-    const { data } = useQuery(NAME_ACTIVITY);
+    const { loading, error, data } = useQuery(NAME_ACTIVITY, {
+        variables: { limit, offset, userId },
+    });
 
-    console.log(data);
+    console.log(error);
+
+    let backButton = <Button variant="light" disabled={true} >&lt; Previous Page</Button>
+    if (offset > 0) {
+        let newOffset = offset - limit;
+        if (newOffset < 0) newOffset = 0;
+        backButton = <Button variant="light" disabled={false} onClick={e => setOffset(newOffset)} >&lt; Previous Page</Button>
+    }
+
+    let nextButton = <Button variant="light" disabled={true} >Next Page &gt;</Button>
+    if (data && data.getRecentChanges.length >= limit) {
+        let newOffset = offset + data.getRecentChanges.length;
+        nextButton = <Button variant="light" disabled={false} onClick={e => setOffset(newOffset)} > Next Page  &gt;</Button>
+    }
 
     // build a distances array with the modified dates in them
     // also an index list
 
     return (
         <Container style={{ marginTop: "2em" }}>
+            <div style={{ float: "right" }}>
+                <SelectUser setUserId={id => {setUserId(id); setOffset(0);}} userId={userId} />
+            </div>
+
             <h2>Recently Changed Names</h2>
-            <Form onSubmit={handleSubmit} style={{ marginBottom: "1em" }}>
-                <Row className="align-items-center">
-                    <Col xs="auto">
-                        <Button type="submit">Next</Button>
-                        <Button type="submit">Search</Button>
-                    </Col>
-                </Row>
-            </Form>
-            <p>These are names that have been changed through the UI</p>
+            
+            <CardSearchResults names={data ? data.getRecentChanges : null} distances={data ? [] : null} loading={loading} error={error} />
+            
+            <ButtonGroup className="me-2" aria-label="First group" size="sm">
+                {backButton}{' | '}{nextButton}
+            </ButtonGroup>
+
         </Container>
     );
 
