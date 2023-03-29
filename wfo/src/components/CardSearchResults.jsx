@@ -5,7 +5,7 @@ import CardSearchName from "./CardSearchName";
 
 function CardSearchResults(props) {
 
-    const { names, distances, loading, error } = props;
+    const { names, distances, loading, error, showModified } = props;
 
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error :(</p>;
@@ -20,7 +20,7 @@ function CardSearchResults(props) {
             return (
                 <Row key={index}>
                     <Col>
-                        <CardSearchName name={name} index={index} distances={distances} />
+                        <CardSearchName name={name} index={index} distances={distances} showModified={showModified} />
                     </Col>
                 </Row>
             );

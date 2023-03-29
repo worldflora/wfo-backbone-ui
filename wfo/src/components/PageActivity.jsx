@@ -16,9 +16,10 @@ function handleSubmit(event) {
 }
 
 function PageActivity(props) {
- 
+
+    const [visible, setVisible] = useState(props.visible)
     const [offset, setOffset] = useState(0);
-    const [limit, setLimit] = useState(5);
+    const [limit, setLimit] = useState(100);
     const [userId, setUserId] = useState();
 
     const NAME_ACTIVITY = gql`
@@ -30,11 +31,18 @@ function PageActivity(props) {
     }
     `;
 
-    const { loading, error, data } = useQuery(NAME_ACTIVITY, {
+    const { loading, error, data, refetch } = useQuery(NAME_ACTIVITY, {
         variables: { limit, offset, userId },
     });
 
-    console.log(error);
+    if (props.visible) {
+        if (!visible) {
+            setVisible(true);
+            refetch();
+        }
+    } else {
+        if (visible) setVisible(false);
+    }
 
     let backButton = <Button variant="light" disabled={true} >&lt; Previous Page</Button>
     if (offset > 0) {
@@ -54,13 +62,20 @@ function PageActivity(props) {
 
     return (
         <Container style={{ marginTop: "2em" }}>
+
             <div style={{ float: "right" }}>
                 <SelectUser setUserId={id => {setUserId(id); setOffset(0);}} userId={userId} />
             </div>
 
             <h2>Recently Changed Names</h2>
             
-            <CardSearchResults names={data ? data.getRecentChanges : null} distances={data ? [] : null} loading={loading} error={error} />
+            <CardSearchResults 
+                names={data ? data.getRecentChanges : null} 
+                distances={data ? [] : null} 
+                loading={loading} 
+                error={error}
+                showModified={true}
+                />
             
             <ButtonGroup className="me-2" aria-label="First group" size="sm">
                 {backButton}{' | '}{nextButton}

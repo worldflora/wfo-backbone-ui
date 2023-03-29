@@ -20,26 +20,35 @@ import { gql, useQuery } from "@apollo/client";
 const nameFieldsFragment = gql`
 
   fragment nameFields on NameGql {
-        id
+        id,
+        lastModified,
+        lastChangeMessage,
+        lastEditor{
+            id
+            name
+        },
         wfo,
         status,
         fullNameString,
         taxonPlacement{
         id,
         acceptedName{
-            wfo
+            id,
+            wfo,
             fullNameString  
         }
         family: ancestorAtRank(rank: "family"){
             acceptedName{
-            wfo,
-            fullNameString(authors: false)
+                id,
+                wfo,
+               fullNameString(authors: false)
             }
         }
         order: ancestorAtRank(rank: "order"){
             acceptedName{
-            wfo,
-            fullNameString(authors: false)
+                id
+                wfo,
+                fullNameString(authors: false)
             }
         }
     }
@@ -193,8 +202,8 @@ function PageTabs(props) {
                     <PageUsers />
                 </Tab>
 
-                <Tab eventKey="activity" title="Activity" disabled={!user || user.isAnonymous}>
-                    <PageActivity nameFieldsFragment={nameFieldsFragment} />
+                <Tab eventKey="activity" title="Activity" disabled={!user || user.isAnonymous} >
+                    <PageActivity nameFieldsFragment={nameFieldsFragment} visible={activeTabKey == 'activity'} />
                 </Tab>
 
                 <Tab eventKey="data" title="Data" disabled={!user || user.isAnonymous}>

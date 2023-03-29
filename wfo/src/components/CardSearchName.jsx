@@ -4,7 +4,7 @@ import Badge from "react-bootstrap/Badge";
 
 function CardSearchName(props) {
 
-    const { name, index, distances } = props;
+    const { name, index, distances, showModified } = props;
 
     //const distances = data.getNamesByStringMatch.distances;
 
@@ -55,11 +55,20 @@ function CardSearchName(props) {
         }
     }
 
+    let modificationData = null;
+    if(showModified){
+        
+        let changeMessage = '';
+        if (name.lastChangeMessage) changeMessage = <span> : {name.lastChangeMessage}</span>
+
+        let modDate = new Date(name.lastModified * 1000);
+
+        modificationData = <Card.Footer><strong>Modified: </strong>{modDate.toLocaleString()} by <strong>{name.lastEditor.name}</strong>{changeMessage}</Card.Footer>;
+    }
 
     function getNameLink(nameString, wfo) {
         return < a href={"#" + wfo} onClick={(e) => { e.preventDefault(); window.location.hash = wfo; }} dangerouslySetInnerHTML={{ __html: nameString }} />
     }
-
 
     return (
         <Card border={border} style={{ marginBottom: '0.5em', borderLeftWidth: '1em', borderRightWidth: '1em' }}>
@@ -71,6 +80,7 @@ function CardSearchName(props) {
                     {placement}
                 </Card.Text>
             </Card.Body>
+            {modificationData}
         </Card>
     );
 

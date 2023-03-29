@@ -17,6 +17,7 @@ const USERS_QUERY = gql`
             taxaCurated{
                     id,
                     acceptedName{
+                        id,
                         wfo,
                         fullNameString
                 }

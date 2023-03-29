@@ -17,8 +17,6 @@ function SelectUser(props) {
     const { data } = useQuery(SELECT_USER_QUERY);
     if (!data) return null;
 
-    console.log(data);
-
     return (
         <Form.Select size="sm" aria-label="Filter to one user" value={props.userId} onChange={e => props.setUserId(parseInt(e.currentTarget.value))}>
             <option>- All Users -</option>
