@@ -28,10 +28,16 @@ function AlertUpdate(props) {
     let heading = "Failure";
     let txt = "Unknown error";
 
-    if (response && response.success) {
-        variant = 'success';
-        heading = "Success";
-        txt = response.message;
+    if (response) {
+        if (response.success) {
+            variant = 'success';
+            heading = "Success";
+            txt = response.message;
+        } else {
+            variant = 'danger';
+            heading = "Failure";
+            txt = response.message;
+        }
     }
 
     if (show) {
