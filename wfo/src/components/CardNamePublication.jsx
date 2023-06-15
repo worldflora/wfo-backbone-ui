@@ -25,7 +25,7 @@ const UPDATE_PUBLICATION = gql`
         mutation  updatePublication(
             $wfo: String!,
             $citationMicro: String!,
-            $year: Int!
+            $year: Int
             ){
           updatePublication(
               wfo: $wfo,
@@ -68,7 +68,7 @@ function CardNamePublication(props) {
     if (name && wfo !== props.wfo) {
         setWfo(props.wfo);
         setCitationMicro(name.citationMicro === null ? "" : name.citationMicro);
-        setYear(name.year === null ? "" : name.year);
+        setYear(name.year === null || name.year === 0 ? "" : name.year);
     }
 
     function handleSubmit(event) {
