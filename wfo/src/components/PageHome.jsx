@@ -46,7 +46,8 @@ class PageHome extends Component {
                                 <Card.Text>Under the <a href="#alpha">A-Z tab</a> you can just start typing the name you are interested in and matching names will be suggested - like looking it up in an index.</Card.Text>
                                 <Card.Text>The <a href="#browse">Browse tab</a> allows you to navigate the hierarchy of names and synonyms.</Card.Text>
                                 <Card.Text>If you want to find a name that you might not be sure of the ending you can use the <a href="#match">Matching tab</a>.</Card.Text>
-                                <Card.Text>Under the <a href="#data">Data tab</a> you'll find snapshot of data in different formats to download.</Card.Text>
+                                <Card.Text>Under the <a href="#data">Data tab</a> you'll find snapshots of data in different formats to download.</Card.Text>
+                                <Card.Text><strong>For full instructions and walkthroughs see the <a href="https://plant-list-docs.rbge.info/rhakhis/" target="handbook">Rhakhis Users' Handbook</a>.</strong></Card.Text>
                             </Card.Body>
                         </Card>
 
