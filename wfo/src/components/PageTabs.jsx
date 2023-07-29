@@ -11,7 +11,7 @@ import PageStats from "./PageStats";
 import PageActivity from "./PageActivity";
 import PageUsers from "./PageUsers";
 import CardDownloads from "./CardDownloads";
-import CardSandboxWarning from "./CardSandboxWarning";
+import CardSystemMessage from "./CardSystemMessage";
 import LoginLogout from "./LoginLogout";
 import { gql, useQuery } from "@apollo/client";
 
@@ -79,11 +79,7 @@ function PageTabs(props) {
     const [activeWfoId, setActiveWfoId] = useState('wfo-9971000003'); // default to Code WFO
     const [user, setUser] = useState();
 
-    const { data, refetch, startPolling, stopPolling } = useQuery(USER_QUERY,
-        {
-            pollInterval: 500
-        }
-    );
+    const { data, refetch, startPolling, stopPolling } = useQuery(USER_QUERY, {});
 
     if (data && data.getUser) {
 
@@ -159,11 +155,9 @@ function PageTabs(props) {
 
     return (
         <Container style={{ marginTop: "1em" }}>
-            <CardSandboxWarning />
+            <CardSystemMessage />
 
             <LoginLogout user={user} refeshUser={refetch} startPolling={startPolling} stopPolling={stopPolling} />
-
-
 
             <Tabs
                 activeKey={activeTabKey}
@@ -203,7 +197,7 @@ function PageTabs(props) {
                 </Tab>
 
                 <Tab eventKey="activity" title="Activity" disabled={!user || user.isAnonymous} >
-                    <PageActivity nameFieldsFragment={nameFieldsFragment} visible={activeTabKey == 'activity'} />
+                    <PageActivity nameFieldsFragment={nameFieldsFragment} visible={activeTabKey === 'activity'} />
                 </Tab>
 
                 <Tab eventKey="data" title="Data" disabled={!user || user.isAnonymous}>

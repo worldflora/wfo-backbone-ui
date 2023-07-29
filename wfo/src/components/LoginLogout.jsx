@@ -93,6 +93,9 @@ function LoginLogout(props) {
 
         // if the user is logged in we should stop any polling of the server
         props.stopPolling();
+        console.log("logged in so slowing polling");
+        props.startPolling(1000 * 10); // poll every 10 seconds to check they still have a session.
+
 
         // build a log out button
         link =
