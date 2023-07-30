@@ -1,3 +1,5 @@
+# FOR USE ON STAGING SERVER
+
 # This will use node to build and deploy the code to the ui director
 # This should be copied to /var/wfo-list directory so we have a single control point
 # for safety the paths are fully qualified - don't want this run from the wrong director!
