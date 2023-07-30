@@ -4,6 +4,6 @@
 cd /var/wfo-list/rhakhis/ui-src/wfo
 npm run build
 rm -rf /var/wfo-list/rhakhis/ui/*  # remove all the existing live artifacts
-cp -r /var/wfo-list/rhakhis/ui-src/build/* /var/wfo-list/rhakhis/ui # just copy everything over.
+cp -r /var/wfo-list/rhakhis/ui-src/wfo/build/* /var/wfo-list/rhakhis/ui # just copy everything over.
 
 
