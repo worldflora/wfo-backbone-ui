@@ -122,7 +122,7 @@ function PageActivityUsers(props) {
                 </Form.Select>
             </div>
 
-            <h2 style={{ marginBottom: "0.5em" }}>Most Active Editors</h2>
+            <h2 style={{ marginBottom: "0.5em" }}>Most Active Editors<span style={{ fontSize: "33%", verticalAlign: "super" }}  >* Excludes admins</span></h2>
 
             {data && data.getMostActiveUsers.length > 0 ? renderUserList(data.getMostActiveUsers) : renderNoResults(loading)}
 
