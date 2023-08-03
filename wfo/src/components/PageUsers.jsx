@@ -4,6 +4,7 @@ import Container from "react-bootstrap/Container";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 import Button from "react-bootstrap/Button";
+import LinkOrcid from "./LinkOrcid";
 
 const USERS_QUERY = gql`
   query getPossibleEditors{
@@ -46,7 +47,7 @@ function PageUsers(props) {
                         if (listEditors !== user.isEditor) return null;
                         return <ListGroup.Item key={user.id}>
                             <strong>{user.name}</strong>&nbsp;
-                            {getOrcidButton(user)}
+                            <LinkOrcid user={user} />
                             {getWebButton(user)}
                             {user.taxaCurated.length ? <><br /><span>Curator of:&nbsp;</span></> : ""}
                             {
@@ -66,9 +67,10 @@ function PageUsers(props) {
 
     }
 
+    /*
+
     function getOrcidButton(user) {
         if (!user.orcid) return null;
-
         return (
             <a href={"https://orcid.org/" + user.orcid} >
                 <img target="orcid" alt="ORCID logo" src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16" />
@@ -76,6 +78,7 @@ function PageUsers(props) {
             </a>
         );
     }
+*/
 
     function getWebButton(user) {
         if (!user.uri) return null;
