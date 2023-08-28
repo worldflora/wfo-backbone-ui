@@ -231,6 +231,11 @@ function PageTabs(props) {
                         </CardDownloads>
 
 
+                        <CardDownloads header="Integrity Reports" directoryName="integrity_reports" fileEnding="csv" >
+                            Reports from periodic data integrity checks.
+                        </CardDownloads>
+
+
                         <p>If the data you are looking for isn't here in the format or with the frequency you need it please <a href="mailto:rhyam@rbge.org.uk">contact us</a> and we will try and get you what you need.</p>
 
                     </Container>
