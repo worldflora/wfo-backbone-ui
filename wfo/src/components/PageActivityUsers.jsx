@@ -10,7 +10,7 @@ import Badge from "react-bootstrap/Badge";
 import LinkOrcid from "./LinkOrcid";
 
 import {
-    useQuery,
+    useLazyQuery,
     gql
 } from "@apollo/client";
 
@@ -18,8 +18,10 @@ function PageActivityUsers(props) {
 
     const [visible, setVisible] = useState(props.visible)
     const [offset, setOffset] = useState(0);
+    const [currentOffset, setCurrentOffset] = useState();
     const [limit, setLimit] = useState(100);
     const [days, setDays] = useState();
+    const [currentDays, setCurrentDays] = useState();
 
     const USER_ACTIVITY = gql`
     query getMostActiveUsers($limit: Int, $offset: Int, $days: Int ){
@@ -33,14 +35,14 @@ function PageActivityUsers(props) {
     }
     `;
 
-    const { loading, error, data, refetch } = useQuery(USER_ACTIVITY, {
-        variables: { limit, offset, days },
-    });
+    const [getData, { loading, error, data }] = useLazyQuery(USER_ACTIVITY);
 
     if (props.visible) {
-        if (!visible) {
+        if (!visible || currentOffset != offset || currentDays != days) {
             setVisible(true);
-            refetch();
+            setCurrentOffset(offset);
+            setCurrentDays(days);
+            getData({ variables: { limit, offset, days } });
         }
     } else {
         if (visible) setVisible(false);

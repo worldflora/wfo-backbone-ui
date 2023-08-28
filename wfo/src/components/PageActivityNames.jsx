@@ -6,17 +6,18 @@ import CardSearchResults from "./CardSearchResults";
 import SelectUser from "./SelectUser";
 
 import {
-    useQuery,
+    useLazyQuery,
     gql
 } from "@apollo/client";
 
 
 function PageActivityNames(props) {
 
-    const [visible, setVisible] = useState(props.visible)
+    const [visible, setVisible] = useState()
     const [offset, setOffset] = useState(0);
+    const [currentOffset, setCurrentOffset] = useState();
     const [limit, setLimit] = useState(100);
-    //const [userId, setUserId] = useState();
+    const [currentUserId, setCurrentUserId] = useState();
 
     const NAME_ACTIVITY = gql`
     ${props.nameFieldsFragment}
@@ -27,14 +28,14 @@ function PageActivityNames(props) {
     }
     `;
 
-    const { loading, error, data, refetch } = useQuery(NAME_ACTIVITY, {
-        variables: { limit, offset, userId: props.userId },
-    });
+    const [getData, { loading, error, data }] = useLazyQuery(NAME_ACTIVITY);
 
     if (props.visible) {
-        if (!visible) {
+        if (!visible || currentUserId != props.userId || currentOffset != offset) {
             setVisible(true);
-            refetch();
+            setCurrentUserId(props.userId);
+            setCurrentOffset(offset);
+            getData({ variables: { limit, offset, userId: props.userId } })
         }
     } else {
         if (visible) setVisible(false);
@@ -60,7 +61,7 @@ function PageActivityNames(props) {
         <Container style={{ marginTop: "1em" }}>
 
             <div style={{ float: "right" }}>
-                <SelectUser setUserId={id => { props.setUserId(id); setOffset(0); }} userId={props.userId} />
+                <SelectUser setUserId={id => { props.setUserId(id); setOffset(0); }} userId={props.userId ? props.userId : ''} />
             </div>
 
             <h2 style={{ marginBottom: "0.5em" }}>Recently Changed Names</h2>
