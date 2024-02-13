@@ -1,4 +1,6 @@
 import React from "react";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 import Card from "react-bootstrap/Card";
 import { useQuery, gql } from "@apollo/client";
 import CardReferencesList from "./CardReferencesList";
@@ -31,8 +33,18 @@ function CardReferences(props) {
 
     return (
         <Card bg={props.headerColour} text={props.headerTextColour} style={{ marginBottom: "1em" }}>
+            <OverlayTrigger
+                key="reference-head-display-text-overlay"
+                placement="top"
+                overlay={
+                    <Tooltip id={`tooltip-reference-head-display-text`}>
+                        {props.toolTip}
+                    </Tooltip>
+                }
+            >
             <Card.Header>{props.headerText}</Card.Header>
-            <CardReferencesList modalHeader={props.modalHeader} modalText={props.children} linkTo={props.linkTo} wfo={props.wfo} preferredKind={props.preferredKind} addButtonText={props.addButtonText} />
+            </OverlayTrigger>
+            <CardReferencesList modalHeader={props.modalHeader} modalText={props.children} linkTo={props.linkTo} wfo={props.wfo} preferredKind={props.preferredKind} excludeKinds={props.excludeKinds} addButtonText={props.addButtonText} />
         </Card>
 
     );

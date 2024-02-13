@@ -47,11 +47,27 @@ function PageForm(props) {
                         headerText="Nomenclatural References"
                         modalHeader="Nomenclatural Reference"
                         preferredKind={'literature'}
+                        excludeKinds={['treatment']}
                         addButtonText="Add Reference"
+                        toolTip="Resources relating to the nomenclatural status of this name."
                     >
                         A reference supporting the nomenclature of this name
                     </CardReferences>
                     <CardUnplacedNames wfo={props.wfo} />
+                    <CardReferences
+                        wfo={props.wfo}
+                        linkTo="name"
+                        headerColour='warning'
+                        headerTextColour='black'
+                        headerText="Other Treatments"
+                        modalHeader="Treatments"
+                        preferredKind={'treatment'}
+                        excludeKinds={['literature', 'database', 'person', 'specimen']}
+                        addButtonText="Add Treatment"
+                        toolTip="Other taxonomic works that include this name."
+                    >
+                        Treatments
+                    </CardReferences>
                     <CardNameComment wfo={props.wfo} />
                     <CardNameIdentifiers wfo={props.wfo} />
                 </Col>
@@ -67,7 +83,9 @@ function PageForm(props) {
                         headerText="Taxonomic Sources"
                         modalHeader="Taxonomic Source"
                         preferredKind={'literature'}
+                        excludeKinds={['treatment']}
                         addButtonText="Add Source"
+                        toolTip="Resources on which current taxonomic placement is based."
                     >
                         References about taxonomic sources..
                     </CardReferences>

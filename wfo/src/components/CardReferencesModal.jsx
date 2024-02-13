@@ -52,6 +52,7 @@ const REFERENCE_BY_URI_QUERY = gql`
 `;
 
 
+
 function CardReferencesModal(props) {
 
     const [modalShow, setModalShow] = React.useState(false);
@@ -72,12 +73,25 @@ function CardReferencesModal(props) {
         fetchPolicy: "network-only" // we want to always run the search as the results might have changed 
     });
 
+    // these are the kinds of reference we can handle here
+    let kinds = ['literature', 'database', 'specimen', 'person', 'treatment']; // fixme this shouldn't really be hard coded
+    kinds = kinds.filter((kind) => !props.excludeKinds || !props.excludeKinds.includes(kind));
+
     // if we have duplicate data and either don't already have a duplicate or the duplicate we have 
     // is of another record
     if (dupeData && dupeData.getReferenceByUri && (!duplicate || duplicate.linkUri !== dupeData.getReferenceByUri.linkUri)) {
 
         setDuplicate(dupeData.getReferenceByUri);
-        setRefKind(dupeData.getReferenceByUri.kind);
+
+        // the dupe may have a kind that we don't support in this context
+        // in which case swap to prefered kind.
+        // this allows us to move between treatments and taxon/name reference types.
+        if (kinds.includes(dupeData.getReferenceByUri.kind)){
+            setRefKind(dupeData.getReferenceByUri.kind);
+        }else{
+            setRefKind(props.preferredKind);
+        }
+        
         setLinkUri(dupeData.getReferenceByUri.linkUri);
         setDisplayText(dupeData.getReferenceByUri.displayText);
         setRefId(parseInt(dupeData.getReferenceByUri.id));
@@ -155,7 +169,6 @@ function CardReferencesModal(props) {
 
         setLinkUri(event.target.value);
 
-        console.log(event.target.value);
         getDuplicate({ variables: { 'uri': event.target.value } });
 
         // change the urlValid state only if it has changed.
@@ -228,7 +241,6 @@ function CardReferencesModal(props) {
 
     // set up the kind of reference
     let permittedKindPicker = null;
-    const kinds = ['literature', 'database', 'specimen', 'person'];
     permittedKindPicker = (
         <Form.Group controlId="reference_kind">
             <FloatingLabel label="Reference Type">
