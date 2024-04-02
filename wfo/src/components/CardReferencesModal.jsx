@@ -74,9 +74,8 @@ function CardReferencesModal(props) {
     });
 
     // these are the kinds of reference we can handle here
-    let kinds = ['literature', 'database', 'specimen', 'person', 'treatment']; // fixme this shouldn't really be hard coded
-    kinds = kinds.filter((kind) => !props.excludeKinds || !props.excludeKinds.includes(kind));
-
+    let kinds = ['literature', 'database', 'specimen', 'person']; // fixme this shouldn't really be hard coded
+    
     // if we have duplicate data and either don't already have a duplicate or the duplicate we have 
     // is of another record
     if (dupeData && dupeData.getReferenceByUri && (!duplicate || duplicate.linkUri !== dupeData.getReferenceByUri.linkUri)) {
@@ -339,7 +338,7 @@ function CardReferencesModal(props) {
                     </Modal.Body>
                     <Modal.Footer>
                         {spinner}
-                        <Button variant="danger" disabled={!refId} onClick={deleteRef}>Delete</Button>
+                        <Button variant="danger" disabled={!refId} onClick={deleteRef}>Remove</Button>
                         <Button onClick={hide}>Cancel</Button>
                         <Button onClick={save} disabled={disableSaveButton()}>Save</Button>
                     </Modal.Footer>

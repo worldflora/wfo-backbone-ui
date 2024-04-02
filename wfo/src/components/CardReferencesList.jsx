@@ -36,15 +36,13 @@ function CardReferencesList(props) {
 
     const refsItems = [];
     if (data) {
+
         let refsData = data.getNameForWfoId.references;
 
         refsData.map(usage => {
 
             // don't render references that are not linking to the things we want
             if (props.linkTo !== usage.subjectType) return null;
-
-            // don't render references that of our exclude kind
-            if (props.excludeKinds &&  props.excludeKinds.includes(usage.reference.kind)) return null;
 
             let thumbnail = null;
             if (usage.reference.thumbnailUri) {
@@ -75,7 +73,6 @@ function CardReferencesList(props) {
                             linkTo={props.linkTo}
                             refetchList={refetch}
                             preferredKind={props.preferredKind}
-                            excludeKinds={props.excludeKinds}
                             refUsage={usage}
                         />
                         </Col>
@@ -102,7 +99,6 @@ function CardReferencesList(props) {
                             refetchList={refetch}
                             preferredKind={props.preferredKind}
                             addButtonText={props.addButtonText}
-                            excludeKinds={props.excludeKinds}
                             refUsage={null}
                         /></Col>
                     </Row>

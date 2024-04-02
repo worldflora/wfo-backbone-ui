@@ -44,7 +44,7 @@ function CardReferences(props) {
             >
             <Card.Header>{props.headerText}</Card.Header>
             </OverlayTrigger>
-            <CardReferencesList modalHeader={props.modalHeader} modalText={props.children} linkTo={props.linkTo} wfo={props.wfo} preferredKind={props.preferredKind} excludeKinds={props.excludeKinds} addButtonText={props.addButtonText} />
+            <CardReferencesList modalHeader={props.modalHeader} modalText={props.children} linkTo={props.linkTo} wfo={props.wfo} preferredKind={props.preferredKind} addButtonText={props.addButtonText} />
         </Card>
 
     );

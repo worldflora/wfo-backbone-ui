@@ -41,13 +41,12 @@ function PageForm(props) {
                     <CardNamePublication wfo={props.wfo} />
                     <CardReferences
                         wfo={props.wfo}
-                        linkTo="name"
+                        linkTo="nomenclatural"
                         headerColour='secondary'
                         headerTextColour='white'
                         headerText="Nomenclatural References"
                         modalHeader="Nomenclatural Reference"
                         preferredKind={'literature'}
-                        excludeKinds={['treatment']}
                         addButtonText="Add Reference"
                         toolTip="Resources relating to the nomenclatural status of this name."
                     >
@@ -56,13 +55,12 @@ function PageForm(props) {
                     <CardUnplacedNames wfo={props.wfo} />
                     <CardReferences
                         wfo={props.wfo}
-                        linkTo="name"
+                        linkTo="treatment"
                         headerColour='warning'
                         headerTextColour='black'
                         headerText="Other Treatments"
                         modalHeader="Treatments"
-                        preferredKind={'treatment'}
-                        excludeKinds={['literature', 'database', 'person', 'specimen']}
+                        preferredKind={'literature'}
                         addButtonText="Add Treatment"
                         toolTip="Other taxonomic works that include this name."
                     >
@@ -77,13 +75,12 @@ function PageForm(props) {
                     <CardPlacement wfo={props.wfo} />
                     <CardReferences
                         wfo={props.wfo}
-                        linkTo="taxon"
+                        linkTo="taxonomic"
                         headerColour='warning'
                         headerTextColour='black'
                         headerText="Taxonomic Sources"
                         modalHeader="Taxonomic Source"
                         preferredKind={'literature'}
-                        excludeKinds={['treatment']}
                         addButtonText="Add Source"
                         toolTip="Resources on which current taxonomic placement is based."
                     >
