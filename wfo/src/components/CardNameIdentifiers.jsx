@@ -1,5 +1,7 @@
 import React from "react";
 import Card from "react-bootstrap/Card";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 import ListGroup from "react-bootstrap/ListGroup";
 import { useQuery, gql } from "@apollo/client";
 
@@ -11,7 +13,8 @@ const IDENTIFIERS_QUERY = gql`
             identifiers{
                 kind,
                 displayName,
-                values
+                values,
+                preferredValue
             }
         }
     }
@@ -28,49 +31,68 @@ function CardNameIdentifiers(props) {
 
     return (
         <Card bg="secondary" text="white" style={{ marginBottom: "1em" }}>
+            <OverlayTrigger
+                key="identifiers-head-display-text-overlay"
+                placement="top"
+                overlay={
+                    <Tooltip id={`tooltip-identifiers-head-display-text`}>
+                        Multiple alternative identifiers are tracked for names.
+                        Those that are considered preferred are presented as links.
+                    </Tooltip>
+                }
+            >
             <Card.Header>Identifiers</Card.Header>
+            </OverlayTrigger>
             <ListGroup variant="flush" style={{ maxHeight: "30em", overflow: "auto", backgroundColor: "white", color: "gray" }} >
                 {
                     name.identifiers.map((id, index) => {
+                        console.log(id);
                         return (<ListGroup.Item key={index}><strong>{id.displayName}:</strong> {
+                            
                             id.values.map((v, vindex, values) => {
 
                                 // work out the display value
                                 let dv;
+
+                                // if it is a URL then make it a link
                                 try {
                                     let url = new URL(v);
-                                    let urlDisplayed = v;
-                                    if (v.length > 10) urlDisplayed = v.substring(0, 30) + "...";
-                                    dv = <a target={id.kind} href={url.href}>{urlDisplayed}</a>;
+                                    if(url.protocol === 'http:' || url.protocol === 'https:'){
+                                        let urlDisplayed = v;
+                                        if (v.length > 10) urlDisplayed = v.substring(0, 30) + "...";
+                                        dv = <a target={id.kind} href={url.href}>{urlDisplayed}</a>;
+                                    }else{
+                                        dv = v;
+                                    }
                                 } catch (_) {
                                     dv = v;
                                 }
 
-                                // if this is a wfo id then we link to the main website
-                                let pattern = /^wfo-[0-9]{10}$/;
-                                if (pattern.test(v)) {
-                                    dv = <a target='wfo' href={'http://www.worldfloraonline.org/taxon/' + v}>{v}</a>;
-                                }
-
-                                // if this is an ipni id then we link to that
-                                pattern = /^[0-9]+-[0-9]+$/;
-                                if (id.kind === 'ipni' && pattern.test(v)) {
-                                    dv = <a target='ipni' href={'https://www.ipni.org/n/' + v}>{v}</a>;
-                                }
-
-                                // if this is an tpl id then we link to that
-                                if (id.kind === 'tpl') {
-                                    dv = <a target='tpl' href={'http://www.theplantlist.org/tpl1.1/record/' + v}>{v}</a>;
-                                }
-
                                 // we add a comma if we are not on the last one
-                                let separator = ", ";
+                                let separator = "; ";
                                 if (vindex + 1 === values.length) {
                                     separator = "";
                                 }
+
+                                // we present preferred IDs as links
+                                // non-preferred are just text
+                                if (id.preferredValue !== null && v === id.preferredValue){
+
+                                    
+                                    if (id.kind === 'ipni') {
+                                        dv = <a target='ipni' href={'https://www.ipni.org/n/' + v}>{v}</a>;
+                                    }
+
+                                    if (id.kind === 'wfo') {
+                                        dv = <a target='wfo' href={'https://list.worldfloraonline.org/' + v}>{v}</a>;
+                                    }
+
+                                }
+
                                 return <span key={vindex}>{dv}{separator}</span>
+                                
                             })
-                        } </ListGroup.Item>);
+                        }.</ListGroup.Item>);
                     })
                 }
             </ListGroup>

@@ -119,22 +119,21 @@ function CardNameComment(props) {
     return (
         <Form onSubmit={handleSubmit}>
             <Card bg="secondary" text="white" style={{ marginBottom: "1em" }}>
+                <OverlayTrigger
+                    key="status-overlay"
+                    placement="top"
+                    overlay={
+                        <Tooltip id={`tooltip-status`}>
+                            Comments on this name.
+                        </Tooltip>
+                    }
+                >
                 <Card.Header>Comments</Card.Header>
+                </OverlayTrigger>
                 <Card.Body style={{ backgroundColor: "white", color: "gray" }} >
-                    <OverlayTrigger
-                        key="status-overlay"
-                        placement="top"
-                        overlay={
-                            <Tooltip id={`tooltip-status`}>
-                                Comments on this name.
-                            </Tooltip>
-                        }
-                    >
                         <Form.Group controlId="authors">
                             <Form.Control type="text" as="textarea" disabled={name && name.canEdit ? false : true} placeholder="Comments" name="comment" value={comment} onChange={handleCommentChange} />
                         </Form.Group>
-
-                    </OverlayTrigger>
                     <AlertUpdate response={mData ? mData.updateComment : null} loading={mLoading} wfo={props.wfo} />
                     {renderButton()}
                 </Card.Body>
