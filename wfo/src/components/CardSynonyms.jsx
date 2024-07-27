@@ -1,9 +1,11 @@
 import React from "react";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
-import Badge from "react-bootstrap/Badge";
 import Spinner from "react-bootstrap/Spinner";
 import { useQuery, gql } from "@apollo/client";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
+import CardSynonymsModal from "./CardSynonymsModal"; 
 
 const SYNONYMS_QUERY = gql`
   query getSynonyms($wfo: String!){
@@ -62,24 +64,14 @@ function CardSynonyms(props) {
     }
 
 
-    function getCountBadge() {
-
-        const badgeStyle = {
-            fontSize: "80%",
-            verticalAlign: "super"
-        };
-
-        if (!synonyms) return null;
-
-        return <span style={badgeStyle} >{' '}<Badge pill bg="secondary">{synonyms.length.toLocaleString()}</Badge></span>;
-    }
-
     // finally rendering land
 
     if (loading) {
         return (
             <Card bg="warning" className="wfo-child-list" style={{ marginBottom: "1em" }}>
-                <Card.Header>Synonyms {getCountBadge()}</Card.Header>
+                <Card.Header>Synonyms <CardSynonymsModal
+                    synonyms={synonyms}
+                /></Card.Header>
                 <Card.Body>
                     <Spinner animation="border" role="status">
                         <span className="visually-hidden">Loading...</span>
@@ -93,7 +85,21 @@ function CardSynonyms(props) {
 
     return (
         <Card bg="warning" className="wfo-child-list" style={{ marginBottom: "1em" }}>
-            <Card.Header>Synonyms {getCountBadge()}</Card.Header>
+            <Card.Header>
+            <OverlayTrigger
+                key="synonym-head-display-text-overlay"
+                placement="top"
+                overlay={
+                    <Tooltip id={`tooltip-synonym-head-display-text`}>
+                        The synonyms of this taxon. 
+                        Click the number badge for bulk actions.
+                    </Tooltip>
+                }
+            >
+                        <span>Synonyms</span>
+            </OverlayTrigger>
+             <CardSynonymsModal synonyms={synonyms}/>
+            </Card.Header>
             <ListGroup variant="flush" style={{ maxHeight: "30em", overflow: "auto" }}>
                 {renderSynonyms()}
             </ListGroup>
