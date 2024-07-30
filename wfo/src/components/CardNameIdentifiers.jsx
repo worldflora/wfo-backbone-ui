@@ -46,7 +46,6 @@ function CardNameIdentifiers(props) {
             <ListGroup variant="flush" style={{ maxHeight: "30em", overflow: "auto", backgroundColor: "white", color: "gray" }} >
                 {
                     name.identifiers.map((id, index) => {
-                        console.log(id);
                         return (<ListGroup.Item key={index}><strong>{id.displayName}:</strong> {
                             
                             id.values.map((v, vindex, values) => {

@@ -12,6 +12,7 @@ const SYNONYMS_QUERY = gql`
         getNameForWfoId(id: $wfo){
             id,
             wfo,
+            fullNameString,
             taxonPlacement{
                 id,
                 acceptedName{
@@ -34,6 +35,8 @@ function CardSynonyms(props) {
     });
 
     let name = data ? data.getNameForWfoId : null;
+    if(!name) return null;
+
     let synonyms = [];
 
     if (name && name.taxonPlacement && name.taxonPlacement.acceptedName && name.taxonPlacement.acceptedName.id === name.id) {
@@ -98,7 +101,7 @@ function CardSynonyms(props) {
             >
                         <span>Synonyms</span>
             </OverlayTrigger>
-             <CardSynonymsModal synonyms={synonyms}/>
+             <CardSynonymsModal synonyms={synonyms} name={name} />
             </Card.Header>
             <ListGroup variant="flush" style={{ maxHeight: "30em", overflow: "auto" }}>
                 {renderSynonyms()}
