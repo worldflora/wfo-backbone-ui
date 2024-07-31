@@ -33,17 +33,22 @@ function CardReferences(props) {
 
     return (
         <Card bg={props.headerColour} text={props.headerTextColour} style={{ marginBottom: "1em" }}>
-            <OverlayTrigger
-                key="reference-head-display-text-overlay"
-                placement="top"
-                overlay={
-                    <Tooltip id={`tooltip-reference-head-display-text`}>
-                        {props.toolTip}
-                    </Tooltip>
-                }
-            >
-            <Card.Header>{props.headerText}</Card.Header>
-            </OverlayTrigger>
+
+            <Card.Header>
+                <OverlayTrigger
+                    key="reference-head-display-text-overlay"
+                    placement="top"
+                    overlay={
+                        <Tooltip id={`tooltip-reference-head-display-text`}>
+                            {props.toolTip}
+                        </Tooltip>
+                    }
+                >
+                    <span>{props.headerText}</span>
+                    </OverlayTrigger>
+            </Card.Header>
+            
+            
             <CardReferencesList modalHeader={props.modalHeader} modalText={props.children} linkTo={props.linkTo} wfo={props.wfo} preferredKind={props.preferredKind} addButtonText={props.addButtonText} />
         </Card>
 

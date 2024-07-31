@@ -5,6 +5,8 @@ import Button from "react-bootstrap/Button";
 import ListGroup from "react-bootstrap/ListGroup";
 import Badge from "react-bootstrap/Badge";
 import { useQuery, useMutation, useLazyQuery, gql } from "@apollo/client";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
 const EDITORS_QUERY = gql`
    query getEditors($wfo: String!){
@@ -226,7 +228,19 @@ function CardEditors(props) {
 
     return (
         <Card bg="light" text="dark" style={{ marginBottom: "1em", maxHeight: "50em", overflow: "auto", backgroundColor: "white" }}>
-            <Card.Header>Editors</Card.Header>
+            <Card.Header>
+                <OverlayTrigger
+                    key="CardEditors-tooltip-overlay"
+                    placement="top"
+                    overlay={
+                        <Tooltip id={`CardEditors-tooltip-text`}>
+                            People who have edit rights for this taxon and its children.
+                        </Tooltip>
+                    }
+                >    
+                <span>Editors</span>
+                </OverlayTrigger>
+            </Card.Header>
             <ListGroup variant="flush" style={{ maxHeight: "50em", overflow: "auto", marginBottom: 'none' }} >
                 {editorList}
             </ListGroup>

@@ -118,22 +118,23 @@ function CardNameAuthors(props) {
     return (
         <Form onSubmit={handleSubmit}>
             <Card bg="secondary" text="white" style={{ marginBottom: "1em" }}>
-                <Card.Header>Author String</Card.Header>
-                <Card.Body style={{ backgroundColor: "white", color: "gray" }} >
+                <Card.Header>
                     <OverlayTrigger
                         key="status-overlay"
                         placement="top"
                         overlay={
                             <Tooltip id={`tooltip-status`}>
-                                Author string using standardized abbreviations where possible.
+                                The names of the authors using standardized abbreviations where possible.
                             </Tooltip>
                         }
                     >
+                    <span>Author String</span>
+                    </OverlayTrigger>
+                </Card.Header>
+                <Card.Body style={{ backgroundColor: "white", color: "gray" }} >
                         <Form.Group controlId="authors">
                             <Form.Control type="text" disabled={name && name.canEdit ? false : true} placeholder="Abbreviated author names" name="authorsString" value={authorsString} onChange={handleAuthorsChange} />
                         </Form.Group>
-
-                    </OverlayTrigger>
                     <AlertUpdate response={mData ? mData.updateAuthorsString : null} loading={mLoading} wfo={props.wfo} />
                     {renderButton()}
                 </Card.Body>

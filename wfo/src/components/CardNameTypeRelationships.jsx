@@ -5,6 +5,8 @@ import { useMutation, useQuery, gql } from "@apollo/client";
 import ListGroup from "react-bootstrap/ListGroup";
 import Badge from "react-bootstrap/Badge";
 import CardNameTypeRelationshipsPick from './CardNameTypeRelationshipsPick';
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
 
 
@@ -179,7 +181,19 @@ function CardNameTypeRelationships(props) {
     return (
         <Form >
             <Card bg="secondary" text="white" style={{ marginBottom: "1em" }}>
-                <Card.Header>Homotypic Names</Card.Header>
+                <Card.Header>
+                    <OverlayTrigger
+                        key="CardNameTypeRelationships-tooltip-overlay"
+                        placement="top"
+                        overlay={
+                            <Tooltip id={`CardNameTypeRelationships-tooltip-text`}>
+                                Names that share the same type specimen.
+                            </Tooltip>
+                        }
+                    >
+                    <span>Homotypic Names</span>
+                    </OverlayTrigger>
+                </Card.Header>
                 <ListGroup variant="flush" style={{ maxHeight: "30em", overflow: "auto" }} >
                     {basionymListItem}
                     {homotypics}

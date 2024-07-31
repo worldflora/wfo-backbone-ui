@@ -5,6 +5,8 @@ import Badge from "react-bootstrap/Badge";
 import Spinner from "react-bootstrap/Spinner";
 import { useQuery, gql } from "@apollo/client";
 import Alert from "react-bootstrap/Alert";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
 const CHILDREN_QUERY = gql`
   query getChildren($wfo: String!){
@@ -175,7 +177,9 @@ function CardChildren(props) {
     if (loading) {
         return (
             <Card className="wfo-child-list" style={{ marginBottom: "1em" }}>
-                <Card.Header>{header}</Card.Header>
+                <Card.Header>
+                    {header}
+                </Card.Header>
                 <Card.Body>
                     <Spinner animation="border" role="status">
                         <span className="visually-hidden">Loading...</span>
@@ -187,7 +191,18 @@ function CardChildren(props) {
 
     return (
         <Card bg="warning" className="wfo-child-list" style={{ marginBottom: "1em" }}>
-            <Card.Header>{header}</Card.Header>
+            <Card.Header>
+                <OverlayTrigger
+                    key="CardChildren-tooltip-overlay"
+                    placement="top"
+                    overlay={
+                        <Tooltip id={`CardChildren-tooltip-text`}>
+                            Child taxa within this {name.rank.name}
+                        </Tooltip>
+                    }
+                ><span>{header}</span>
+                </OverlayTrigger>
+                </Card.Header>
             {alert}
             <ListGroup variant="flush" style={{ maxHeight: "30em", overflow: "auto" }} >
                 {renderChildren(children)}

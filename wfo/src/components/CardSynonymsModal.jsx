@@ -24,7 +24,27 @@ query getSynonymMover($wfo: String!  $filter: String ){
 }
 `;
 
-
+const MOVE_SYNS_MUTATION = gql`
+        mutation  moveSynonyms(
+            $sourceWfo: String!,
+            $destinationWfo: String
+            ){
+          moveSynonyms(
+              sourceWfo: $sourceWfo,
+              destinationWfo: $destinationWfo
+          ){
+            name,
+            success,
+            message,
+            children{
+              name,
+              success,
+              message
+            },
+            taxonIds
+          }
+        }
+`;
 
 function CardSynonymsModal(props) {
 
@@ -32,12 +52,36 @@ function CardSynonymsModal(props) {
     const [actionType, setActionType] = React.useState("none");
     const [filterValue, setFilterValue] = React.useState("");
     const [selectedTaxon, setSelectedTaxon] = React.useState(null);
+    const [errorMessage, setErrorMessage] = React.useState(null);
 
     const {data, refetch } = useQuery(ACCEPTED_NAMES_QUERY, {
         variables: { wfo: props.name.wfo, filter: '' }
     });
 
-    let spinner = null;
+    const [moveSynonyms] = useMutation(MOVE_SYNS_MUTATION, {
+        refetchQueries: [
+            'getSynonyms' // Query name
+        ],
+        update: (cache, mutationResult) => {
+            // after we have moved something we need to invalidate
+            // the cache of the source and destination taxa
+            if (mutationResult.data.moveSynonyms.success){
+                mutationResult.data.moveSynonyms.taxonIds.map(tid => {
+                    cache.data.delete('TaxonGql:' + tid);
+                    return true;
+                });
+                resetValues();
+            }
+        },
+        onComplete: (mutationResult) => {
+            console.log(mutationResult.data);
+            if (!mutationResult.data.moveSynonyms.success) {
+                setErrorMessage(mutationResult.data.moveSynonyms.message);
+            } else {
+                hide();
+            }
+        }
+    });
 
     function hide() {
         resetValues();
@@ -50,14 +94,21 @@ function CardSynonymsModal(props) {
     }
 
     function save() {
-        hide();
+        moveSynonyms(
+            {
+                variables: {
+                    sourceWfo: props.name.wfo,
+                    destinationWfo: selectedTaxon ? selectedTaxon.acceptedName.wfo : null
+                }
+            }
+        );
     }
-
 
     function resetValues(){
         setActionType('none');
         setFilterValue('');
         setSelectedTaxon(null);
+        setErrorMessage(null);
     }
 
 
@@ -168,22 +219,28 @@ function CardSynonymsModal(props) {
         return true;
     }
 
-
-    const badgeStyle = {
-        fontSize: "80%",
-        verticalAlign: "super",
-        cursor: "pointer"
-    };
-
+    // give up if no synonyms
     if(!props.synonyms) return null;
 
+    // get the pretty name
     let displayName = <span dangerouslySetInnerHTML={{ __html: props.name.fullNameString }} />
+
+    // set up a counter badge
+    const badgeStyle = {
+        fontSize: "80%",
+        verticalAlign: "super"
+    };
+
+    let badge = <span style={badgeStyle} >{' '}<Badge pill bg="secondary">{props.synonyms.length.toLocaleString()}</Badge></span>;
+    if (props.name.taxonPlacement && props.name.taxonPlacement.canEdit) {
+        badgeStyle.cursor = "pointer";
+        badge = <span style={badgeStyle} >{' '}<Badge pill bg="secondary" onClick={(show)}>{props.synonyms.length.toLocaleString()}</Badge></span>;
+    }
+
 
     return (
         <>
-            <span style={badgeStyle} >{' '}
-                <Badge pill bg="secondary" onClick={(show)}>{props.synonyms.length.toLocaleString()}</Badge>
-            </span>
+            {badge}
             <Modal
                 show={modalShow}
                 onHide={hide}
@@ -211,7 +268,6 @@ function CardSynonymsModal(props) {
                         {getAcceptedTaxonPicker()}
                     </Modal.Body>
                     <Modal.Footer>
-                        {spinner}
                         <Button onClick={hide}>Cancel</Button>
                         <Button onClick={save} disabled={getSaveDisabled()}>Save</Button>
                     </Modal.Footer>
@@ -219,7 +275,6 @@ function CardSynonymsModal(props) {
             </Modal>
         </>
     );
-
 
 }
 export default CardSynonymsModal;

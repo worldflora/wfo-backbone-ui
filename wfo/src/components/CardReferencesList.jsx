@@ -59,9 +59,7 @@ function CardReferencesList(props) {
                         <Col>
                             {thumbnail}
                             <p style={{ marginBottom: "0.3em" }}>
-                                <OverlayTrigger overlay={<Tooltip id="tooltip-disabled">{usage.id}</Tooltip>}>
                                     <strong>{usage.reference.kind.charAt(0).toUpperCase() + usage.reference.kind.slice(1)}: </strong>
-                                </OverlayTrigger>
                                 <a href={usage.reference.linkUri} target={usage.reference.kind} >{usage.reference.displayText}</a>
                             </p>
                             <p style={{ marginBottom: "0.3em", color: "gray" }}>{usage.comment}</p>

@@ -7,6 +7,8 @@ import ListGroupItem from "react-bootstrap/ListGroupItem";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import Badge from "react-bootstrap/Badge";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
 const UNPLACED_NAMES_QUERY = gql`
   query getUnplacedNames($wfo: String! $offset: Int){
@@ -129,7 +131,21 @@ function CardUnplacedNames(props) {
 
     return (
         <Card bg="secondary" text="white" className="wfo-unplaced-list" style={{ marginBottom: "1em" }}>
-            <Card.Header>Unplaced Names <span style={{ fontSize: "80%", verticalAlign: "super" }} >{' '}<Badge pill bg="primary">{getTotalUnplaced()}</Badge></span> {' '}</Card.Header>
+            <Card.Header>
+                
+                <OverlayTrigger
+                    key="CardUnplacedNames-tooltip-overlay"
+                    placement="top"
+                    overlay={
+                        <Tooltip id={`CardUnplacedNames-tooltip-text`}>
+                            Names that have not been explicitly placed in the taxonomy or deprecated yet.
+                        </Tooltip>
+                    }
+                >
+                <span>Unplaced Names</span>
+                </OverlayTrigger>
+                
+                <span style={{ fontSize: "80%", verticalAlign: "super" }} >{' '}<Badge pill bg="primary">{getTotalUnplaced()}</Badge></span> {' '}</Card.Header>
             <ListGroup style={{ maxHeight: "30em", overflow: "auto" }}>
                 {getListItems()}
             </ListGroup>

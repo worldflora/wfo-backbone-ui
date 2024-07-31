@@ -15,6 +15,7 @@ const SYNONYMS_QUERY = gql`
             fullNameString,
             taxonPlacement{
                 id,
+                canEdit,
                 acceptedName{
                     id
                 },
@@ -43,11 +44,7 @@ function CardSynonyms(props) {
         synonyms = name.taxonPlacement.synonyms;
     }
 
-    //    if (name && name.taxonPlacement && name.taxonPlacement.synonyms) {
-    //        synonyms = name.taxonPlacement.synonyms;
-    //    }
-
-
+    // FIXME - only render link to move synonyms if we can edit the taxon
 
     function renderSynonyms() {
         if (synonyms && synonyms.length > 0) {
@@ -86,6 +83,11 @@ function CardSynonyms(props) {
 
     if (!synonyms || synonyms.length < 1) return null;
 
+    let editMessage = "";
+    if (name.taxonPlacement && name.taxonPlacement.canEdit){
+        editMessage = " Click the number badge for bulk actions.";
+    }
+
     return (
         <Card bg="warning" className="wfo-child-list" style={{ marginBottom: "1em" }}>
             <Card.Header>
@@ -94,8 +96,8 @@ function CardSynonyms(props) {
                 placement="top"
                 overlay={
                     <Tooltip id={`tooltip-synonym-head-display-text`}>
-                        The synonyms of this taxon. 
-                        Click the number badge for bulk actions.
+                        The names that are considered synonyms within this taxon. 
+                        {editMessage}
                     </Tooltip>
                 }
             >

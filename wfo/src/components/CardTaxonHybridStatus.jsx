@@ -110,23 +110,28 @@ function CardTaxonHybridStatus(props) {
     if (updateLoading) {
         label = " Updating... ";
     } else {
-        label = isHybrid ? "This is a hybrid taxon" : "This is not a hybrid taxon";
+        label = isHybrid ? "Uncheck the box to make this a regular taxon." : "Check the box to make this a hybrid taxon.";
     }
 
     return (
         <Form >
             <Card bg="warning" text="dark" style={{ marginBottom: "1em" }}>
-                <Card.Header>Hybrid Status</Card.Header>
-                <Card.Body style={{ backgroundColor: "white", color: "black" }} >
+                <Card.Header>
                     <OverlayTrigger
                         key="hybrid-overlay"
                         placement="top"
                         overlay={
                             <Tooltip id={`tooltip-hybrid`}>
-                                Flag this taxon as being a hybrid taxon.
+                                A flag to indicate that this taxon is of hybrid origin.
                             </Tooltip>
                         }
                     >
+                    <span>Hybrid Status</span>
+                    </OverlayTrigger>                
+                    
+                </Card.Header>
+                <Card.Body style={{ backgroundColor: "white", color: "black" }} >
+
                         <Form.Group controlId="hybrid">
                             <Form.Check
                                 type="checkbox"
@@ -135,8 +140,7 @@ function CardTaxonHybridStatus(props) {
                                 onChange={handleStatusChange}
                                 checked={isHybrid}
                             />
-                        </Form.Group>
-                    </OverlayTrigger>
+                        </Form.Group>   
                 </Card.Body>
             </Card>
         </Form>

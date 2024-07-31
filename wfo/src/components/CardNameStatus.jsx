@@ -5,6 +5,8 @@ import Button from "react-bootstrap/Button";
 import Spinner from "react-bootstrap/Spinner";
 import { useMutation, useQuery, gql } from "@apollo/client";
 import AlertUpdate from "./AlertUpdate";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
 const STATUS_QUERY = gql`
    query getNameStatus($wfo: String!){
@@ -171,7 +173,21 @@ function CardNameStatus(props) {
     return (
         <Form onSubmit={handleSubmit}>
             <Card bg="secondary" text="white" style={{ marginBottom: "1em" }}>
-                <Card.Header>Nomenclatural Status</Card.Header>
+                <Card.Header>
+                    <OverlayTrigger
+                        key="CardNameStatus-tooltip-overlay"
+                        placement="top"
+                        overlay={
+                            <Tooltip id={`CardNameStatus-tooltip-text`}>
+                                All names have a nomenclatural status. 
+                                Accepted names of taxa must be valid, sanctioned or conserved.
+                                Deprecated names cannot be placed in the classification at all.
+                            </Tooltip>
+                        }
+                    >            
+                        <span>Nomenclatural Status</span>
+                    </OverlayTrigger>
+                </Card.Header>
                 <Card.Body style={{ backgroundColor: "white", color: "gray" }} >
                     {renderStates()}
                     <AlertUpdate response={mData ? mData.updateNameStatus : null} loading={mLoading} wfo={props.wfo} />

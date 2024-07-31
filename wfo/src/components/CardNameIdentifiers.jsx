@@ -31,18 +31,21 @@ function CardNameIdentifiers(props) {
 
     return (
         <Card bg="secondary" text="white" style={{ marginBottom: "1em" }}>
-            <OverlayTrigger
-                key="identifiers-head-display-text-overlay"
-                placement="top"
-                overlay={
-                    <Tooltip id={`tooltip-identifiers-head-display-text`}>
-                        Multiple alternative identifiers are tracked for names.
-                        Those that are considered preferred are presented as links.
-                    </Tooltip>
-                }
-            >
-            <Card.Header>Identifiers</Card.Header>
-            </OverlayTrigger>
+
+            <Card.Header>
+                <OverlayTrigger
+                    key="identifiers-head-display-text-overlay"
+                    placement="top"
+                    overlay={
+                        <Tooltip id={`tooltip-identifiers-head-display-text`}>
+                            Multiple alternative identifiers are tracked for names.
+                            Those that are considered preferred are presented as links.
+                        </Tooltip>
+                    }
+                >
+                    <span>Identifiers</span>
+                </OverlayTrigger>
+            </Card.Header>
             <ListGroup variant="flush" style={{ maxHeight: "30em", overflow: "auto", backgroundColor: "white", color: "gray" }} >
                 {
                     name.identifiers.map((id, index) => {

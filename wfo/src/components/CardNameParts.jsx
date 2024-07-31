@@ -250,6 +250,15 @@ function CardNameParts(props) {
 
         // overlay trigger has been removed because it is buggy and too tricky to fix
         return (
+            <OverlayTrigger
+                key="rank-select-tooltip-overlay"
+                placement="top"
+                overlay={
+                    <Tooltip id={`rank-select-tooltip-text`}>
+                        The rank of this name. This is restricted by the name's placement in the classification. It restricts the number of parts the name can have.
+                    </Tooltip>
+                }
+            >
             <Form.Group controlId="rank">
                 <FloatingLabel label="Rank">
                     <Form.Select name="rankString" disabled={disabled} value={rankString} onChange={handleRankChange}>
@@ -257,6 +266,7 @@ function CardNameParts(props) {
                     </Form.Select>
                 </FloatingLabel>
             </Form.Group>
+            </OverlayTrigger>
         );
 
     }
@@ -483,7 +493,19 @@ function CardNameParts(props) {
     return (
         <Form onSubmit={handleSubmit}>
             <Card bg="secondary" text="white" style={{ marginBottom: "1em" }}>
-                <Card.Header>Name Parts</Card.Header>
+                <Card.Header>
+                    <OverlayTrigger
+                        key="CardNameParts-tooltip-overlay"
+                        placement="top"
+                        overlay={
+                            <Tooltip id={`CardNameParts-tooltip-text`}>
+                                Botanical names consist of between one and three words (name parts) depending on their rank.
+                            </Tooltip>
+                        }
+                    >
+                            <span>Name Parts</span>
+                    </OverlayTrigger>
+                </Card.Header>
                 <Card.Body style={{ backgroundColor: "white", color: "gray" }}>
                     {renderRank()}
                     {renderGenus()}

@@ -82,7 +82,7 @@ function PageForm(props) {
                         modalHeader="Taxonomic Source"
                         preferredKind={'literature'}
                         addButtonText="Add Source"
-                        toolTip="Resources on which current taxonomic placement is based."
+                        toolTip="Resources on which the current taxonomic placement is based."
                     >
                         References about taxonomic sources..
                     </CardReferences>

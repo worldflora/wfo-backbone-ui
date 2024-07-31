@@ -2,6 +2,8 @@ import React from "react";
 import Card from "react-bootstrap/Card";
 import Badge from "react-bootstrap/Badge";
 import { useQuery, gql } from "@apollo/client";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
 const HEADER_QUERY = gql`
   query getHeaderInfo($wfo: String!){
@@ -101,15 +103,26 @@ function CardFormHeader(props) {
         <Card bg={variant} text={text} className="wfo-child-list" style={{ marginBottom: "1em" }}>
             <Card.Header>
                 {linkBadge}
-                <div>
-                    {header}
-                </div>
+                
+                    <OverlayTrigger
+                        key="CardFormHeader-tooltip-overlay"
+                        placement="top"
+                        overlay={
+                            <Tooltip id={`CardFormHeader-tooltip-text`}>
+                                The full rendering of this name including the rank and authors. 
+                            </Tooltip>
+                        }
+                    >
+                        <span>
+                        {header}
+                        </span>
+                    </OverlayTrigger>
             </Card.Header>
             <Card.Body style={{ backgroundColor: "white", color: "black" }}>
                 <h2>{headline}</h2>
             </Card.Body>
         </Card>
     );
-
+ 
 }
 export default CardFormHeader;

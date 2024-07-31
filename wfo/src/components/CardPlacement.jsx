@@ -4,6 +4,8 @@ import Form from "react-bootstrap/Form";
 import { useQuery, gql, useMutation } from "@apollo/client";
 import CardPlacementFilter from "./CardPlacementFilter";
 import CardPlacementList from "./CardPlacementList";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
 
 // FIXME: Prevent placing in a taxon you don't own.
@@ -228,7 +230,19 @@ function CardPlacement(props) {
 
     return (
         <Card bg="warning" className="wfo-placement" style={{ marginBottom: "1em" }}>
-            <Card.Header>Placement</Card.Header>
+            <Card.Header>
+                <OverlayTrigger
+                    key="CardPlacement-tooltip-overlay"
+                    placement="top"
+                    overlay={
+                        <Tooltip id={`CardPlacement-tooltip-text`}>
+                            This tool sets where the name should appear in the classification.
+                        </Tooltip>
+                    }
+                >    
+                <span>Placement</span>
+                </OverlayTrigger>
+            </Card.Header>
             <Card.Body style={{ maxHeight: "50em", overflow: "auto", backgroundColor: "white", paddingBottom: "1em" }} >
                 <Form>
                     <Form.Group controlId="placementAction" >

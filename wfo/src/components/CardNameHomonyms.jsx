@@ -2,6 +2,8 @@ import React from "react";
 import Card from "react-bootstrap/Card";
 import ListGroup from "react-bootstrap/ListGroup";
 import { useQuery, gql } from "@apollo/client";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Tooltip from "react-bootstrap/Tooltip";
 
 const HOMONYMS_QUERY = gql`
    query getNameHomonyms($wfo: String!){
@@ -28,7 +30,19 @@ function CardNameHomonyms(props) {
 
     return (
         <Card bg="secondary" text="white" style={{ marginBottom: "1em" }}>
-            <Card.Header>Homonyms</Card.Header>
+            <Card.Header>
+                <OverlayTrigger
+                    key="CardNameHomonyms-tooltip-overlay"
+                    placement="top"
+                    overlay={
+                        <Tooltip id={`CardNameHomonyms-tooltip-text`}>
+                            Names with the same name parts spellings.
+                        </Tooltip>
+                    }
+                >
+                <span>Homonyms</span>
+                </OverlayTrigger>
+            </Card.Header>
             <ListGroup variant="flush" style={{ backgroundColor: "white", color: "gray" }} >
                 {
                     name.homonyms.map(n => {

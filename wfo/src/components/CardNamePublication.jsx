@@ -158,7 +158,20 @@ function CardNamePublication(props) {
     return (
         <Form onSubmit={handleSubmit} noValidate={true}>
             <Card bg="secondary" text="white" style={{ marginBottom: "1em" }}>
-                <Card.Header>Publication</Card.Header>
+                <Card.Header>
+                    <OverlayTrigger
+                        key="CardNamePublication-tooltip-overlay"
+                        placement="top"
+                        overlay={
+                            <Tooltip id={`CardNamePublication-tooltip-text`}>
+                                The place of publication of this name that establishes its date for priority purposes.
+                                Additional, supporting publications should be included under Nomenclatural References.  
+                            </Tooltip>
+                        }
+                    >
+                    <span>Publication</span>
+                    </OverlayTrigger>
+                </Card.Header>
                 <Card.Body style={{ backgroundColor: "white", color: "gray" }} >
                     <OverlayTrigger
                         key="micro-citation-overlay"
