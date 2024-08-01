@@ -96,7 +96,8 @@ function CardNameParts(props) {
     const [updateNameParts, { data: mData, loading: mLoading }] = useMutation(UPDATE_NAME_PARTS, {
         refetchQueries: [
             NAME_PARTS_QUERY, // DocumentNode object parsed with gql
-            'getNameParts' // Query name
+            'getNameParts',
+            'getNameForIpniDifferences' // Query name
         ],
     });
 

@@ -12,6 +12,7 @@ import CardNameStatus from "./CardNameStatus";
 import CardUnplacedNames from "./CardUnplacedNames";
 import CardNameAuthors from "./CardNameAuthors";
 import CardNamePublication from "./CardNamePublication";
+import CardNameIpni from "./CardNameIpni";
 import CardNameComment from "./CardNameComment";
 import CardNameTypeRelationships from "./CardNameTypeRelationships";
 import CardTaxonHybridStatus from "./CardTaxonHybridStatus";
@@ -67,6 +68,7 @@ function PageForm(props) {
                         Treatments
                     </CardReferences>
                     <CardNameComment wfo={props.wfo} />
+                    <CardNameIpni wfo={props.wfo} />
                     <CardNameIdentifiers wfo={props.wfo} />
                 </Col>
                 <Col md={4}>

@@ -58,7 +58,8 @@ function CardNamePublication(props) {
     const [updatePublication, { loading: mLoading, data: mData }] = useMutation(UPDATE_PUBLICATION, {
         refetchQueries: [
             PUBLICATION_QUERY, // run this query again
-            'getPublication'
+            'getPublication',
+            'getNameForIpniDifferences'
         ],
     });
 
