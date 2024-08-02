@@ -53,8 +53,6 @@ function CardNameIpni(props) {
 
     // we have got the data but there are no differences
     if (name.ipniDifferences.differenceCount === 0) return null;
-
-    console.log(name);
  
     function handleSubmit(e){
         

@@ -66,7 +66,7 @@ function CardReferencesModal(props) {
 
 
     const [updateReference, { loading: mLoading }] = useMutation(UPDATE_REFERENCE, {
-        refetchQueries: ['getNameForWfoId']
+        refetchQueries: ['getNameForWfoId', 'getAuthorValidation']
     });
 
     const [getDuplicate, { loading: dupeLoading, data: dupeData }] = useLazyQuery(REFERENCE_BY_URI_QUERY, {

@@ -9,6 +9,7 @@ import Tooltip from "react-bootstrap/Tooltip";
 import AlertUpdate from "./AlertUpdate";
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import CardNameAuthorsModal from "./CardNameAuthorsModal";
 
 const AUTHORS_QUERY = gql`
    query getNameAuthors($wfo: String!){
@@ -121,14 +122,12 @@ function CardNameAuthors(props) {
     /*
 
         Block for adding button for validator - work to come soon...
-        <Row>
-            <Form.Group as={Col}  controlId="authors">
-                <Form.Control type="text" disabled={name && name.canEdit ? false : true} placeholder="Abbreviated author names" name="authorsString" value={authorsString} onChange={handleAuthorsChange} />
-            </Form.Group>
-            <Form.Group as={Col} md="auto"  controlId="authorsValidate">
-                <Form.Control type="button" name="authorsValidate" value="Validator"  />
-            </Form.Group>
-        </Row>
+
+
+
+                            <Form.Group as={Col} controlId="authors">
+                        <Form.Control type="text" disabled={name && name.canEdit ? false : true} placeholder="Abbreviated author names" name="authorsString" value={authorsString} onChange={handleAuthorsChange} />
+                    </Form.Group>
 
     */
 
@@ -149,9 +148,14 @@ function CardNameAuthors(props) {
                     </OverlayTrigger>
                 </Card.Header>
                 <Card.Body style={{ backgroundColor: "white", color: "gray" }} >
-                    <Form.Group as={Col} controlId="authors">
-                        <Form.Control type="text" disabled={name && name.canEdit ? false : true} placeholder="Abbreviated author names" name="authorsString" value={authorsString} onChange={handleAuthorsChange} />
-                    </Form.Group>
+                    <Row>
+                        <Form.Group as={Col} controlId="authors">
+                            <Form.Control type="text" disabled={name && name.canEdit ? false : true} placeholder="Abbreviated author names" name="authorsString" value={authorsString} onChange={handleAuthorsChange} />
+                        </Form.Group>
+                        <Form.Group as={Col} md="auto" controlId="authorsValidate">
+                            <CardNameAuthorsModal authorsString={authorsString} wfo={wfo}/>
+                        </Form.Group>
+                    </Row>
                     <AlertUpdate response={mData ? mData.updateAuthorsString : null} loading={mLoading} wfo={props.wfo} />
                     {renderButton()}
                 </Card.Body>
