@@ -3,11 +3,10 @@ import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import ListGroup from "react-bootstrap/ListGroup";
-import { useQuery, gql, useMutation } from "@apollo/client";
+import { useLazyQuery, gql, useMutation } from "@apollo/client";
 import Spinner from "react-bootstrap/Spinner";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
-import CardReferencesModal from './CardReferencesModal';
 
 const AUTHORS_VALIDATE_QUERY = gql`
 query getAuthorValidation($authorsString: String!, $wfo: String!){
@@ -54,8 +53,7 @@ function CardNameAuthorsModal(props) {
 
     const [modalShow, setModalShow] = React.useState(false);
 
-    // FIXME change to lazy
-    const { data, loading } = useQuery(AUTHORS_VALIDATE_QUERY, {
+    const [getData, { data, loading }] = useLazyQuery(AUTHORS_VALIDATE_QUERY, {
         variables: { authorsString: props.authorsString, wfo: props.wfo }
     });
 
@@ -64,16 +62,12 @@ function CardNameAuthorsModal(props) {
     });
 
     function hide() {
-        resetValues();
         setModalShow(false);
     }
 
     function show() {
-        resetValues();
+        getData();
         setModalShow(true);
-    }
-
-    function resetValues(){
     }
 
     function createReference(e){
@@ -84,8 +78,6 @@ function CardNameAuthorsModal(props) {
         // get the author we are talking about
         data.getAuthorTeamMembersFromString.map(author => {
             if (author.id === e.target.value){
-                console.log(author);
-
                 addAuthorRef(
                     {
                         variables: {
@@ -96,12 +88,11 @@ function CardNameAuthorsModal(props) {
                         }
                     }
                 );
-
+                return true;
             }
+            return false;
         });
 
-
-        console.log(props.wfo);
     }
 
     
