@@ -68,9 +68,8 @@ https://www.ipni.org/n/${name.ipni.split(':').pop()}
 
 Dear IPNI editors,
 
-There are differences between the entry in WFO Plant List (Rhakhis) and the current IPNI record that I can't resolve.
+There are differences between the entry in WFO Plant List (Rhakhis) and the current IPNI record.
 ${nameString}${genusString}${speciesString}${authorsString}${citationMicro}
-Which of these needs correcting?
 
 You can view the Rhakhis record here: ${window.location}
 
