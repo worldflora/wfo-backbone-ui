@@ -44,8 +44,6 @@ function CardSynonyms(props) {
         synonyms = name.taxonPlacement.synonyms;
     }
 
-    // FIXME - only render link to move synonyms if we can edit the taxon
-
     function renderSynonyms() {
         if (synonyms && synonyms.length > 0) {
             return synonyms.map((syn) => (
@@ -103,7 +101,7 @@ function CardSynonyms(props) {
             >
                         <span>Synonyms</span>
             </OverlayTrigger>
-             <CardSynonymsModal synonyms={synonyms} name={name} />
+            <CardSynonymsModal synonyms={synonyms} name={name} />
             </Card.Header>
             <ListGroup variant="flush" style={{ maxHeight: "30em", overflow: "auto" }}>
                 {renderSynonyms()}

@@ -6,6 +6,12 @@ import Badge from "react-bootstrap/Badge";
 import ListGroup from "react-bootstrap/ListGroup";
 import { useQuery, gql, useMutation } from "@apollo/client";
 
+/*
+    renders a badge that can be clicked on to move
+    or remove the synonyms of a taxon by displaying
+    a modal.
+*/
+
 const ACCEPTED_NAMES_QUERY = gql`
 query getSynonymMover($wfo: String!  $filter: String ){
     getSynonymMover(id: $wfo filter: $filter){
@@ -70,17 +76,11 @@ function CardSynonymsModal(props) {
                     cache.data.delete('TaxonGql:' + tid);
                     return true;
                 });
-                resetValues();
-            }
-        },
-        onComplete: (mutationResult) => {
-            console.log(mutationResult.data);
-            if (!mutationResult.data.moveSynonyms.success) {
-                setErrorMessage(mutationResult.data.moveSynonyms.message);
-            } else {
                 hide();
+            }else{
+                setErrorMessage(mutationResult.data.moveSynonyms.message);
             }
-        }
+        }   
     });
 
     function hide() {
@@ -234,7 +234,7 @@ function CardSynonymsModal(props) {
     let badge = <span style={badgeStyle} >{' '}<Badge pill bg="secondary">{props.synonyms.length.toLocaleString()}</Badge></span>;
     if (props.name.taxonPlacement && props.name.taxonPlacement.canEdit) {
         badgeStyle.cursor = "pointer";
-        badge = <span style={badgeStyle} >{' '}<Badge pill bg="secondary" onClick={(show)}>{props.synonyms.length.toLocaleString()}</Badge></span>;
+        badge = <span style={badgeStyle} >{' '}<Badge pill bg="primary" onClick={(show)}>{props.synonyms.length.toLocaleString()}</Badge></span>;
     }
 
 
