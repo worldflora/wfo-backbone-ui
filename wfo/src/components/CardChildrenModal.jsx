@@ -40,12 +40,14 @@ const MOVE_CHILDREN_MUTATION = gql`
         mutation  moveChildren(
             $oldParentWfo: String!,
             $childrensRank: String,
-            $newParentWfo: String
+            $newParentWfo: String,
+            $childWfos: [String]
             ){
           moveChildren(
               oldParentWfo: $oldParentWfo,
               childrensRank: $childrensRank,
-              newParentWfo: $newParentWfo
+              newParentWfo: $newParentWfo,
+              childWfos: $childWfos
           ){
             name,
             success,
@@ -103,12 +105,20 @@ function CardChildrenModal(props) {
     }
 
     function save() {
+
+        const childrenMoving = [];
+        props.children.forEach(kid => {
+            if(excludedChildren.indexOf(kid.id) > -1) return;
+            childrenMoving.push(kid.acceptedName.wfo);
+        });
+
         moveChildren(
             {
                 variables: {
                     oldParentWfo: props.name.wfo,
                     childrensRank: props.rank,
-                    newParentWfo: selectedTaxon ? selectedTaxon.acceptedName.wfo : null
+                    newParentWfo: selectedTaxon ? selectedTaxon.acceptedName.wfo : null,
+                    childWfos: childrenMoving
                 }
             }
         );
@@ -129,6 +139,25 @@ function CardChildrenModal(props) {
         setExcludedChildren(excludedChildren.slice());
     }
 
+    /**
+     * Exclude all the children in the list
+     */
+    function excludeAllChildren(){
+
+        const allExcluded = [];
+        props.children.forEach(kid => {
+            allExcluded.push(kid.id);
+        });
+        setExcludedChildren(allExcluded);
+        
+    }
+
+    /**
+     * Include all the children in the list
+     */
+    function includeAllChildren(){
+        setExcludedChildren([]);
+    }
     function resetValues(){
         setFilterValue('');
         setSelectedTaxon(null);
@@ -239,10 +268,10 @@ function CardChildrenModal(props) {
             return (
                 <>
                 <span style={{float: 'right', marginTop: "-2.3em"}} >
-                    &nbsp;<Button variant="outline-secondary" size="sm" onClick={() => setSelectedTaxon(null)}>Include all</Button>
-                    &nbsp;<Button variant="outline-secondary" size="sm" onClick={() => setSelectedTaxon(null)}>Exclude all</Button>
+                    &nbsp;<Button variant="outline-secondary" size="sm" onClick={() => includeAllChildren()}>Include all</Button>
+                    &nbsp;<Button variant="outline-secondary" size="sm" onClick={() => excludeAllChildren()}>Exclude all</Button>
                 </span>
-                <span>Click child taxa to exclude them.</span>
+                <span>Click taxa to include/exclude them.</span>
 
                 <ListGroup variant="flush" style={{ height: "27em", overflow: "auto", marginTop: "1em" }}  >
                        {listItems}
@@ -271,13 +300,12 @@ function CardChildrenModal(props) {
     }
 
     function getSaveDisabled(){
-        if(selectedTaxon) return false;
+        if(selectedTaxon && props.children.length - excludedChildren.length > 0) return false;
         return true;
     }
 
     // give up if no children to display no badge even
     if(props.children.length < 1) return null;
-
 
     // set up a counter badge
     const badgeStyle = {
@@ -313,7 +341,7 @@ function CardChildrenModal(props) {
                     {toolTip}
                 </Tooltip>
             }
-        ><span> <span key={props.key}>
+        ><span> <span> 
             {props.rank}
             <span style={badgeStyle} >{' '}{pill}</span>
             {" "}
@@ -366,7 +394,7 @@ function CardChildrenModal(props) {
                     <Modal.Footer>
                         <span style={{color: "red"}} ><strong>Take care!</strong> This action cannot be undone.</span>
                         <Button onClick={hide}>Cancel</Button>
-                        <Button onClick={save} disabled={getSaveDisabled()}>Move</Button>
+                        <Button onClick={save} disabled={getSaveDisabled()}>Move {(props.children.length - excludedChildren.length).toLocaleString()} taxa</Button>
                     </Modal.Footer>
                 </Form>
             </Modal>

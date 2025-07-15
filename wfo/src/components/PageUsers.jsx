@@ -52,8 +52,7 @@ function PageUsers(props) {
                             {user.taxaCurated.length ? <><br /><span>Curator of:&nbsp;</span></> : ""}
                             {
                                 user.taxaCurated.map((taxon, i) => {
-
-                                    return <span key={taxon.id}><a href={'#' + taxon.acceptedName.wfo} dangerouslySetInnerHTML={{ __html: taxon.acceptedName.fullNameString }} /> {i < user.taxaCurated.length - 1 ? "," : ""}&nbsp;</span>
+                                    return <span key={taxon.id + '-' + user.id}><a href={'#' + taxon.acceptedName.wfo} dangerouslySetInnerHTML={{ __html: taxon.acceptedName.fullNameString }} /> {i < user.taxaCurated.length - 1 ? "," : ""}&nbsp;</span>
                                 })
                             }
 
