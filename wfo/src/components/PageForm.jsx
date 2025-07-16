@@ -15,7 +15,7 @@ import CardNamePublication from "./CardNamePublication";
 import CardNameIpni from "./CardNameIpni";
 import CardNameComment from "./CardNameComment";
 import CardNameTypeRelationships from "./CardNameTypeRelationships";
-import CardTaxonHybridStatus from "./CardTaxonHybridStatus";
+import CardTaxonStatus from "./CardTaxonStatus";
 import CardNameIdentifiers from "./CardNameIdentifiers";
 import CardNameHomonyms from "./CardNameHomonyms";
 import CardEditors from "./CardEditors";
@@ -88,7 +88,7 @@ function PageForm(props) {
                     >
                         References about taxonomic sources..
                     </CardReferences>
-                    <CardTaxonHybridStatus wfo={props.wfo} />
+                    <CardTaxonStatus wfo={props.wfo} />
                     <CardNameTypeRelationships wfo={props.wfo} />
                     <CardNameHomonyms wfo={props.wfo} />
                     <CardEditors wfo={props.wfo} />
