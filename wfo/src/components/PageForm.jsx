@@ -20,6 +20,7 @@ import CardNameIdentifiers from "./CardNameIdentifiers";
 import CardNameHomonyms from "./CardNameHomonyms";
 import CardEditors from "./CardEditors";
 import CardReferences from "./CardReferences";
+import CardTaxonDescription from "./CardTaxonDescription";
 
 function PageForm(props) {
 

@@ -315,7 +315,7 @@ function CardChildrenModal(props) {
 
     // create the badge that will be the trigger for the modal
     let pill = <Badge pill bg="secondary">{props.children.length.toLocaleString()}</Badge>;
-    let toolTip = <>{props.rank} within this {props.name.rank.name}. These can't be moved en masse.</>;
+    let toolTip = <>{props.rankPlural} within this {props.name.rank.name}. These can't be moved en masse.</>;
     
 
     // if they have edit rights to the taxon then we display the pill as clickable
@@ -328,11 +328,10 @@ function CardChildrenModal(props) {
     ) {
         badgeStyle.cursor = "pointer";
         pill = <Badge pill bg="primary" onClick={(show)}>{props.children.length.toLocaleString()}</Badge>;
-        toolTip = <>{props.rank} within this {props.name.rank.name}. Click the blue badge to move them en masse.</>;
+        toolTip = <>{props.rankPlural} within this {props.name.rank.name}. Click the blue badge to move them en masse.</>;
     }
 
      let badge =
-
         <OverlayTrigger
             key="CardChildren-tooltip-overlay"
             placement="top"
@@ -342,7 +341,7 @@ function CardChildrenModal(props) {
                 </Tooltip>
             }
         ><span> <span> 
-            {props.rank}
+            {props.rankPlural}
             <span style={badgeStyle} >{' '}{pill}</span>
             {" "}
         </span></span>

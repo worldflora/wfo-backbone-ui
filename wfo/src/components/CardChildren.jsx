@@ -72,6 +72,7 @@ function CardChildren(props) {
     // what is the header and do we have mixed ranks?
     let header = [];
     let rankNames = [];
+    let rankNamesPlural = [];
     let rankKids = [];
     let warningLevel = "secondary";
     let alert = null;
@@ -83,6 +84,7 @@ function CardChildren(props) {
                 rankKids[kid.acceptedName.rank.name].push(kid);
             } else {
                 rankNames.push(kid.acceptedName.rank.name);
+                rankNamesPlural.push(kid.acceptedName.rank.plural); 
                 rankKids[kid.acceptedName.rank.name] = [kid];
             }
             return true;
@@ -134,7 +136,7 @@ function CardChildren(props) {
     for (let i = 0; i < rankNames.length; i++) {
 
         header.push(
-            <CardChildrenModal name={name} rank={rankNames[i]} key={i} warningLevel={warningLevel} children={rankKids[rankNames[i]]} />
+            <CardChildrenModal name={name} rank={rankNames[i]} rankPlural={rankNamesPlural[i]} key={i} warningLevel={warningLevel} children={rankKids[rankNames[i]]} />
         );
 
     }
