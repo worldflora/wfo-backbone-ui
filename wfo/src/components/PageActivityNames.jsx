@@ -31,6 +31,8 @@ function PageActivityNames(props) {
     const [getData, { loading, error, data }] = useLazyQuery(NAME_ACTIVITY);
 
     if (props.visible) {
+        console.log(currentUserId);
+        console.log(props.userId);
         if (!visible || currentUserId != props.userId || currentOffset != offset) {
             setVisible(true);
             setCurrentUserId(props.userId);

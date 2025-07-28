@@ -109,8 +109,13 @@ function PageActivityUsers(props) {
         <Container style={{ marginTop: "1em" }}>
 
             <div style={{ float: "right" }}>
-                <Form.Select size="sm" aria-label="Filter to a time period" value={props.userId} onChange={e => setDays(parseInt(e.currentTarget.value))}>
-                    <option value="">- All time -</option>
+                <Form.Select size="sm" aria-label="Filter to a time period" value={props.userId} onChange={e => 
+                    {
+                        // careful to pass null rather than NaN
+                        setDays(e.currentTarget.value == -1 ? null : parseInt(e.currentTarget.value));
+                    }
+                }>
+                    <option value="-1">- All time -</option>
                     <option value="1">1 day</option>
                     <option value="2">2 days</option>
                     <option value="3">3 days</option>

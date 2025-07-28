@@ -18,8 +18,12 @@ function SelectUser(props) {
     if (!data) return null;
 
     return (
-        <Form.Select size="sm" aria-label="Filter to one user" value={props.userId} onChange={e => props.setUserId(parseInt(e.currentTarget.value))}>
-            <option>- All Users -</option>
+        <Form.Select size="sm" aria-label="Filter to one user" value={props.userId} onChange={e => {
+            // we need to pass null as the user id as NaN will freak out the logic elsewhere
+            props.setUserId(e.currentTarget.value == -1 ? null : parseInt(e.currentTarget.value)); 
+        }
+        }>
+            <option key={-1} value={-1} >- All Users -</option>
             {
                 data.getPossibleEditors.map(user => {
                     return(
