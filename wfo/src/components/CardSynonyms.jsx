@@ -5,7 +5,9 @@ import Spinner from "react-bootstrap/Spinner";
 import { useQuery, gql } from "@apollo/client";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
-import CardSynonymsModal from "./CardSynonymsModal"; 
+import CardSynonymsMoveModal from "./CardSynonymsMoveModal"; 
+import CardSynonymsFullModal from "./CardSynonymsFullModal"; 
+
 
 const SYNONYMS_QUERY = gql`
   query getSynonyms($wfo: String!){
@@ -67,7 +69,7 @@ function CardSynonyms(props) {
     if (loading) {
         return (
             <Card bg="warning" className="wfo-child-list" style={{ marginBottom: "1em" }}>
-                <Card.Header>Synonyms <CardSynonymsModal
+                <Card.Header>Synonyms <CardSynonymsMoveModal
                     synonyms={synonyms}
                 /></Card.Header>
                 <Card.Body>
@@ -101,7 +103,8 @@ function CardSynonyms(props) {
             >
                         <span>Synonyms</span>
             </OverlayTrigger>
-            <CardSynonymsModal synonyms={synonyms} name={name} />
+            <CardSynonymsMoveModal synonyms={synonyms} name={name} />
+            <CardSynonymsFullModal name={name} />
             </Card.Header>
             <ListGroup variant="flush" style={{ maxHeight: "30em", overflow: "auto" }}>
                 {renderSynonyms()}

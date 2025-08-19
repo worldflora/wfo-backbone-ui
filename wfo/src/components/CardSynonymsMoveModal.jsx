@@ -28,7 +28,7 @@ query getSynonymMover($wfo: String!  $filter: String ){
         }
     }
 }
-`;
+`; 
 
 const MOVE_SYNS_MUTATION = gql`
         mutation  moveSynonyms(
@@ -52,7 +52,7 @@ const MOVE_SYNS_MUTATION = gql`
         }
 `;
 
-function CardSynonymsModal(props) {
+function CardSynonymsMoveModal(props) {
 
     const [modalShow, setModalShow] = React.useState(false);
     const [actionType, setActionType] = React.useState("none");
@@ -277,4 +277,4 @@ function CardSynonymsModal(props) {
     );
 
 }
-export default CardSynonymsModal;
+export default CardSynonymsMoveModal;
