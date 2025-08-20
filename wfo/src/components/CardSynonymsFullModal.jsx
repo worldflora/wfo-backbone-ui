@@ -3,6 +3,8 @@ import Form from "react-bootstrap/Form";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Badge from "react-bootstrap/Badge";
+import Row from "react-bootstrap/Row";
+import Col from "react-bootstrap/Col";
 import ListGroup from "react-bootstrap/ListGroup";
 import { useLazyQuery, gql } from "@apollo/client";
 import ListGroupItem from "react-bootstrap/esm/ListGroupItem";
@@ -302,7 +304,14 @@ function CardSynonymsFullModal(props) {
                         </ListGroup>
                     </Modal.Body>
                     <Modal.Footer>
-                        <Button onClick={hide}>Close</Button>
+                        <Row style={{width: "100%"}}>
+                            <Col><div style={{ float: "left" }}>
+                                ≡ signifies a homotypic relationship.
+                                <br />
+                                = signifies a heterotypic relationship.
+                            </div></Col>
+                            <Col style={{ textAlign: "right" }}><Button onClick={hide}>Close</Button></Col>
+                        </Row>
                     </Modal.Footer>
                 </Form>
             </Modal>
