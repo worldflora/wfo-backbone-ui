@@ -4,7 +4,7 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import Badge from "react-bootstrap/Badge";
 import ListGroup from "react-bootstrap/ListGroup";
-import { useQuery, gql, useMutation } from "@apollo/client";
+import { useLazyQuery, gql } from "@apollo/client";
 import ListGroupItem from "react-bootstrap/esm/ListGroupItem";
 
 /*
@@ -91,12 +91,7 @@ const FULL_SYNONYMY_QUERY = gql`
 function CardSynonymsFullModal(props) {
 
     const [modalShow, setModalShow] = React.useState(false);
-
-    // FIXME SHOULD BE LAZY LOADING
-
-    const {data, refetch } = useQuery(FULL_SYNONYMY_QUERY, {
-        variables: { wfo: props.name.wfo }
-    });
+    const [loadSynonyms, {data}] = useLazyQuery(FULL_SYNONYMY_QUERY, {variables: { wfo: props.name.wfo }});
 
     function hide() {
         setModalShow(false);
@@ -104,6 +99,7 @@ function CardSynonymsFullModal(props) {
 
     function show() {
         setModalShow(true);
+        loadSynonyms();
     }
 
     // get the pretty name
@@ -222,7 +218,7 @@ function CardSynonymsFullModal(props) {
                 onClick={(e) => { e.preventDefault(); window.location.hash = name.wfo; }}
                 style={{paddingLeft: paddingLeft}}>
                     {symbol}&nbsp;<span style={{fontWeight: fontWeight}} dangerouslySetInnerHTML={{ __html: name.fullNameString }} />
-                    [{name.wfo}]
+                    &nbsp;<span style={{fontSize: "80%"}}>[{name.wfo}]</span>
                     {message}
                 </ListGroupItem>)
 
