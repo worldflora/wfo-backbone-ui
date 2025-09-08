@@ -23,7 +23,15 @@ const FULL_SYNONYMY_QUERY = gql`
             basionym{
                 id,
                 wfo,
-                fullNameString
+                fullNameString,
+                taxonPlacement{
+                    id,
+                    acceptedName{
+                        id,
+                        wfo,
+                        fullNameString
+                    }
+                }
             },
             homotypicNames{
                 id,
@@ -32,7 +40,15 @@ const FULL_SYNONYMY_QUERY = gql`
                 basionym{
                     id,
                     wfo,
-                    fullNameString
+                    fullNameString,
+                    taxonPlacement{
+                        id,
+                        acceptedName{
+                            id,
+                            wfo,
+                            fullNameString
+                        }
+                    }
                 }
                 taxonPlacement{
                     id,
@@ -47,7 +63,8 @@ const FULL_SYNONYMY_QUERY = gql`
             taxonPlacement{
                 id,
                 acceptedName{
-                    id
+                    id,
+                    fullNameString
                 },
                 synonyms{
                     id,
@@ -56,7 +73,15 @@ const FULL_SYNONYMY_QUERY = gql`
                     basionym{
                         id,
                         wfo,
-                        fullNameString
+                        fullNameString,
+                        taxonPlacement{
+                            id,
+                            acceptedName{
+                                id,
+                                wfo,
+                                fullNameString
+                            }
+                        }
                     },
                     homotypicNames{
                         id,
@@ -65,7 +90,15 @@ const FULL_SYNONYMY_QUERY = gql`
                         basionym{
                             id,
                             wfo,
-                            fullNameString
+                            fullNameString,
+                            taxonPlacement{
+                                id,
+                                acceptedName{
+                                    id,
+                                    wfo,
+                                    fullNameString
+                                }
+                            }
                         }
                         taxonPlacement{
                             id,
@@ -198,8 +231,8 @@ function CardSynonymsFullModal(props) {
         // work out if we have any messages for them
         let message = "";
         if(name.id != data.getNameForWfoId.id){
+            
             // we are not the accepted name
-
             // none of the synonyms should be accepted names
             if(name.taxonPlacement){
                 if(name.taxonPlacement.acceptedName.id != data.getNameForWfoId.id){
@@ -249,7 +282,7 @@ function CardSynonymsFullModal(props) {
                 b.id = name.basionym.id;
                 b.fullNameString = name.basionym.fullNameString;
                 b.wfo = name.basionym.wfo;
-                b.taxonPlacement = name.taxonPlacement;
+                b.taxonPlacement = name.basionym.taxonPlacement;
                 b.combinations = new Map();
 
                 // add the accepted name as a combination of the basionym
