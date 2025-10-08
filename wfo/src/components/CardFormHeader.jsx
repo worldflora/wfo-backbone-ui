@@ -4,6 +4,7 @@ import Badge from "react-bootstrap/Badge";
 import { useQuery, gql } from "@apollo/client";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Tooltip from "react-bootstrap/Tooltip";
+import BadgeRssFeed from "./BadgeRssFeed";
 
 const HEADER_QUERY = gql`
   query getHeaderInfo($wfo: String!){
@@ -21,13 +22,27 @@ const HEADER_QUERY = gql`
                 }
                 acceptedName{
                     id,
-                    fullNameString
+                    fullNameString,
+                    nameString,
+                    rank{
+                        id
+                    }
                 },
                 synonyms{
                     id,
                     wfo,
                     fullNameString
                 },
+                ancestors{
+                    id,
+                    rank{
+                        id
+                    }
+                    acceptedName{
+                        id,
+                        nameString
+                    }
+                }
             }
         }
     }
@@ -48,6 +63,8 @@ function CardFormHeader(props) {
     let text = "light";
 
     let linkBadge = null;
+
+    let feedBadge = null;
 
     // it may be deprecated
     if (name && name.status === 'deprecated') {
@@ -77,6 +94,10 @@ function CardFormHeader(props) {
                 headline = <span dangerouslySetInnerHTML={{ __html: name.fullNameString }} />;
             }
 
+            if(name.taxonPlacement.rank.id == 'family' || name.taxonPlacement.rank.id == 'order'){
+                feedBadge = <BadgeRssFeed name={name.taxonPlacement.acceptedName} ancestors={name.taxonPlacement.ancestors} />;
+            }
+
 
 
         } else {
@@ -86,14 +107,26 @@ function CardFormHeader(props) {
 
         }
 
-        linkBadge = <Badge
-            style={{ float: "right" }}
-            bg="secondary"
-            text="light"
-            pill
-        >
-            <a style={{ textDecoration: "none", color: "white" }} href={"http://www.worldfloraonline.org/taxon/" + name.wfo}>{name.wfo} ↗</a></Badge>
+        linkBadge = 
+            <OverlayTrigger
+                key="LinkBadge-tooltip-overlay"
+                placement="top"
+                overlay={
+                    <Tooltip id={`LinkBadge-tooltip-text`}>
+                        Link to this name as currently published in the WFO Plant List.
+                    </Tooltip>
+                }
+            >
 
+                <Badge
+                    style={{ float: "right" }}
+                    bg="secondary"
+                    text="light"
+                    pill
+                >
+                    <a style={{ textDecoration: "none", color: "white" }} href={"http://www.worldfloraonline.org/taxon/" + name.wfo}>{name.wfo} ↗</a></Badge>
+
+            </OverlayTrigger>
     }
 
 
@@ -103,7 +136,7 @@ function CardFormHeader(props) {
         <Card bg={variant} text={text} className="wfo-child-list" style={{ marginBottom: "1em" }}>
             <Card.Header>
                 {linkBadge}
-                
+                {feedBadge}
                     <OverlayTrigger
                         key="CardFormHeader-tooltip-overlay"
                         placement="top"
