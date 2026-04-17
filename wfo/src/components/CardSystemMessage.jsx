@@ -12,12 +12,13 @@ function CardSystemMessage() {
 
     const { data } = useQuery(MESSAGE_QUERY, { pollInterval: 1000 * 30 });
 
+    // this is an array of message plus style now.
     let message = data ? data.getSystemMessage : null;
 
     if (message) {
         return (
-            <Card bg="primary" text="light" style={{ marginBottom: "1em" }}>
-                <Card.Header>⚠️ {message}</Card.Header>
+            <Card bg={message[1]} text="light" style={{ marginBottom: "1em" }}>
+                <Card.Header>⚠️ {message[0]}</Card.Header>
             </Card>
         );
     } else {
