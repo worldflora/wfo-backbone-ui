@@ -76,7 +76,7 @@ class PageHome extends Component {
                                 </Card.Title>
                                 <ol>
                                     <li>If Rhakhis has become unresponsive please contact the technical lead <a href="mailto:rhyam@rbge.org.uk">Roger Hyam</a> directly.</li>
-                                    <li>If you come across anything that looks like a bug or have a suggested improvement please <a href="https://github.com/rogerhyam/wfo-backbone-ui/issues/">raised an issue in GitHub</a>.
+                                    <li>If you come across anything that looks like a bug or have a suggested improvement please <a href="https://github.com/rogerhyam/wfo-backbone-ui/issues/">raise an issue in GitHub</a>.
                                         Don't assume that it has already been raised or is too big or too small. Check the <a href="https://github.com/rogerhyam/wfo-backbone-ui/issues/">GitHub issues page</a> and if in doubt create a new issue.
                                         It is far preferable to have to deal with too many issues than find out later that there was something we could have fixed.
                                     </li>
