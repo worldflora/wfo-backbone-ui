@@ -21,6 +21,8 @@ import CardNameHomonyms from "./CardNameHomonyms";
 import CardEditors from "./CardEditors";
 import CardReferences from "./CardReferences";
 import CardTaxonDescription from "./CardTaxonDescription";
+import CardPreviousPlacements from "./CardPreviousPlacements";
+
 
 function PageForm(props) {
 
@@ -55,6 +57,7 @@ function PageForm(props) {
                         A reference supporting the nomenclature of this name
                     </CardReferences>
                     <CardUnplacedNames wfo={props.wfo} />
+                    <CardPreviousPlacements wfo={props.wfo} />
                     <CardReferences
                         wfo={props.wfo}
                         linkTo="treatment"
