@@ -93,6 +93,7 @@ function CardNameStatus(props) {
             'deprecated',
             'illegitimate',
             'invalid',
+            'later homonym',
             'orthovar',
             'rejected',
             'sanctioned',
