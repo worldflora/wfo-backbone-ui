@@ -124,50 +124,50 @@ function CardNameParts(props) {
     function handleRankChange(event) {
         let newRank = event.target.value;
         setRankString(newRank);
-
-        let ns = nameString;
-        ns = ns.toLowerCase();
-
-        // uppercase it if we are above species level
-        for (var i = 0; i < ranks.length; i++) {
-
-            let rank = ranks[i];
-
-            // stop at species
-            if (rank.name === "species") break;
-
-            // found a the rank
-            if (rank.name === newRank) {
-                ns = ns.charAt(0).toUpperCase() + ns.slice(1);
-                break;
-            }
-        }
-
-        // set it in the new state
-        setNameString(ns);
-
+        updateNameStringCapitalisation(nameString, newRank);
     }
 
     function handleNameChange(event) {
-        let newName = event.target.value;
+         updateNameStringCapitalisation(event.target.value, rankString);
+    }
 
-        // everything is lower cases 
-        newName = newName.toLowerCase();
+    function updateNameStringCapitalisation(originalValue, forRank){
+
+        let newName = originalValue;
+
+        console.log(forRank);
 
         // we only deal with single words which may (in extremis have hyphens)
         newName = newName.replace(/[^A-Za-z-]/g, '');
 
-        // apart from certain ranks
-        for (var i = 0; i < ranks.length; i++) {
+        // everything is lower cases 
+        newName = newName.toLowerCase();
 
-            let rank = ranks[i];
+        
+        if(forRank == 'unranked'){
 
-            // stop at species
-            if (rank.name === "species") break;
-
-            // found a the rank
-            if (rank.name === rankString) {
+            // special case of unranked which may be above species level
+            // or below species level
+            const regex = /^[A-Z]/; // capital first letter
+            if(originalValue.match(regex)){
                 newName = newName.charAt(0).toUpperCase() + newName.slice(1);
+            }
+
+        }else{
+            
+            // names of ranks above species have capital initial letters
+            for (var i = 0; i < ranks.length; i++) {
+
+                let rank = ranks[i];
+
+                // stop at species
+                if (rank.name === "species") break;
+
+                // found a the rank
+                if (rank.name === forRank) {
+                    newName = newName.charAt(0).toUpperCase() + newName.slice(1);
+                }
+
             }
 
         }
